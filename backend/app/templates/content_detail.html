@@ -1,0 +1,376 @@
+{% extends "base.html" %}
+
+{% block title %}{{ content.title }} - Knowledge Management System{% endblock %}
+
+{% block extra_head %}
+<!-- Rich Markdown Editor Styles -->
+<style>
+    /* Editor container styles */
+    .editor-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    /* Base editor styles matching our theme */
+    .ProseMirror {
+        font-family: 'Inter', system-ui, sans-serif;
+        font-size: 16px;
+        line-height: 1.75;
+        color: #1F1E1D; /* heritage-charcoal */
+        outline: none;
+    }
+
+    .dark .ProseMirror {
+        color: #F6F4F0; /* ivory-mist */
+    }
+
+    /* Headings */
+    .ProseMirror h1 {
+        font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+        font-size: 2.5rem;
+        font-weight: 800;
+        line-height: 1.2;
+        margin: 2rem 0 1rem 0;
+        color: #1F1E1D;
+    }
+
+    .dark .ProseMirror h1 {
+        color: #F6F4F0;
+    }
+
+    .ProseMirror h2 {
+        font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: 1.3;
+        margin: 1.75rem 0 0.75rem 0;
+        color: #1F1E1D;
+    }
+
+    .dark .ProseMirror h2 {
+        color: #E9DCC4; /* warm-sand */
+    }
+
+    .ProseMirror h3 {
+        font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.4;
+        margin: 1.5rem 0 0.5rem 0;
+        color: #3B3A38; /* graphite */
+    }
+
+    .dark .ProseMirror h3 {
+        color: #E9DCC4;
+    }
+
+    /* Paragraphs */
+    .ProseMirror p {
+        margin: 1rem 0;
+        color: #3B3A38;
+    }
+
+    .dark .ProseMirror p {
+        color: #E9DCC4;
+    }
+
+    /* Links */
+    .ProseMirror a {
+        color: #A74E39; /* deep-terracotta */
+        text-decoration: underline;
+        text-decoration-color: rgba(167, 78, 57, 0.3);
+        text-underline-offset: 2px;
+        transition: all 0.2s;
+    }
+
+    .ProseMirror a:hover {
+        color: #2F6E47; /* civic-emerald */
+        text-decoration-color: rgba(47, 110, 71, 0.5);
+    }
+
+    .dark .ProseMirror a {
+        color: #D8A843; /* heritage-gold */
+        text-decoration-color: rgba(216, 168, 67, 0.3);
+    }
+
+    .dark .ProseMirror a:hover {
+        color: #2F6E47;
+        text-decoration-color: rgba(47, 110, 71, 0.5);
+    }
+
+    /* Lists */
+    .ProseMirror ul,
+    .ProseMirror ol {
+        margin: 1rem 0;
+        padding-left: 2rem;
+        color: #3B3A38;
+    }
+
+    .dark .ProseMirror ul,
+    .dark .ProseMirror ol {
+        color: #E9DCC4;
+    }
+
+    .ProseMirror li {
+        margin: 0.5rem 0;
+    }
+
+    /* Code blocks */
+    .ProseMirror pre {
+        background: #243C5A; /* ink-blue */
+        color: #F6F4F0;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        margin: 1.5rem 0;
+        font-family: 'Monaco', 'Courier New', monospace;
+        font-size: 0.875rem;
+        line-height: 1.5;
+    }
+
+    .dark .ProseMirror pre {
+        background: #1F1E1D;
+        border: 1px solid #3B3A38;
+    }
+
+    .ProseMirror code {
+        background: #E9DCC4;
+        color: #A74E39;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-family: 'Monaco', 'Courier New', monospace;
+        font-size: 0.875rem;
+    }
+
+    .dark .ProseMirror code {
+        background: #243C5A;
+        color: #D8A843;
+    }
+
+    /* Blockquotes */
+    .ProseMirror blockquote {
+        border-left: 4px solid #A74E39;
+        margin: 1.5rem 0;
+        padding: 0.5rem 0 0.5rem 1.5rem;
+        color: #817567; /* clay-taupe */
+        font-style: italic;
+    }
+
+    .dark .ProseMirror blockquote {
+        border-left-color: #D8A843;
+        color: #E9DCC4;
+    }
+
+    /* Tables */
+    .ProseMirror table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1.5rem 0;
+    }
+
+    .ProseMirror th,
+    .ProseMirror td {
+        border: 1px solid #E9DCC4;
+        padding: 0.75rem;
+        text-align: left;
+    }
+
+    .dark .ProseMirror th,
+    .dark .ProseMirror td {
+        border-color: #3B3A38;
+    }
+
+    .ProseMirror th {
+        background: #E9DCC4;
+        color: #1F1E1D;
+        font-weight: 600;
+    }
+
+    .dark .ProseMirror th {
+        background: #243C5A;
+        color: #F6F4F0;
+    }
+
+    /* Horizontal rule */
+    .ProseMirror hr {
+        border: none;
+        border-top: 2px solid #E9DCC4;
+        margin: 2rem 0;
+    }
+
+    .dark .ProseMirror hr {
+        border-top-color: #3B3A38;
+    }
+
+    /* Images */
+    .ProseMirror img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 0.5rem;
+        margin: 1.5rem 0;
+    }
+
+    /* Strong and emphasis */
+    .ProseMirror strong {
+        font-weight: 600;
+        color: #1F1E1D;
+    }
+
+    .dark .ProseMirror strong {
+        color: #F6F4F0;
+    }
+
+    .ProseMirror em {
+        font-style: italic;
+        color: #817567;
+    }
+
+    .dark .ProseMirror em {
+        color: #E9DCC4;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Content Header -->
+<section class="bg-gradient-to-br from-warm-sand to-ivory-mist dark:from-heritage-charcoal dark:to-ink-blue py-12 border-b border-warm-sand dark:border-graphite">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- Content Type Badge -->
+        <div class="mb-4">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
+                {% if content.type == 'article' %}bg-deep-terracotta/10 text-deep-terracotta dark:bg-deep-terracotta/20 dark:text-heritage-gold
+                {% elif content.type == 'video' %}bg-civic-emerald/10 text-civic-emerald dark:bg-civic-emerald/20 dark:text-heritage-gold
+                {% elif content.type == 'audio' %}bg-heritage-gold/10 text-heritage-gold dark:bg-heritage-gold/20 dark:text-civic-emerald
+                {% endif %}">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    {% if content.type == 'article' %}
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    {% elif content.type == 'video' %}
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                    {% elif content.type == 'audio' %}
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+                    {% endif %}
+                </svg>
+                {{ content.type|capitalize }}
+            </span>
+        </div>
+
+        <!-- Title -->
+        <h1 class="font-display font-bold text-4xl sm:text-5xl text-heritage-charcoal dark:text-ivory-mist mb-6">
+            {{ content.title }}
+        </h1>
+
+        <!-- Metadata -->
+        <div class="flex flex-wrap items-center gap-4 text-sm text-graphite dark:text-warm-sand mb-6">
+            {% if content.created_at %}
+            <span class="flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                {{ content.created_at }}
+            </span>
+            {% endif %}
+
+            {% if content.language %}
+            <span class="flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+                </svg>
+                {{ content.language|upper }}
+            </span>
+            {% endif %}
+
+            {% if content.visibility %}
+            <span class="flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    {% if content.visibility == 'public' %}
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    {% else %}
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    {% endif %}
+                </svg>
+                {{ content.visibility|capitalize }}
+            </span>
+            {% endif %}
+        </div>
+
+        <!-- Tags -->
+        {% if content.tags %}
+        <div class="flex flex-wrap gap-2">
+            {% for tag in content.tags %}
+            <a href="/search?q={{ tag }}" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-clay-taupe/10 dark:bg-clay-taupe/20 text-clay-taupe dark:text-warm-sand border border-clay-taupe/30 dark:border-clay-taupe/40 hover:bg-deep-terracotta hover:text-ivory-mist dark:hover:bg-civic-emerald transition-colors">
+                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                </svg>
+                {{ tag }}
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Available Translations -->
+        {% if available_languages|length > 1 %}
+        <div class="mt-6 pt-6 border-t border-warm-sand dark:border-graphite">
+            <p class="text-sm text-graphite dark:text-warm-sand mb-3">
+                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                </svg>
+                Available in:
+            </p>
+            <div class="flex flex-wrap gap-2">
+                {% for lang in available_languages %}
+                <a href="/contents/{{ content.id }}?lang={{ lang }}"
+                   class="px-3 py-1 rounded-lg text-sm font-medium transition-colors
+                   {% if lang == content.language %}
+                   bg-deep-terracotta text-ivory-mist
+                   {% else %}
+                   bg-white dark:bg-ink-blue text-heritage-charcoal dark:text-ivory-mist border border-warm-sand dark:border-graphite hover:bg-warm-sand dark:hover:bg-graphite
+                   {% endif %}">
+                    {{ lang|upper }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Content Body -->
+<section class="py-12 bg-ivory-mist dark:bg-heritage-charcoal min-h-screen">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- Article Content (rendered by rich-markdown-editor) -->
+        <article class="bg-white dark:bg-ink-blue rounded-2xl shadow-xl p-8 sm:p-12 border border-warm-sand dark:border-graphite">
+            <div class="editor-container">
+                <!-- React will mount the rich-markdown-editor here -->
+                <div id="markdown-viewer" data-markdown="{{ content.markdown|e }}">
+                    <!-- Embed the raw markdown as JSON to preserve code fences and special characters -->
+                    <script id="markdown-data" type="application/json">{{ content.markdown|tojson }}</script>
+                    <!-- Fallback: render basic markdown if JS fails -->
+                    <noscript>
+                        {{ content.markdown_html|safe }}
+                    </noscript>
+                </div>
+            </div>
+        </article>
+
+        <!-- Back Button -->
+        <div class="mt-8 text-center">
+            <a href="/search" class="inline-flex items-center px-6 py-3 bg-warm-sand dark:bg-graphite text-heritage-charcoal dark:text-ivory-mist hover:bg-deep-terracotta hover:text-ivory-mist dark:hover:bg-civic-emerald font-semibold rounded-lg shadow-lg transition-colors">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Back to Search
+            </a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- Rich Markdown Editor Bundle -->
+<script type="module" src="{{ url_for('static', filename='dist/main.js') }}"></script>
+{% endblock %}

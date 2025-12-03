@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="{{ current_language or 'en' }}" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Knowledge Management System{% endblock %}</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- TailwindCSS CDN (for development) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        // Heritage palette from color_palette.md
+                        'heritage-charcoal': '#1F1E1D',
+                        'warm-sand': '#E9DCC4',
+                        'deep-terracotta': '#A74E39',
+                        'civic-emerald': '#2F6E47',
+                        'heritage-gold': '#D8A843',
+                        'ink-blue': '#243C5A',
+                        'clay-taupe': '#817567',
+                        'ivory-mist': '#F6F4F0',
+                        'graphite': '#3B3A38',
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                        'display': ['Outfit', 'Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Utility nav link */
+        .nav-link {
+            @apply text-graphite dark:text-warm-sand hover:text-deep-terracotta dark:hover:text-heritage-gold font-medium transition-colors;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            @apply bg-warm-sand dark:bg-heritage-charcoal;
+        }
+        ::-webkit-scrollbar-thumb {
+            @apply bg-deep-terracotta hover:bg-civic-emerald rounded;
+        }
+
+        /* Smooth transitions */
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+    </style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gradient-to-br from-ivory-mist via-warm-sand/40 to-white dark:from-heritage-charcoal dark:via-ink-blue/40 dark:to-black text-heritage-charcoal dark:text-ivory-mist font-sans antialiased">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-heritage-charcoal/80 backdrop-blur-xl border-b border-warm-sand/60 dark:border-graphite shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+
+                <!-- Logo -->
+                <div class="flex-shrink-0">
+                    <a href="/" class="flex items-center space-x-3">
+                        <div class="w-11 h-11 bg-gradient-to-br from-deep-terracotta via-heritage-gold to-civic-emerald rounded-xl flex items-center justify-center shadow-lg shadow-deep-terracotta/20">
+                            <svg class="w-6 h-6 text-ivory-mist" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="font-display font-bold text-xl text-heritage-charcoal dark:text-ivory-mist">KMS</span>
+                            <p class="text-xs text-graphite dark:text-warm-sand/70">Modern knowledge platform</p>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/search" class="nav-link">Search</a>
+                    <a href="/contents" class="nav-link">Browse</a>
+                    <a href="/contents/new" class="nav-link">Create</a>
+                    <a href="/media" class="nav-link">Media</a>
+                    <a href="/tags" class="nav-link">Tags</a>
+                </div>
+
+                <!-- Right side controls -->
+                <div class="flex items-center space-x-4">
+
+                    <!-- Language Selector -->
+                    <div class="relative hidden sm:block">
+                        <button id="language-toggle" class="flex items-center space-x-2 px-3 py-2 rounded-lg bg-warm-sand dark:bg-graphite text-heritage-charcoal dark:text-ivory-mist hover:bg-deep-terracotta hover:text-ivory-mist dark:hover:bg-civic-emerald transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+                            </svg>
+                            <span class="font-medium text-sm">{{ current_language|upper or 'EN' }}</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+
+                        <!-- Language Dropdown -->
+                        <div id="language-menu" class="hidden absolute right-0 mt-2 w-48 rounded-lg bg-ivory-mist dark:bg-ink-blue shadow-lg border border-warm-sand dark:border-graphite overflow-hidden">
+                            <div class="py-1">
+                                {% for lang_code, lang_name in [('en', 'English'), ('de', 'Deutsch'), ('es', 'Español'), ('fr', 'Français'), ('it', 'Italiano'), ('pt', 'Português'), ('ru', 'Русский'), ('zh', '中文'), ('ja', '日本語'), ('ko', '한국어')] %}
+                                <a href="?lang={{ lang_code }}" class="block px-4 py-2 text-sm text-heritage-charcoal dark:text-ivory-mist hover:bg-warm-sand dark:hover:bg-civic-emerald transition-colors">
+                                    {{ lang_name }}
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dark Mode Toggle -->
+                    <button id="dark-mode-toggle" class="p-2 rounded-lg bg-warm-sand dark:bg-graphite text-heritage-charcoal dark:text-heritage-gold hover:bg-deep-terracotta hover:text-ivory-mist dark:hover:bg-civic-emerald transition-colors">
+                        <svg id="sun-icon" class="w-5 h-5 hidden dark:block" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
+                        </svg>
+                        <svg id="moon-icon" class="w-5 h-5 block dark:hidden" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                        </svg>
+                    </button>
+
+                    <!-- Mobile menu button -->
+                    <button id="mobile-menu-toggle" class="md:hidden p-2 rounded-lg text-heritage-charcoal dark:text-ivory-mist hover:bg-warm-sand dark:hover:bg-graphite transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-warm-sand dark:border-graphite">
+            <div class="px-4 pt-2 pb-3 space-y-1">
+                <a href="/" class="block px-3 py-2 rounded-lg text-heritage-charcoal dark:text-ivory-mist hover:bg-warm-sand dark:hover:bg-graphite font-medium transition-colors">Home</a>
+                <a href="/search" class="block px-3 py-2 rounded-lg text-heritage-charcoal dark:text-ivory-mist hover:bg-warm-sand dark:hover:bg-graphite font-medium transition-colors">Search</a>
+                <a href="/contents" class="block px-3 py-2 rounded-lg text-heritage-charcoal dark:text-ivory-mist hover:bg-warm-sand dark:hover:bg-graphite font-medium transition-colors">Browse</a>
+                <a href="/contents/new" class="block px-3 py-2 rounded-lg text-heritage-charcoal dark:text-ivory-mist hover:bg-warm-sand dark:hover:bg-graphite font-medium transition-colors">Create</a>
+                <a href="/media" class="block px-3 py-2 rounded-lg text-heritage-charcoal dark:text-ivory-mist hover:bg-warm-sand dark:hover:bg-graphite font-medium transition-colors">Media</a>
+                <a href="/tags" class="block px-3 py-2 rounded-lg text-heritage-charcoal dark:text-ivory-mist hover:bg-warm-sand dark:hover:bg-graphite font-medium transition-colors">Tags</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-16">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-ink-blue dark:bg-heritage-charcoal border-t border-graphite">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+
+                <!-- About -->
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-br from-deep-terracotta to-civic-emerald rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-ivory-mist" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                            </svg>
+                        </div>
+                        <span class="font-display font-bold text-xl text-ivory-mist">Knowledge Management System</span>
+                    </div>
+                    <p class="text-warm-sand text-sm leading-relaxed max-w-md">
+                        A multilingual, multimodal knowledge management platform for preserving and sharing expertise across languages and cultures.
+                    </p>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="font-display font-semibold text-ivory-mist mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/search" class="text-warm-sand hover:text-heritage-gold text-sm transition-colors">Search</a></li>
+                        <li><a href="/contents" class="text-warm-sand hover:text-heritage-gold text-sm transition-colors">Browse Content</a></li>
+                        <li><a href="/about" class="text-warm-sand hover:text-heritage-gold text-sm transition-colors">About</a></li>
+                        <li><a href="/api/docs" class="text-warm-sand hover:text-heritage-gold text-sm transition-colors">API Documentation</a></li>
+                    </ul>
+                </div>
+
+                <!-- Resources -->
+                <div>
+                    <h3 class="font-display font-semibold text-ivory-mist mb-4">Resources</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/help" class="text-warm-sand hover:text-heritage-gold text-sm transition-colors">Help Center</a></li>
+                        <li><a href="/contribute" class="text-warm-sand hover:text-heritage-gold text-sm transition-colors">Contribute</a></li>
+                        <li><a href="/privacy" class="text-warm-sand hover:text-heritage-gold text-sm transition-colors">Privacy Policy</a></li>
+                        <li><a href="/terms" class="text-warm-sand hover:text-heritage-gold text-sm transition-colors">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Bottom Bar -->
+            <div class="mt-12 pt-8 border-t border-graphite flex flex-col sm:flex-row justify-between items-center">
+                <p class="text-warm-sand text-sm">
+                    &copy; {{ current_year or 2025 }} Knowledge Management System. All rights reserved.
+                </p>
+                <div class="flex space-x-6 mt-4 sm:mt-0">
+                    <a href="#" class="text-warm-sand hover:text-heritage-gold transition-colors">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-warm-sand hover:text-heritage-gold transition-colors">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Dark mode toggle
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const html = document.documentElement;
+
+        // Check for saved theme preference or default to light mode
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        if (currentTheme === 'dark') {
+            html.classList.add('dark');
+        }
+
+        darkModeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            const theme = html.classList.contains('dark') ? 'dark' : 'light';
+            localStorage.setItem('theme', theme);
+        });
+
+        // Language menu toggle
+        const languageToggle = document.getElementById('language-toggle');
+        const languageMenu = document.getElementById('language-menu');
+
+        languageToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            languageMenu.classList.toggle('hidden');
+        });
+
+        // Close language menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!languageToggle.contains(e.target) && !languageMenu.contains(e.target)) {
+                languageMenu.classList.add('hidden');
+            }
+        });
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

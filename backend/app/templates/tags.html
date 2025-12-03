@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Tags - Knowledge Management System{% endblock %}
+
+{% block content %}
+<section class="py-16 bg-ivory-mist dark:bg-heritage-charcoal min-h-screen">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm uppercase tracking-wide text-clay-taupe">Taxonomy</p>
+                <h1 class="font-display font-bold text-4xl text-heritage-charcoal dark:text-ivory-mist">Tags &amp; Namespaces</h1>
+                <p class="text-graphite dark:text-warm-sand mt-2">Create and organize tags. (Static placeholder)</p>
+            </div>
+            <button class="inline-flex items-center px-4 py-2 rounded-lg bg-deep-terracotta text-ivory-mist hover:bg-civic-emerald transition-colors text-sm font-semibold">
+                + New Tag
+            </button>
+        </div>
+
+        <div class="bg-white dark:bg-ink-blue border border-warm-sand dark:border-graphite rounded-2xl shadow-xl p-6 space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <label class="block text-sm font-medium text-heritage-charcoal dark:text-warm-sand">Key</label>
+                <input type="text" class="md:col-span-2 rounded-lg border border-warm-sand dark:border-graphite bg-ivory-mist dark:bg-heritage-charcoal text-sm p-3" placeholder="python, design, onboarding">
+
+                <label class="block text-sm font-medium text-heritage-charcoal dark:text-warm-sand">Default Label</label>
+                <input type="text" class="md:col-span-2 rounded-lg border border-warm-sand dark:border-graphite bg-ivory-mist dark:bg-heritage-charcoal text-sm p-3" placeholder="Python">
+
+                <label class="block text-sm font-medium text-heritage-charcoal dark:text-warm-sand">Namespace</label>
+                <select class="rounded-lg border border-warm-sand dark:border-graphite bg-ivory-mist dark:bg-heritage-charcoal text-sm p-3">
+                    <option>topic</option>
+                    <option>audience</option>
+                    <option>type</option>
+                </select>
+
+                <label class="block text-sm font-medium text-heritage-charcoal dark:text-warm-sand">Color</label>
+                <input type="color" class="rounded-lg border border-warm-sand dark:border-graphite bg-ivory-mist dark:bg-heritage-charcoal text-sm p-3" value="#A74E39">
+            </div>
+
+            <div class="flex items-center justify-between">
+                <p class="text-sm text-graphite dark:text-warm-sand/80">Add localized labels per language under the same tag.</p>
+                <button class="px-4 py-2 rounded-lg bg-warm-sand dark:bg-graphite text-heritage-charcoal dark:text-ivory-mist text-sm">Save Tag</button>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-ink-blue border border-warm-sand dark:border-graphite rounded-2xl shadow-xl p-6">
+            <h2 class="font-semibold text-heritage-charcoal dark:text-ivory-mist text-lg mb-4">Existing Tags</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for ns in ['topic','audience','type','department'] %}
+                <div class="rounded-xl border border-warm-sand dark:border-graphite bg-ivory-mist dark:bg-heritage-charcoal p-4">
+                    <p class="text-xs uppercase tracking-wide text-clay-taupe">{{ ns }}</p>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        {% for i in range(1,4) %}
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs bg-deep-terracotta/10 text-deep-terracotta border border-deep-terracotta/20">Tag {{ i }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

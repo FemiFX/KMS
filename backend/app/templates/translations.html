@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Translations - Knowledge Management System{% endblock %}
+
+{% block content %}
+<section class="py-16 bg-ivory-mist dark:bg-heritage-charcoal min-h-screen">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm uppercase tracking-wide text-clay-taupe">Localization</p>
+                <h1 class="font-display font-bold text-4xl text-heritage-charcoal dark:text-ivory-mist">Translations</h1>
+                <p class="text-graphite dark:text-warm-sand mt-2">Manage per-language variants for articles. (Static placeholder)</p>
+            </div>
+            <a href="/contents/new" class="inline-flex items-center px-4 py-2 rounded-lg bg-deep-terracotta text-ivory-mist hover:bg-civic-emerald transition-colors text-sm font-semibold">
+                + New Article
+            </a>
+        </div>
+
+        <div class="bg-white dark:bg-ink-blue rounded-2xl border border-warm-sand dark:border-graphite shadow-xl p-6">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h2 class="font-semibold text-heritage-charcoal dark:text-ivory-mist text-lg">Recent Articles</h2>
+                    <p class="text-sm text-graphite dark:text-warm-sand/80">Select an article to add or edit translations.</p>
+                </div>
+                <button class="px-3 py-2 text-sm rounded-lg bg-warm-sand dark:bg-graphite text-heritage-charcoal dark:text-ivory-mist">Filter</button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for i in range(1,5) %}
+                <div class="rounded-xl border border-warm-sand dark:border-graphite bg-ivory-mist dark:bg-heritage-charcoal p-4">
+                    <div class="flex items-start justify-between mb-2">
+                        <div>
+                            <p class="text-xs uppercase tracking-wide text-clay-taupe">Article</p>
+                            <h3 class="font-semibold text-heritage-charcoal dark:text-ivory-mist">Sample Article {{ i }}</h3>
+                        </div>
+                        <span class="px-2 py-1 rounded-full text-xs bg-deep-terracotta/10 text-deep-terracotta">EN</span>
+                    </div>
+                    <p class="text-sm text-graphite dark:text-warm-sand/80 mb-3">Click "Manage translations" to add DE, ES, FR, etc.</p>
+                    <div class="flex items-center gap-2">
+                        <button class="px-3 py-2 rounded-lg bg-warm-sand dark:bg-graphite text-sm text-heritage-charcoal dark:text-ivory-mist">Manage translations</button>
+                        <button class="px-3 py-2 rounded-lg bg-heritage-gold/20 text-sm text-heritage-charcoal">Set primary</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

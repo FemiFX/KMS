@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Media Library - Knowledge Management System{% endblock %}
+
+{% block content %}
+<section class="py-16 bg-ivory-mist dark:bg-heritage-charcoal min-h-screen">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm uppercase tracking-wide text-clay-taupe">Media</p>
+                <h1 class="font-display font-bold text-4xl text-heritage-charcoal dark:text-ivory-mist">Media Library</h1>
+                <p class="text-graphite dark:text-warm-sand mt-2">Browse and manage video/audio assets. (Static placeholder)</p>
+            </div>
+            <a href="/media/upload" class="inline-flex items-center px-4 py-2 rounded-lg bg-deep-terracotta text-ivory-mist hover:bg-civic-emerald transition-colors text-sm font-semibold">
+                + Upload Media
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {% for i in range(1,7) %}
+            <div class="rounded-2xl bg-white dark:bg-ink-blue border border-warm-sand dark:border-graphite shadow-lg overflow-hidden">
+                <div class="h-32 bg-gradient-to-br from-ink-blue to-heritage-charcoal/80 flex items-center justify-center text-ivory-mist text-lg font-semibold">
+                    Thumbnail {{ i }}
+                </div>
+                <div class="p-4 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-semibold text-heritage-charcoal dark:text-ivory-mist">Media Item {{ i }}</h3>
+                        <span class="px-2 py-1 rounded-full text-xs bg-heritage-gold/20 text-heritage-charcoal">Video</span>
+                    </div>
+                    <p class="text-sm text-graphite dark:text-warm-sand/80">Duration: 03:12 • Language: EN</p>
+                    <div class="flex items-center gap-2 pt-2">
+                        <button class="px-3 py-2 rounded-lg bg-warm-sand dark:bg-graphite text-sm text-heritage-charcoal dark:text-ivory-mist">View</button>
+                        <button class="px-3 py-2 rounded-lg bg-ivory-mist dark:bg-heritage-charcoal border border-warm-sand dark:border-graphite text-sm">Transcripts</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

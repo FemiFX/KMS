@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Media - Knowledge Management System{% endblock %}
+
+{% block content %}
+<section class="py-16 bg-ivory-mist dark:bg-heritage-charcoal min-h-screen">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm uppercase tracking-wide text-clay-taupe">Media</p>
+                <h1 class="font-display font-bold text-4xl text-heritage-charcoal dark:text-ivory-mist">Upload Media</h1>
+                <p class="text-graphite dark:text-warm-sand mt-2">Upload video/audio files and attach metadata. (Static placeholder)</p>
+            </div>
+            <a href="/media" class="inline-flex items-center px-4 py-2 rounded-lg bg-warm-sand dark:bg-graphite text-heritage-charcoal dark:text-ivory-mist hover:bg-deep-terracotta hover:text-ivory-mist transition-colors text-sm font-semibold">
+                ← Back to Library
+            </a>
+        </div>
+
+        <div class="bg-white dark:bg-ink-blue border border-warm-sand dark:border-graphite rounded-2xl shadow-xl p-6 space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <label class="block text-sm font-medium text-heritage-charcoal dark:text-warm-sand">File</label>
+                <input type="file" class="col-span-1 md:col-span-2 rounded-lg border border-warm-sand dark:border-graphite bg-ivory-mist dark:bg-heritage-charcoal text-sm p-3">
+
+                <label class="block text-sm font-medium text-heritage-charcoal dark:text-warm-sand">Kind</label>
+                <select class="rounded-lg border border-warm-sand dark:border-graphite bg-ivory-mist dark:bg-heritage-charcoal text-sm p-3">
+                    <option>video</option>
+                    <option>audio</option>
+                </select>
+
+                <label class="block text-sm font-medium text-heritage-charcoal dark:text-warm-sand">Visibility</label>
+                <select class="rounded-lg border border-warm-sand dark:border-graphite bg-ivory-mist dark:bg-heritage-charcoal text-sm p-3">
+                    <option>public</option>
+                    <option>org</option>
+                    <option>private</option>
+                </select>
+
+                <label class="block text-sm font-medium text-heritage-charcoal dark:text-warm-sand">Title</label>
+                <input type="text" class="rounded-lg border border-warm-sand dark:border-graphite bg-ivory-mist dark:bg-heritage-charcoal text-sm p-3" placeholder="Media title">
+
+                <label class="block text-sm font-medium text-heritage-charcoal dark:text-warm-sand">Original Language</label>
+                <input type="text" class="rounded-lg border border-warm-sand dark:border-graphite bg-ivory-mist dark:bg-heritage-charcoal text-sm p-3" placeholder="en">
+            </div>
+
+            <div class="flex items-center justify-between pt-2">
+                <p class="text-sm text-graphite dark:text-warm-sand/80">Transcription and embedding will run asynchronously.</p>
+                <button class="inline-flex items-center px-6 py-3 rounded-lg bg-deep-terracotta text-ivory-mist hover:bg-civic-emerald transition-colors font-semibold">Upload</button>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

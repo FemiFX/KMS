@@ -1,0 +1,444 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Black Trans+ Fund - Unterstützung für Schwarze Trans+ Personen') }}{% endblock %}
+
+{% block content %}
+<!-- Hero Section - Clean, Modern Design inspired by inspiration -->
+<section class="relative bg-ivory dark:bg-indigo-900 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <!-- Hero Text - Left Side -->
+            <div class="space-y-8">
+                <div class="space-y-6">
+                    <h1 class="text-5xl sm:text-6xl lg:text-7xl font-display font-extrabold text-indigo-800 dark:text-ivory leading-[1.1] tracking-tight">
+                        {% trans %}Finanzielle<br>
+                        Unterstützung<br>
+                        <span class="text-skyblue-400 dark:text-skyblue-300">für Schwarze<br>Trans+ Personen</span>{% endtrans %}
+                    </h1>
+
+                    <p class="text-lg sm:text-xl text-indigo-600 dark:text-ivory/80 leading-relaxed max-w-xl font-medium">
+                        {% trans %}Der Black Trans+ Fund ist ein Mikrofund, der Schwarzen Trans+ Personen in finanziell schwierigen Situationen konkret hilft.{% endtrans %}
+                    </p>
+                </div>
+
+                <!-- CTA Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="/apply" class="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-xl bg-indigo-800 hover:bg-indigo-700 text-ivory shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">
+                        {{ _('Jetzt bewerben') }}
+                    </a>
+                    <a href="/about" class="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-xl bg-white dark:bg-indigo-800 text-indigo-800 dark:text-ivory border-2 border-indigo-200 dark:border-indigo-700 hover:border-indigo-300 dark:hover:border-indigo-600 transition-all duration-200">
+                        {{ _('Mehr erfahren') }}
+                    </a>
+                </div>
+            </div>
+
+            <!-- Hero Visual - Right Side with geometric shapes -->
+            <div class="relative h-[500px] lg:h-[550px]">
+                <!-- Geometric Background Shapes -->
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <!-- Large Circle - Turquoise/Skyblue -->
+                    <div class="absolute w-80 h-80 lg:w-96 lg:h-96 rounded-full bg-skyblue-200 dark:bg-skyblue-600/30 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0"></div>
+
+                    <!-- Rectangle - Coral/Red -->
+                    <div class="absolute w-48 h-32 bg-rosequartz-400 dark:bg-rosequartz-600/40 -top-4 right-8 lg:-top-8 lg:right-4 rounded-2xl z-10"></div>
+
+                    <!-- Small Circle - Orange/Gold -->
+                    <div class="absolute w-24 h-24 rounded-full bg-goldamber-400 dark:bg-goldamber-500/50 top-0 -right-4 lg:top-4 lg:right-0 z-20"></div>
+
+                    <!-- Small Semi-circle - Green -->
+                    <div class="absolute w-28 h-14 bg-teal-400 dark:bg-teal-500/40 bottom-24 -left-4 lg:bottom-28 lg:left-0 rounded-t-full z-10"></div>
+
+                    <!-- Rectangle - Yellow -->
+                    <div class="absolute w-40 h-40 bg-goldamber-300 dark:bg-goldamber-400/30 -bottom-8 right-12 lg:-bottom-12 lg:right-8 rounded-2xl z-10"></div>
+
+                    <!-- Circle - Purple/Rose -->
+                    <div class="absolute w-48 h-48 rounded-full bg-rosequartz-500 dark:bg-rosequartz-600/40 bottom-0 -right-4 lg:bottom-4 lg:right-0 z-15"></div>
+
+                    <!-- Small Circle - Orange -->
+                    <div class="absolute w-20 h-20 rounded-full bg-goldamber-500 dark:bg-goldamber-400/50 bottom-12 right-36 lg:bottom-16 lg:right-44 z-20"></div>
+                </div>
+
+                <!-- SVG Image Container - Properly sized -->
+                <div class="absolute inset-0 flex items-center justify-center z-30">
+                    <div class="relative w-[400px] h-[480px] lg:w-[450px] lg:h-[520px] bg-white/95 dark:bg-white/90 rounded-3xl shadow-2xl p-8 lg:p-10 transform hover:scale-[1.02] transition-transform duration-300">
+                        <img src="/static/images/btf-image.svg" alt="Black Trans+ Fund" class="w-full h-full object-contain">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-16 bg-white dark:bg-indigo-800/50 border-y border-indigo-100 dark:border-indigo-700">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div class="space-y-2">
+                <div class="text-5xl font-display font-bold text-indigo-800 dark:text-skyblue-300">42</div>
+                <div class="text-indigo-600 dark:text-ivory/70 font-medium">{{ _('Unterstützte Personen') }}</div>
+            </div>
+            <div class="space-y-2">
+                <div class="text-5xl font-display font-bold text-indigo-800 dark:text-goldamber-400">€15.500</div>
+                <div class="text-indigo-600 dark:text-ivory/70 font-medium">{{ _('Ausgezahlt') }}</div>
+            </div>
+            <div class="space-y-2">
+                <div class="text-5xl font-display font-bold text-indigo-800 dark:text-rosequartz-300">78%</div>
+                <div class="text-indigo-600 dark:text-ivory/70 font-medium">{{ _('Bewilligungsquote') }}</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Values Section -->
+<section class="py-20 bg-ivory dark:bg-indigo-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl sm:text-5xl font-display font-bold text-indigo-800 dark:text-ivory mb-4">
+                {{ _('Unsere Werte') }}
+            </h2>
+            <p class="text-xl text-indigo-600 dark:text-ivory/70 max-w-3xl mx-auto">
+                {% trans %}Wir arbeiten intersektional, um Schwarze Trans+ Stimmen zu verstärken{% endtrans %}
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Inclusion -->
+            <div class="bg-white dark:bg-indigo-800 rounded-3xl overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-indigo-100 dark:border-indigo-700">
+                <div class="w-full h-64 overflow-hidden">
+                    <img src="/static/images/inclusion.jpg" alt="Inklusion" class="w-full h-full object-cover">
+                </div>
+                <div class="p-8">
+                    <h3 class="text-2xl font-display font-bold text-indigo-800 dark:text-ivory mb-3">{{ _('Inklusion') }}</h3>
+                    <p class="text-indigo-600 dark:text-ivory/70 leading-relaxed">
+                        {% trans %}Wir arbeiten intersektional, um Schwarze Trans+ Stimmen zu verstärken und zu zentrieren.{% endtrans %}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Empowerment -->
+            <div class="bg-white dark:bg-indigo-800 rounded-3xl overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-indigo-100 dark:border-indigo-700">
+                <div class="w-full h-64 overflow-hidden">
+                    <img src="/static/images/empowerment.jpg" alt="Empowerment" class="w-full h-full object-cover">
+                </div>
+                <div class="p-8">
+                    <h3 class="text-2xl font-display font-bold text-indigo-800 dark:text-ivory mb-3">{{ _('Empowerment') }}</h3>
+                    <p class="text-indigo-600 dark:text-ivory/70 leading-relaxed">
+                        {% trans %}Wir schaffen Räume, die Gemeinschaft und Selbstbestimmung fördern.{% endtrans %}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Anti-Discrimination -->
+            <div class="bg-white dark:bg-indigo-800 rounded-3xl overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-indigo-100 dark:border-indigo-700">
+                <div class="w-full h-64 overflow-hidden">
+                    <img src="/static/images/anti-discrimination.jpg" alt="Anti-Diskriminierung" class="w-full h-full object-cover">
+                </div>
+                <div class="p-8">
+                    <h3 class="text-2xl font-display font-bold text-indigo-800 dark:text-ivory mb-3">{{ _('Anti-Diskriminierung') }}</h3>
+                    <p class="text-indigo-600 dark:text-ivory/70 leading-relaxed">
+                        {% trans %}Wir bekämpfen aktiv alle Formen von Rassismus, Transphobie und Diskriminierung.{% endtrans %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- What We Offer Section -->
+<section class="py-20 bg-white dark:bg-indigo-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6">
+                <h2 class="text-4xl sm:text-5xl font-display font-bold text-indigo-800 dark:text-ivory">
+                    {{ _('Was wir anbieten') }}
+                </h2>
+                <div class="space-y-4 text-lg text-indigo-600 dark:text-ivory/70 leading-relaxed">
+                    <p>
+                        {% trans %}Der Black Trans+ Fund ist dazu da, Schwarzen Trans+ Personen direkt Geld zu geben oder sie indirekt zu unterstützen, indem wir einen Teil ihrer Rechnungen bezahlen.{% endtrans %}
+                    </p>
+                    <p>
+                        {% trans %}Wenn du eine Schwarze Trans+ Person bist, kannst du dich bewerben, indem du uns mitteilst, wie viel Geld du brauchst und wofür du es brauchst. Eine Gruppe von Peers wird alle Anträge durchgehen und das Geld verteilen.{% endtrans %}
+                    </p>
+                </div>
+
+                <div class="bg-goldamber-50 dark:bg-goldamber-900/20 border-l-4 border-goldamber-500 p-6 rounded-r-2xl">
+                    <p class="text-indigo-800 dark:text-ivory font-semibold">
+                        {% trans %}Da wir erst am Anfang stehen, können wir derzeit nicht auf Notfälle reagieren.{% endtrans %}
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-skyblue-100 to-rosequartz-100 dark:from-skyblue-900/20 dark:to-rosequartz-900/20 rounded-3xl p-8 border border-indigo-100 dark:border-indigo-700">
+                <h3 class="text-2xl font-display font-bold text-indigo-800 dark:text-ivory mb-6">
+                    {{ _('Niederschwelliges Verfahren') }}
+                </h3>
+                <ul class="space-y-4">
+                    <li class="flex items-start">
+                        <svg class="w-6 h-6 text-teal-600 dark:text-teal-400 mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        <span class="text-indigo-700 dark:text-ivory/80 font-medium">{{ _('Einfacher Bewerbungsprozess') }}</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-6 h-6 text-teal-600 dark:text-teal-400 mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        <span class="text-indigo-700 dark:text-ivory/80 font-medium">{{ _('Peer-Review durch Beirat') }}</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-6 h-6 text-teal-600 dark:text-teal-400 mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        <span class="text-indigo-700 dark:text-ivory/80 font-medium">{{ _('Datenschutz und Vertraulichkeit') }}</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-6 h-6 text-teal-600 dark:text-teal-400 mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        <span class="text-indigo-700 dark:text-ivory/80 font-medium">{{ _('Direkte finanzielle Unterstützung') }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 bg-indigo-800 dark:bg-indigo-900 text-ivory">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-4xl sm:text-5xl font-display font-bold mb-6">
+            {{ _('Bereit, Unterstützung zu erhalten?') }}
+        </h2>
+        <p class="text-xl mb-8 text-ivory/90">
+            {% trans %}Bewirb dich jetzt für finanzielle Unterstützung durch den Black Trans+ Fund.{% endtrans %}
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/apply" class="inline-flex items-center justify-center px-4 py-2 text-lg font-bold rounded-lg bg-goldamber-500 hover:bg-goldamber-400 text-indigo-900 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">
+                {{ _('Zur Bewerbung') }}
+            </a>
+            <a href="/donate" class="inline-flex items-center justify-center px-4 py-2 text-lg font-bold rounded-lg bg-ivory/10 hover:bg-ivory/20 backdrop-blur-sm text-ivory border-2 border-ivory/50 hover:border-ivory transition-all duration-200">
+                {{ _('Unterstützen') }}
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-20 bg-ivory dark:bg-indigo-800">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h2 class="text-4xl sm:text-5xl font-display font-extrabold text-indigo-800 dark:text-ivory mb-4">
+                {{ _('Häufig gestellte') }} <span class="text-skyblue-500 dark:text-skyblue-400">{{ _('Fragen') }}</span>
+            </h2>
+            <p class="text-lg text-indigo-600 dark:text-ivory/70 max-w-2xl mx-auto">
+                {% trans %}Hier findest du Antworten auf die häufigsten Fragen zum Black Trans+ Fund.{% endtrans %}
+            </p>
+        </div>
+
+        <!-- FAQ Accordion -->
+        <div class="space-y-4">
+            <!-- FAQ Item 1 -->
+            <div class="faq-item bg-white dark:bg-indigo-900 dark:bg-opacity-60 rounded-2xl border border-indigo-100 dark:border-indigo-600 shadow-sm hover:shadow-lg dark:hover:shadow-xl transition-all duration-300">
+                <button class="faq-question w-full text-left px-6 py-5 flex justify-between items-center gap-4 group">
+                    <span class="text-lg font-semibold text-indigo-900 dark:text-ivory group-hover:text-skyblue-600 dark:group-hover:text-skyblue-400 transition-colors">
+                        {{ _('Wer kann sich für den Black Trans+ Fund bewerben?') }}
+                    </span>
+                    <div class="faq-icon-container flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-700 group-hover:bg-skyblue-100 dark:group-hover:bg-skyblue-800 transition-colors">
+                        <svg class="faq-plus w-5 h-5 text-indigo-700 dark:text-ivory transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        <svg class="faq-minus hidden w-5 h-5 text-skyblue-600 dark:text-skyblue-300 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"/>
+                        </svg>
+                    </div>
+                </button>
+                <div class="faq-answer hidden">
+                    <div class="px-6 pb-6 pt-2">
+                        <p class="text-indigo-600 dark:text-ivory/90 leading-relaxed">
+                            {% trans %}Der Black Trans+ Fund steht allen Schwarzen Trans+ Personen offen, die in Deutschland leben und sich in einer finanziell schwierigen Situation befinden. Du musst dich als Schwarze Trans+ Person identifizieren und einen Wohnsitz in Deutschland haben.{% endtrans %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Item 2 -->
+            <div class="faq-item bg-white dark:bg-indigo-900 dark:bg-opacity-60 rounded-2xl border border-indigo-100 dark:border-indigo-600 shadow-sm hover:shadow-lg dark:hover:shadow-xl transition-all duration-300">
+                <button class="faq-question w-full text-left px-6 py-5 flex justify-between items-center gap-4 group">
+                    <span class="text-lg font-semibold text-indigo-900 dark:text-ivory group-hover:text-skyblue-600 dark:group-hover:text-skyblue-400 transition-colors">
+                        {{ _('Wie läuft der Bewerbungsprozess ab?') }}
+                    </span>
+                    <div class="faq-icon-container flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-700 group-hover:bg-skyblue-100 dark:group-hover:bg-skyblue-800 transition-colors">
+                        <svg class="faq-plus w-5 h-5 text-indigo-700 dark:text-ivory transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        <svg class="faq-minus hidden w-5 h-5 text-skyblue-600 dark:text-skyblue-300 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"/>
+                        </svg>
+                    </div>
+                </button>
+                <div class="faq-answer hidden">
+                    <div class="px-6 pb-6 pt-2">
+                        <p class="text-indigo-600 dark:text-ivory/90 leading-relaxed mb-3">
+                            {{ _('Der Bewerbungsprozess besteht aus vier Schritten:') }}
+                        </p>
+                        <ol class="list-decimal list-inside space-y-2 text-indigo-600 dark:text-ivory/90 pl-2">
+                            <li>{{ _('Ausfüllen des Online-Formulars mit persönlichen Daten') }}</li>
+                            <li>{{ _('Angabe deiner finanziellen Situation und des benötigten Betrags') }}</li>
+                            <li>{{ _('Hochladen relevanter Dokumente') }}</li>
+                            <li>{{ _('Bestätigung und elektronische Unterschrift') }}</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Item 3 -->
+            <div class="faq-item bg-white dark:bg-indigo-900 dark:bg-opacity-60 rounded-2xl border border-indigo-100 dark:border-indigo-600 shadow-sm hover:shadow-lg dark:hover:shadow-xl transition-all duration-300">
+                <button class="faq-question w-full text-left px-6 py-5 flex justify-between items-center gap-4 group">
+                    <span class="text-lg font-semibold text-indigo-900 dark:text-ivory group-hover:text-skyblue-600 dark:group-hover:text-skyblue-400 transition-colors">
+                        {{ _('Wie lange dauert die Bearbeitung meiner Bewerbung?') }}
+                    </span>
+                    <div class="faq-icon-container flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-700 group-hover:bg-skyblue-100 dark:group-hover:bg-skyblue-800 transition-colors">
+                        <svg class="faq-plus w-5 h-5 text-indigo-700 dark:text-ivory transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        <svg class="faq-minus hidden w-5 h-5 text-skyblue-600 dark:text-skyblue-300 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"/>
+                        </svg>
+                    </div>
+                </button>
+                <div class="faq-answer hidden">
+                    <div class="px-6 pb-6 pt-2">
+                        <p class="text-indigo-600 dark:text-ivory/90 leading-relaxed">
+                            {% trans %}Die Bearbeitungszeit variiert je nach Anzahl der Bewerbungen. In der Regel erhältst du innerhalb von 2-4 Wochen eine Rückmeldung. Wir bemühen uns, alle Bewerbungen so schnell wie möglich zu bearbeiten.{% endtrans %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Item 4 -->
+            <div class="faq-item bg-white dark:bg-indigo-900 dark:bg-opacity-60 rounded-2xl border border-indigo-100 dark:border-indigo-600 shadow-sm hover:shadow-lg dark:hover:shadow-xl transition-all duration-300">
+                <button class="faq-question w-full text-left px-6 py-5 flex justify-between items-center gap-4 group">
+                    <span class="text-lg font-semibold text-indigo-900 dark:text-ivory group-hover:text-skyblue-600 dark:group-hover:text-skyblue-400 transition-colors">
+                        {{ _('Wie werden meine Daten geschützt?') }}
+                    </span>
+                    <div class="faq-icon-container flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-700 group-hover:bg-skyblue-100 dark:group-hover:bg-skyblue-800 transition-colors">
+                        <svg class="faq-plus w-5 h-5 text-indigo-700 dark:text-ivory transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        <svg class="faq-minus hidden w-5 h-5 text-skyblue-600 dark:text-skyblue-300 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"/>
+                        </svg>
+                    </div>
+                </button>
+                <div class="faq-answer hidden">
+                    <div class="px-6 pb-6 pt-2">
+                        <p class="text-indigo-600 dark:text-ivory/90 leading-relaxed">
+                            {% trans %}Deine Daten werden gemäß der DSGVO verschlüsselt und sicher gespeichert. Nur autorisierte Teammitglieder haben Zugriff auf deine personenbezogenen Daten. Der Beirat erhält ausschließlich anonymisierte Informationen zur Entscheidungsfindung.{% endtrans %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Item 5 -->
+            <div class="faq-item bg-white dark:bg-indigo-900 dark:bg-opacity-60 rounded-2xl border border-indigo-100 dark:border-indigo-600 shadow-sm hover:shadow-lg dark:hover:shadow-xl transition-all duration-300">
+                <button class="faq-question w-full text-left px-6 py-5 flex justify-between items-center gap-4 group">
+                    <span class="text-lg font-semibold text-indigo-900 dark:text-ivory group-hover:text-skyblue-600 dark:group-hover:text-skyblue-400 transition-colors">
+                        {{ _('Wofür kann ich die Unterstützung verwenden?') }}
+                    </span>
+                    <div class="faq-icon-container flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-700 group-hover:bg-skyblue-100 dark:group-hover:bg-skyblue-800 transition-colors">
+                        <svg class="faq-plus w-5 h-5 text-indigo-700 dark:text-ivory transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        <svg class="faq-minus hidden w-5 h-5 text-skyblue-600 dark:text-skyblue-300 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"/>
+                        </svg>
+                    </div>
+                </button>
+                <div class="faq-answer hidden">
+                    <div class="px-6 pb-6 pt-2">
+                        <p class="text-indigo-600 dark:text-ivory/90 leading-relaxed mb-3">
+                            {{ _('Die finanzielle Unterstützung kann für verschiedene Zwecke verwendet werden, wie zum Beispiel:') }}
+                        </p>
+                        <ul class="list-disc list-inside space-y-2 text-indigo-600 dark:text-ivory/90 pl-2">
+                            <li>{{ _('Miete und Wohnkosten') }}</li>
+                            <li>{{ _('Lebenshaltungskosten') }}</li>
+                            <li>{{ _('Medizinische und therapeutische Kosten') }}</li>
+                            <li>{{ _('Bildungskosten') }}</li>
+                            <li>{{ _('Andere dringende finanzielle Bedürfnisse') }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Item 6 -->
+            <div class="faq-item bg-white dark:bg-indigo-900 dark:bg-opacity-60 rounded-2xl border border-indigo-100 dark:border-indigo-600 shadow-sm hover:shadow-lg dark:hover:shadow-xl transition-all duration-300">
+                <button class="faq-question w-full text-left px-6 py-5 flex justify-between items-center gap-4 group">
+                    <span class="text-lg font-semibold text-indigo-900 dark:text-ivory group-hover:text-skyblue-600 dark:group-hover:text-skyblue-400 transition-colors">
+                        {{ _('Wie wird das Geld ausgezahlt?') }}
+                    </span>
+                    <div class="faq-icon-container flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-700 group-hover:bg-skyblue-100 dark:group-hover:bg-skyblue-800 transition-colors">
+                        <svg class="faq-plus w-5 h-5 text-indigo-700 dark:text-ivory transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        <svg class="faq-minus hidden w-5 h-5 text-skyblue-600 dark:text-skyblue-300 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"/>
+                        </svg>
+                    </div>
+                </button>
+                <div class="faq-answer hidden">
+                    <div class="px-6 pb-6 pt-2">
+                        <p class="text-indigo-600 dark:text-ivory/90 leading-relaxed">
+                            {% trans %}Nach der Bewilligung wird das Geld direkt auf dein angegebenes Bankkonto überwiesen. In einigen Fällen können wir auch Rechnungen direkt bezahlen, wenn du das bevorzugst.{% endtrans %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact CTA under accordion -->
+        <div class="mt-10 text-center">
+            <p class="text-lg text-indigo-600 dark:text-ivory/70 mb-3 pt-6">
+                {% trans %}Weitere Fragen? Kontaktiere uns gerne per E-Mail.{% endtrans %}
+            </p>
+            <a href="mailto:info@blacktransfund.de" class="inline-flex items-center text-skyblue-600 dark:text-skyblue-400 hover:text-skyblue-500 dark:hover:text-skyblue-300 font-semibold transition-colors duration-200">
+                {{ _('Kontakt aufnehmen') }}
+                <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Accordion Script -->
+<script>
+    // FAQ Accordion with + to - animation
+    document.querySelectorAll('.faq-question').forEach(button => {
+        button.addEventListener('click', () => {
+            const answer = button.nextElementSibling;
+            const plusIcon = button.querySelector('.faq-plus');
+            const minusIcon = button.querySelector('.faq-minus');
+            const isOpen = !answer.classList.contains('hidden');
+
+            // Close all other answers
+            document.querySelectorAll('.faq-answer').forEach(a => {
+                a.classList.add('hidden');
+            });
+            document.querySelectorAll('.faq-plus').forEach(icon => {
+                icon.classList.remove('hidden');
+            });
+            document.querySelectorAll('.faq-minus').forEach(icon => {
+                icon.classList.add('hidden');
+            });
+
+            // Toggle current answer
+            if (!isOpen) {
+                answer.classList.remove('hidden');
+                plusIcon.classList.add('hidden');
+                minusIcon.classList.remove('hidden');
+            }
+        });
+    });
+</script>
+{% endblock %}
