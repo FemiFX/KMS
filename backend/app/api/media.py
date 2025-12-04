@@ -1,8 +1,14 @@
 from flask import Blueprint, request, jsonify
 from app import db
 from app.models import Content, MediaContent, Transcript, User
+from app.utils.api_access import enforce_read_only_in_public_mode
 
 media_bp = Blueprint('media', __name__)
+
+
+@media_bp.before_request
+def _protect_public_mode():
+    enforce_read_only_in_public_mode()
 
 
 @media_bp.route('', methods=['POST'])

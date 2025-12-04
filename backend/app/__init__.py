@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
@@ -17,6 +18,13 @@ def create_app(config_class=Config):
     """Application factory pattern"""
     app = Flask(__name__)
     app.config.from_object(config_class)
+    app_mode = (app.config.get('APP_MODE') or os.getenv('APP_MODE', 'full')).lower()
+    app.config['APP_MODE'] = app_mode
+    # Default to read-only API when running the public surface unless explicitly overridden
+    if app_mode == 'public' and 'PUBLIC_API_READ_ONLY' in app.config and os.getenv('PUBLIC_API_READ_ONLY') is None:
+        app.config['PUBLIC_API_READ_ONLY'] = True
+    elif 'PUBLIC_API_READ_ONLY' not in app.config:
+        app.config['PUBLIC_API_READ_ONLY'] = False
 
     # Initialize extensions
     db.init_app(app)
@@ -25,8 +33,9 @@ def create_app(config_class=Config):
 
     # Initialize Flask-Login
     login_manager.init_app(app)
-    login_manager.login_view = 'auth.login'
-    login_manager.login_message = 'Please log in to access this page.'
+    if app_mode in ('admin', 'full'):
+        login_manager.login_view = 'auth.login'
+        login_manager.login_message = 'Please log in to access this page.'
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -51,13 +60,13 @@ def create_app(config_class=Config):
     from app.views.public import public_bp
 
     # Admin routes with /admin prefix (requires authentication)
-    app.register_blueprint(admin_bp, url_prefix='/admin')
-
-    # Auth routes (no prefix)
-    app.register_blueprint(auth_bp)
+    if app_mode in ('admin', 'full'):
+        app.register_blueprint(admin_bp, url_prefix='/admin')
+        app.register_blueprint(auth_bp)
 
     # Public routes (no prefix)
-    app.register_blueprint(public_bp)
+    if app_mode in ('public', 'full'):
+        app.register_blueprint(public_bp)
 
     # Health check endpoint
     @app.route('/health')

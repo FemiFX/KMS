@@ -1,401 +1,93 @@
-<!DOCTYPE html>
-<html lang="{{ current_language or 'en' }}" class="h-full">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Knowledge Management System{% endblock %}</title>
+{% extends "base.html" %}
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+{% block home_url %}{{ url_for('admin.index') }}{% endblock %}
+{% block brand_name %}<span class="hidden lg:block">Verwaltungsportal</span><span class="lg:hidden">Admin</span>{% endblock %}
 
-    <!-- TailwindCSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        'heritage-charcoal': '#1F1E1D',
-                        'warm-sand': '#E9DCC4',
-                        'deep-terracotta': '#A74E39',
-                        'civic-emerald': '#2F6E47',
-                        'heritage-gold': '#D8A843',
-                        'ink-blue': '#243C5A',
-                        'clay-taupe': '#817567',
-                        'ivory-mist': '#F6F4F0',
-                        'graphite': '#3B3A38',
-                        'azure-breeze': '#4A9EDA',
-                    },
-                    fontFamily: {
-                        'sans': ['Inter', 'system-ui', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
+{% block nav_extra %}
+    <!-- User Menu -->
+    <div class="flex items-center space-x-2 ml-4 pl-4 border-l border-gray-300 dark:border-gray-600">
+        <span class="text-sm text-gray-700 dark:text-gray-300 hidden md:block">{{ current_user.email if current_user.is_authenticated else 'Admin' }}</span>
+        <a href="{{ url_for('auth.logout') }}" class="text-sm text-red-600 dark:text-red-400 hover:underline">Abmelden</a>
+    </div>
+{% endblock %}
 
-    <style>
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            @apply bg-warm-sand/20 dark:bg-heritage-charcoal;
-        }
-        ::-webkit-scrollbar-thumb {
-            @apply bg-clay-taupe/40 dark:bg-graphite rounded-full;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            @apply bg-deep-terracotta;
-        }
-    </style>
+{% block content %}
+<div class="flex min-h-[calc(100vh-8rem)]">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 hidden md:block">
+        <nav class="p-4 space-y-1">
+            <a href="{{ url_for('admin.index') }}" class="nav-link flex items-center space-x-2 {% if request.endpoint == 'admin.index' %}nav-link-active{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                </svg>
+                <span>Dashboard</span>
+            </a>
 
-    {% block extra_head %}{% endblock %}
-</head>
-<body class="h-full bg-ivory-mist dark:bg-heritage-charcoal text-heritage-charcoal dark:text-ivory-mist font-sans antialiased">
+            <a href="{{ url_for('admin.contents_page') }}" class="nav-link flex items-center space-x-2 {% if request.endpoint == 'admin.contents_page' %}nav-link-active{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <span>Inhalte</span>
+            </a>
 
-    <div class="flex h-full">
-        <!-- Sidebar -->
-        <aside class="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 bg-white dark:bg-ink-blue border-r border-warm-sand/30 dark:border-graphite/50">
-            <!-- Logo & Search -->
-            <div class="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
-                <div class="flex items-center flex-shrink-0 px-4 mb-5">
-                    <div class="flex items-center space-x-2">
-                        <div class="w-8 h-8 bg-gradient-to-br from-deep-terracotta to-civic-emerald rounded-lg flex items-center justify-center">
-                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                            </svg>
-                        </div>
-                        <span class="font-semibold text-lg text-heritage-charcoal dark:text-ivory-mist">KMS</span>
-                    </div>
-                </div>
+            <a href="{{ url_for('admin.new_content_page') }}" class="nav-link flex items-center space-x-2 {% if request.endpoint == 'admin.new_content_page' %}nav-link-active{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                <span>Neuer Artikel</span>
+            </a>
 
-                <!-- Search Bar -->
-                <div class="px-3 mb-4">
-                    <div class="relative">
-                        <input type="text"
-                               onclick="window.location.href='/search?lang={{ current_language }}'"
-                               placeholder="Ask or search"
-                               class="w-full pl-9 pr-3 py-2 text-sm rounded-lg bg-warm-sand/20 dark:bg-heritage-charcoal/50 border border-warm-sand/30 dark:border-graphite/50 text-heritage-charcoal dark:text-ivory-mist placeholder-clay-taupe focus:outline-none focus:ring-2 focus:ring-civic-emerald/50 cursor-pointer">
-                        <svg class="absolute left-3 top-2.5 w-4 h-4 text-clay-taupe pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                        </svg>
-                        <kbd class="absolute right-3 top-2 hidden sm:inline-block px-2 py-0.5 text-xs font-semibold text-clay-taupe bg-warm-sand/40 dark:bg-heritage-charcoal rounded pointer-events-none">⌘ K</kbd>
-                    </div>
-                </div>
+            <a href="{{ url_for('admin.media_page') }}" class="nav-link flex items-center space-x-2 {% if request.endpoint == 'admin.media_page' %}nav-link-active{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                <span>Medien</span>
+            </a>
 
-                <!-- Navigation -->
-                <nav class="flex-1 px-2 space-y-1">
-                    <a href="/admin?lang={{ current_language }}" class="group flex items-center px-2 py-2 text-sm font-medium rounded-lg hover:bg-warm-sand/30 dark:hover:bg-heritage-charcoal/50 text-heritage-charcoal dark:text-ivory-mist transition-colors">
-                        <svg class="mr-3 flex-shrink-0 h-5 w-5 text-clay-taupe dark:text-warm-sand/70 group-hover:text-deep-terracotta" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                        </svg>
-                        Home
-                    </a>
+            <a href="{{ url_for('admin.media_upload_page') }}" class="nav-link flex items-center space-x-2 {% if request.endpoint == 'admin.media_upload_page' %}nav-link-active{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                </svg>
+                <span>Medien hochladen</span>
+            </a>
 
-                    <a href="/contents?lang={{ current_language }}" class="group flex items-center px-2 py-2 text-sm font-medium rounded-lg hover:bg-warm-sand/30 dark:hover:bg-heritage-charcoal/50 text-heritage-charcoal dark:text-ivory-mist transition-colors">
-                        <svg class="mr-3 flex-shrink-0 h-5 w-5 text-clay-taupe dark:text-warm-sand/70 group-hover:text-deep-terracotta" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                        </svg>
-                        Content
-                    </a>
+            <a href="{{ url_for('admin.tags_page') }}" class="nav-link flex items-center space-x-2 {% if request.endpoint == 'admin.tags_page' %}nav-link-active{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                </svg>
+                <span>Tags</span>
+            </a>
 
-                    <a href="/media?lang={{ current_language }}" class="group flex items-center px-2 py-2 text-sm font-medium rounded-lg hover:bg-warm-sand/30 dark:hover:bg-heritage-charcoal/50 text-heritage-charcoal dark:text-ivory-mist transition-colors">
-                        <svg class="mr-3 flex-shrink-0 h-5 w-5 text-clay-taupe dark:text-warm-sand/70 group-hover:text-deep-terracotta" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                        </svg>
-                        Media
-                    </a>
+            <a href="{{ url_for('admin.translations_page') }}" class="nav-link flex items-center space-x-2 {% if request.endpoint == 'admin.translations_page' %}nav-link-active{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
+                </svg>
+                <span>Übersetzungen</span>
+            </a>
 
-                    <a href="/tags?lang={{ current_language }}" class="group flex items-center px-2 py-2 text-sm font-medium rounded-lg hover:bg-warm-sand/30 dark:hover:bg-heritage-charcoal/50 text-heritage-charcoal dark:text-ivory-mist transition-colors">
-                        <svg class="mr-3 flex-shrink-0 h-5 w-5 text-clay-taupe dark:text-warm-sand/70 group-hover:text-deep-terracotta" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-                        </svg>
-                        Tags
-                    </a>
+            <a href="{{ url_for('public.search_page') }}" class="nav-link flex items-center space-x-2 {% if request.endpoint == 'public.search_page' %}nav-link-active{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <span>Suchen</span>
+            </a>
 
-                    <a href="/translations?lang={{ current_language }}" class="group flex items-center px-2 py-2 text-sm font-medium rounded-lg hover:bg-warm-sand/30 dark:hover:bg-heritage-charcoal/50 text-heritage-charcoal dark:text-ivory-mist transition-colors">
-                        <svg class="mr-3 flex-shrink-0 h-5 w-5 text-clay-taupe dark:text-warm-sand/70 group-hover:text-deep-terracotta" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
-                        </svg>
-                        Translations
-                    </a>
-                </nav>
+            <hr class="my-4 border-gray-200 dark:border-gray-700">
 
-                <!-- Bottom actions -->
-                <div class="flex-shrink-0 border-t border-warm-sand/30 dark:border-graphite/50 p-4">
-                    <button id="dark-mode-toggle-sidebar" class="w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-warm-sand/30 dark:hover:bg-heritage-charcoal/50 text-heritage-charcoal dark:text-ivory-mist transition-colors">
-                        <svg id="sun-icon-sidebar" class="mr-3 h-5 w-5 hidden dark:block" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
-                        </svg>
-                        <svg id="moon-icon-sidebar" class="mr-3 h-5 w-5 block dark:hidden" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
-                        </svg>
-                        <span id="theme-text">Dark mode</span>
-                    </button>
-                </div>
-            </div>
-        </aside>
+            <a href="{{ url_for('public.index') }}" class="nav-link flex items-center space-x-2 text-accent-sky dark:text-accent-rose" target="_blank">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                </svg>
+                <span>Öffentliche Seite</span>
+            </a>
+        </nav>
+    </aside>
 
-        <!-- Main Content Area -->
-        <div class="lg:pl-64 flex flex-col flex-1">
-            <!-- Top Bar -->
-            <div class="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white/80 dark:bg-ink-blue/80 backdrop-blur-xl border-b border-warm-sand/30 dark:border-graphite/50">
-                <div class="flex-1 px-4 flex justify-between">
-                    <!-- Mobile menu button -->
-                    <div class="flex items-center lg:hidden">
-                        <button id="mobile-menu-toggle" type="button" class="inline-flex items-center justify-center p-2 rounded-md text-heritage-charcoal dark:text-ivory-mist hover:bg-warm-sand/30 dark:hover:bg-heritage-charcoal/50">
-                            <svg class="block h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                            </svg>
-                        </button>
-                    </div>
-
-                    <!-- Empty space for balance -->
-                    <div class="flex-1"></div>
-
-                    <!-- Right side actions -->
-                    <div class="ml-4 flex items-center md:ml-6 space-x-3">
-                        <!-- Language selector -->
-                        <div class="relative">
-                            <button id="lang-menu-btn" class="flex items-center space-x-1 px-3 py-1.5 text-sm rounded-lg hover:bg-warm-sand/30 dark:hover:bg-heritage-charcoal/50 text-heritage-charcoal dark:text-ivory-mist">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
-                                </svg>
-                                <span class="font-medium">{{ current_language|upper }}</span>
-                            </button>
-                            <div id="lang-menu" class="hidden absolute right-0 mt-2 w-32 rounded-lg bg-white dark:bg-ink-blue shadow-lg border border-warm-sand/30 dark:border-graphite/50 py-1 z-50">
-                                {% for lang_code, lang_name in [('en', 'EN'), ('de', 'DE'), ('es', 'ES'), ('fr', 'FR')] %}
-                                <a href="?lang={{ lang_code }}" class="block px-4 py-2 text-sm hover:bg-warm-sand/30 dark:hover:bg-heritage-charcoal/50">{{ lang_name }}</a>
-                                {% endfor %}
-                            </div>
-                        </div>
-
-                        <!-- Invite button (placeholder) -->
-                        <button class="hidden sm:inline-flex items-center px-3 py-1.5 text-sm rounded-lg hover:bg-warm-sand/30 dark:hover:bg-heritage-charcoal/50 text-heritage-charcoal dark:text-ivory-mist">
-                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
-                            </svg>
-                            Invite
-                        </button>
-
-                        <!-- + New Dropdown -->
-                        <div class="relative">
-                            <button id="new-menu-btn" class="inline-flex items-center px-4 py-1.5 text-sm font-medium rounded-lg bg-civic-emerald hover:bg-civic-emerald/90 text-white shadow-sm transition-colors">
-                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                                </svg>
-                                New
-                            </button>
-
-                            <!-- Dropdown Menu -->
-                            <div id="new-menu" class="hidden absolute right-0 mt-2 w-56 rounded-lg bg-white dark:bg-ink-blue shadow-lg border border-warm-sand/30 dark:border-graphite/50 py-1 z-50">
-                                <div class="px-3 py-2 text-xs font-semibold text-clay-taupe uppercase">Create new</div>
-                                <a href="/admin/contents/new?lang={{ current_language }}&type=article" class="flex items-center px-4 py-2.5 text-sm hover:bg-warm-sand/30 dark:hover:bg-heritage-charcoal/50 text-heritage-charcoal dark:text-ivory-mist">
-                                    <svg class="w-5 h-5 mr-3 text-deep-terracotta" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                    </svg>
-                                    <div>
-                                        <div class="font-medium">Article</div>
-                                        <div class="text-xs text-clay-taupe">Written content with markdown</div>
-                                    </div>
-                                </a>
-                                <a href="/admin/contents/new?lang={{ current_language }}&type=guide" class="flex items-center px-4 py-2.5 text-sm hover:bg-warm-sand/30 dark:hover:bg-heritage-charcoal/50 text-heritage-charcoal dark:text-ivory-mist">
-                                    <svg class="w-5 h-5 mr-3 text-civic-emerald" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                                    </svg>
-                                    <div>
-                                        <div class="font-medium">Guide</div>
-                                        <div class="text-xs text-clay-taupe">Step-by-step instructions</div>
-                                    </div>
-                                </a>
-                                <a href="/admin/media/upload?lang={{ current_language }}&type=video" class="flex items-center px-4 py-2.5 text-sm hover:bg-warm-sand/30 dark:hover:bg-heritage-charcoal/50 text-heritage-charcoal dark:text-ivory-mist">
-                                    <svg class="w-5 h-5 mr-3 text-azure-breeze" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                                    </svg>
-                                    <div>
-                                        <div class="font-medium">Video</div>
-                                        <div class="text-xs text-clay-taupe">Upload video with transcription</div>
-                                    </div>
-                                </a>
-                                <a href="/admin/media/upload?lang={{ current_language }}&type=audio" class="flex items-center px-4 py-2.5 text-sm hover:bg-warm-sand/30 dark:hover:bg-heritage-charcoal/50 text-heritage-charcoal dark:text-ivory-mist">
-                                    <svg class="w-5 h-5 mr-3 text-heritage-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
-                                    </svg>
-                                    <div>
-                                        <div class="font-medium">Audio</div>
-                                        <div class="text-xs text-clay-taupe">Upload audio with transcription</div>
-                                    </div>
-                                </a>
-                                <div class="border-t border-warm-sand/30 dark:border-graphite/50 my-1"></div>
-                                <a href="/admin/tags?lang={{ current_language }}" class="flex items-center px-4 py-2.5 text-sm hover:bg-warm-sand/30 dark:hover:bg-heritage-charcoal/50 text-heritage-charcoal dark:text-ivory-mist">
-                                    <svg class="w-5 h-5 mr-3 text-clay-taupe" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-                                    </svg>
-                                    <div class="font-medium">Tag</div>
-                                </a>
-                            </div>
-                        </div>
-
-                        <!-- User menu -->
-                        <div class="relative">
-                            <button id="user-menu-btn" class="flex-shrink-0 rounded-full overflow-hidden">
-                                <div class="h-8 w-8 rounded-full bg-gradient-to-br from-deep-terracotta to-civic-emerald flex items-center justify-center text-white text-sm font-medium">
-                                    {% if current_user.is_authenticated %}
-                                        {{ current_user.name[0]|upper if current_user.name else current_user.email[0]|upper }}
-                                    {% else %}
-                                        U
-                                    {% endif %}
-                                </div>
-                            </button>
-                            <!-- User Dropdown Menu -->
-                            <div id="user-menu" class="hidden absolute right-0 mt-2 w-56 rounded-lg bg-white dark:bg-ink-blue shadow-lg border border-warm-sand/30 dark:border-graphite/50 py-1 z-50">
-                                {% if current_user.is_authenticated %}
-                                <div class="px-4 py-3 border-b border-warm-sand/30 dark:border-graphite/50">
-                                    <p class="text-sm font-medium text-heritage-charcoal dark:text-ivory-mist">{{ current_user.name or 'User' }}</p>
-                                    <p class="text-xs text-clay-taupe truncate">{{ current_user.email }}</p>
-                                </div>
-                                <a href="/logout" class="flex items-center px-4 py-2.5 text-sm hover:bg-warm-sand/30 dark:hover:bg-heritage-charcoal/50 text-heritage-charcoal dark:text-ivory-mist">
-                                    <svg class="w-5 h-5 mr-3 text-deep-terracotta" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                                    </svg>
-                                    <div class="font-medium">Logout</div>
-                                </a>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Page Content -->
-            <main class="flex-1 overflow-y-auto focus:outline-none">
-                {% block content %}{% endblock %}
-            </main>
+    <!-- Main Content Area -->
+    <div class="flex-1 overflow-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {% block admin_content %}{% endblock %}
         </div>
     </div>
-
-    <!-- Mobile Sidebar Overlay -->
-    <div id="mobile-sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden"></div>
-    <div id="mobile-sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-ink-blue transform -translate-x-full transition-transform duration-300 lg:hidden">
-        <!-- Same sidebar content as desktop -->
-        <div class="flex flex-col h-full pt-5 pb-4 overflow-y-auto">
-            <div class="flex items-center flex-shrink-0 px-4 mb-5">
-                <div class="flex items-center space-x-2">
-                    <div class="w-8 h-8 bg-gradient-to-br from-deep-terracotta to-civic-emerald rounded-lg flex items-center justify-center">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                        </svg>
-                    </div>
-                    <span class="font-semibold text-lg text-heritage-charcoal dark:text-ivory-mist">KMS</span>
-                </div>
-            </div>
-
-            <nav class="flex-1 px-2 space-y-1">
-                <a href="/admin?lang={{ current_language }}" class="group flex items-center px-2 py-2 text-sm font-medium rounded-lg hover:bg-warm-sand/30 dark:hover:bg-heritage-charcoal/50 text-heritage-charcoal dark:text-ivory-mist">
-                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                    </svg>
-                    Home
-                </a>
-                <a href="/admin/contents?lang={{ current_language }}" class="group flex items-center px-2 py-2 text-sm font-medium rounded-lg hover:bg-warm-sand/30 dark:hover:bg-heritage-charcoal/50 text-heritage-charcoal dark:text-ivory-mist">
-                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                    </svg>
-                    Content
-                </a>
-                <a href="/admin/media?lang={{ current_language }}" class="group flex items-center px-2 py-2 text-sm font-medium rounded-lg hover:bg-warm-sand/30 dark:hover:bg-heritage-charcoal/50 text-heritage-charcoal dark:text-ivory-mist">
-                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                    </svg>
-                    Media
-                </a>
-                <a href="/admin/tags?lang={{ current_language }}" class="group flex items-center px-2 py-2 text-sm font-medium rounded-lg hover:bg-warm-sand/30 dark:hover:bg-heritage-charcoal/50 text-heritage-charcoal dark:text-ivory-mist">
-                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-                    </svg>
-                    Tags
-                </a>
-            </nav>
-        </div>
-    </div>
-
-    <!-- Scripts -->
-    <script>
-        // Dark mode toggle
-        const darkModeToggle = document.getElementById('dark-mode-toggle-sidebar');
-        const html = document.documentElement;
-        const themeText = document.getElementById('theme-text');
-
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        if (currentTheme === 'dark') {
-            html.classList.add('dark');
-            if (themeText) themeText.textContent = 'Light mode';
-        }
-
-        if (darkModeToggle) {
-            darkModeToggle.addEventListener('click', () => {
-                html.classList.toggle('dark');
-                const theme = html.classList.contains('dark') ? 'dark' : 'light';
-                localStorage.setItem('theme', theme);
-                if (themeText) themeText.textContent = theme === 'dark' ? 'Light mode' : 'Dark mode';
-            });
-        }
-
-        // + New menu toggle
-        const newMenuBtn = document.getElementById('new-menu-btn');
-        const newMenu = document.getElementById('new-menu');
-        if (newMenuBtn && newMenu) {
-            newMenuBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                newMenu.classList.toggle('hidden');
-            });
-            document.addEventListener('click', () => newMenu.classList.add('hidden'));
-        }
-
-        // Language menu toggle
-        const langMenuBtn = document.getElementById('lang-menu-btn');
-        const langMenu = document.getElementById('lang-menu');
-        if (langMenuBtn && langMenu) {
-            langMenuBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                langMenu.classList.toggle('hidden');
-            });
-            document.addEventListener('click', () => langMenu.classList.add('hidden'));
-        }
-
-        // User menu toggle
-        const userMenuBtn = document.getElementById('user-menu-btn');
-        const userMenu = document.getElementById('user-menu');
-        if (userMenuBtn && userMenu) {
-            userMenuBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                userMenu.classList.toggle('hidden');
-            });
-            document.addEventListener('click', () => userMenu.classList.add('hidden'));
-        }
-
-        // Mobile sidebar toggle
-        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-        const mobileSidebar = document.getElementById('mobile-sidebar');
-        const mobileSidebarOverlay = document.getElementById('mobile-sidebar-overlay');
-
-        if (mobileMenuToggle && mobileSidebar) {
-            mobileMenuToggle.addEventListener('click', () => {
-                mobileSidebar.classList.toggle('-translate-x-full');
-                mobileSidebarOverlay.classList.toggle('hidden');
-            });
-            mobileSidebarOverlay.addEventListener('click', () => {
-                mobileSidebar.classList.add('-translate-x-full');
-                mobileSidebarOverlay.classList.add('hidden');
-            });
-        }
-    </script>
-
-    {% block extra_scripts %}{% endblock %}
-</body>
-</html>
+</div>
+{% endblock %}

@@ -1,251 +1,196 @@
 {% extends "base_admin.html" %}
 
-{% block title %}Search - Knowledge Management System{% endblock %}
+{% block title %}Suche - Verwaltungsportal{% endblock %}
 
-{% block content %}
-
-<!-- Search Header -->
-<section class="bg-gradient-to-br from-warm-sand to-ivory-mist dark:from-heritage-charcoal dark:to-ink-blue py-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 class="font-display font-bold text-4xl text-heritage-charcoal dark:text-ivory-mist mb-8">
-            Search Knowledge Base
+{% block admin_content %}
+<div class="space-y-6">
+    <!-- Search Header -->
+    <div class="card">
+        <h1 class="text-2xl font-bold text-primary-indigo dark:text-white mb-4">
+            Inhalte durchsuchen
         </h1>
 
         <!-- Search Form -->
-        <form action="/search" method="GET" class="space-y-4">
-            <div class="relative">
+        <form method="GET" class="space-y-4">
+            <input type="hidden" name="lang" value="{{ current_language }}">
+            <div class="flex space-x-2">
                 <input
                     type="text"
                     name="q"
-                    value="{{ query or '' }}"
-                    placeholder="Search for articles, videos, audio transcripts..."
-                    class="w-full px-6 py-5 pl-14 text-lg rounded-xl bg-white dark:bg-heritage-charcoal text-heritage-charcoal dark:text-ivory-mist placeholder-clay-taupe dark:placeholder-warm-sand border-2 border-warm-sand dark:border-graphite focus:border-deep-terracotta dark:focus:border-civic-emerald focus:outline-none focus:ring-4 focus:ring-deep-terracotta/20 dark:focus:ring-civic-emerald/20 transition-all"
+                    value="{{ query }}"
+                    placeholder="Suchen Sie nach Titeln, Inhalten, Tags..."
+                    class="flex-1 input-field"
                     autofocus
                 >
-                <svg class="absolute left-5 top-1/2 transform -translate-y-1/2 w-6 h-6 text-clay-taupe dark:text-warm-sand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                </svg>
+                <button type="submit" class="btn-primary px-8">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </button>
             </div>
 
             <!-- Filters -->
-            <div class="flex flex-wrap gap-3">
-                <select name="type" class="px-4 py-2 rounded-lg bg-white dark:bg-ink-blue text-heritage-charcoal dark:text-ivory-mist border border-warm-sand dark:border-graphite focus:border-deep-terracotta dark:focus:border-civic-emerald focus:outline-none focus:ring-2 focus:ring-deep-terracotta/20 dark:focus:ring-civic-emerald/20">
-                    <option value="" {% if not content_type %}selected{% endif %}>All Types</option>
-                    <option value="article" {% if content_type == 'article' %}selected{% endif %}>Articles</option>
-                    <option value="video" {% if content_type == 'video' %}selected{% endif %}>Videos</option>
-                    <option value="audio" {% if content_type == 'audio' %}selected{% endif %}>Audio</option>
-                </select>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Inhaltstyp
+                    </label>
+                    <select name="type" class="input-field">
+                        <option value="">Alle Typen</option>
+                        <option value="article" {% if content_type == 'article' %}selected{% endif %}>Artikel</option>
+                        <option value="video" {% if content_type == 'video' %}selected{% endif %}>Video</option>
+                        <option value="audio" {% if content_type == 'audio' %}selected{% endif %}>Audio</option>
+                    </select>
+                </div>
 
-                <select name="lang" class="px-4 py-2 rounded-lg bg-white dark:bg-ink-blue text-heritage-charcoal dark:text-ivory-mist border border-warm-sand dark:border-graphite focus:border-deep-terracotta dark:focus:border-civic-emerald focus:outline-none focus:ring-2 focus:ring-deep-terracotta/20 dark:focus:ring-civic-emerald/20">
-                    <option value="en" {% if language == 'en' %}selected{% endif %}>English</option>
-                    <option value="de" {% if language == 'de' %}selected{% endif %}>Deutsch</option>
-                    <option value="es" {% if language == 'es' %}selected{% endif %}>Español</option>
-                    <option value="fr" {% if language == 'fr' %}selected{% endif %}>Français</option>
-                    <option value="it" {% if language == 'it' %}selected{% endif %}>Italiano</option>
-                    <option value="pt" {% if language == 'pt' %}selected{% endif %}>Português</option>
-                    <option value="ru" {% if language == 'ru' %}selected{% endif %}>Русский</option>
-                    <option value="zh" {% if language == 'zh' %}selected{% endif %}>中文</option>
-                    <option value="ja" {% if language == 'ja' %}selected{% endif %}>日本語</option>
-                    <option value="ko" {% if language == 'ko' %}selected{% endif %}>한국어</option>
-                </select>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Sprache
+                    </label>
+                    <select name="lang" class="input-field">
+                        <option value="de" {% if language == 'de' %}selected{% endif %}>Deutsch</option>
+                        <option value="en" {% if language == 'en' %}selected{% endif %}>English</option>
+                        <option value="fr" {% if language == 'fr' %}selected{% endif %}>Français</option>
+                        <option value="pt" {% if language == 'pt' %}selected{% endif %}>Português</option>
+                    </select>
+                </div>
 
-                <button type="submit" class="flex-1 sm:flex-none px-8 py-2 bg-deep-terracotta hover:bg-civic-emerald text-ivory-mist font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
-                    Search
-                </button>
+                <div class="flex items-end">
+                    <button type="submit" class="w-full btn-secondary">
+                        Filter anwenden
+                    </button>
+                </div>
             </div>
         </form>
     </div>
-</section>
 
-<!-- Results Section -->
-<section class="py-12 bg-ivory-mist dark:bg-heritage-charcoal min-h-screen">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-        {% if query %}
-            <!-- Results Header -->
-            <div class="mb-8">
-                <h2 class="text-2xl font-display font-semibold text-heritage-charcoal dark:text-ivory-mist mb-2">
-                    Search Results for "<span class="text-deep-terracotta dark:text-heritage-gold">{{ query }}</span>"
+    <!-- Results -->
+    {% if query %}
+        <div class="card">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-lg font-semibold text-primary-indigo dark:text-white">
+                    {% if total > 0 %}
+                        {{ total }} Ergebnis{% if total != 1 %}se{% endif %} gefunden
+                    {% else %}
+                        Keine Ergebnisse gefunden
+                    {% endif %}
                 </h2>
-                <p class="text-graphite dark:text-warm-sand">
-                    Found {{ total or 0 }} result{{ 's' if total != 1 else '' }}
-                    {% if content_type %} in {{ content_type }}s{% endif %}
-                    {% if language != 'en' %} ({{ language|upper }}){% endif %}
-                </p>
+                {% if query %}
+                    <span class="text-sm text-gray-600 dark:text-gray-400">
+                        für "{{ query }}"
+                    </span>
+                {% endif %}
             </div>
 
             {% if results %}
-                <!-- Results List -->
-                <div class="space-y-6">
-                    {% for item in results %}
-                    <article class="bg-white dark:bg-ink-blue rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 overflow-hidden border border-warm-sand dark:border-graphite">
-                        <div class="p-6">
-                            <!-- Content Type Badge -->
-                            <div class="flex items-center justify-between mb-4">
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
-                                    {% if item.type == 'article' %}bg-deep-terracotta/10 text-deep-terracotta dark:bg-deep-terracotta/20 dark:text-heritage-gold
-                                    {% elif item.type == 'video' %}bg-civic-emerald/10 text-civic-emerald dark:bg-civic-emerald/20 dark:text-heritage-gold
-                                    {% elif item.type == 'audio' %}bg-heritage-gold/10 text-heritage-gold dark:bg-heritage-gold/20 dark:text-civic-emerald
-                                    {% endif %}">
-                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        {% if item.type == 'article' %}
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                        {% elif item.type == 'video' %}
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                                        {% elif item.type == 'audio' %}
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
-                                        {% endif %}
-                                    </svg>
-                                    {{ item.type|capitalize }}
-                                </span>
+                <div class="space-y-4">
+                    {% for result in results %}
+                        <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center space-x-2 mb-2">
+                                        <!-- Type Badge -->
+                                        <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium
+                                            {% if result.type == 'article' %}bg-accent-sky/20 text-accent-sky dark:bg-accent-rose/20 dark:text-accent-rose
+                                            {% elif result.type == 'video' %}bg-accent-rose/20 text-accent-rose dark:bg-accent-sky/20 dark:text-accent-sky
+                                            {% else %}bg-accent-gold/20 text-accent-gold{% endif %}">
+                                            {{ result.type|capitalize }}
+                                        </span>
 
-                                {% if item.language %}
-                                <span class="text-xs text-clay-taupe dark:text-warm-sand font-medium uppercase">
-                                    {{ item.language }}
-                                </span>
-                                {% endif %}
-                            </div>
+                                        <!-- Visibility Badge -->
+                                        <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+                                            {{ result.visibility|capitalize }}
+                                        </span>
 
-                            <!-- Title -->
-                            <h3 class="text-2xl font-display font-bold text-heritage-charcoal dark:text-ivory-mist mb-3 hover:text-deep-terracotta dark:hover:text-heritage-gold transition-colors">
-                                <a href="/admin/contents/{{ item.id }}?lang={{ item.language }}">
-                                    {{ item.title }}
+                                        <!-- Language Badge -->
+                                        <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-support-teal/20 text-support-teal">
+                                            {{ result.language|upper }}
+                                        </span>
+                                    </div>
+
+                                    <h3 class="text-lg font-semibold text-primary-indigo dark:text-white mb-2">
+                                        {{ result.title }}
+                                    </h3>
+
+                                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-3 line-clamp-2">
+                                        {{ result.excerpt }}
+                                    </p>
+
+                                    <!-- Tags -->
+                                    {% if result.tags %}
+                                        <div class="flex flex-wrap gap-2 mb-2">
+                                            {% for tag in result.tags %}
+                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+                                                    {{ tag }}
+                                                </span>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+
+                                    {% if result.created_at %}
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                                            Erstellt am {{ result.created_at }}
+                                        </p>
+                                    {% endif %}
+                                </div>
+
+                                <a href="{{ url_for('public.content_detail', content_id=result.id, lang=current_language) }}"
+                                   class="ml-4 flex-shrink-0 text-accent-sky dark:text-accent-rose hover:underline text-sm font-medium">
+                                    Anzeigen →
                                 </a>
-                            </h3>
-
-                            <!-- Excerpt/Description -->
-                            {% if item.excerpt %}
-                            <p class="text-graphite dark:text-warm-sand leading-relaxed mb-4 line-clamp-3">
-                                {{ item.excerpt }}
-                            </p>
-                            {% endif %}
-
-                            <!-- Tags -->
-                            {% if item.tags %}
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                {% for tag in item.tags[:5] %}
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-clay-taupe/10 dark:bg-clay-taupe/20 text-clay-taupe dark:text-warm-sand border border-clay-taupe/30 dark:border-clay-taupe/40">
-                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-                                    </svg>
-                                    {{ tag }}
-                                </span>
-                                {% endfor %}
-                                {% if item.tags|length > 5 %}
-                                <span class="text-xs text-clay-taupe dark:text-warm-sand">+{{ item.tags|length - 5 }} more</span>
-                                {% endif %}
-                            </div>
-                            {% endif %}
-
-                            <!-- Metadata -->
-                            <div class="flex items-center text-sm text-clay-taupe dark:text-warm-sand space-x-4">
-                                {% if item.created_at %}
-                                <span class="flex items-center">
-                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                    </svg>
-                                    {{ item.created_at }}
-                                </span>
-                                {% endif %}
-
-                                {% if item.visibility %}
-                                <span class="flex items-center">
-                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        {% if item.visibility == 'public' %}
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                        {% else %}
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                                        {% endif %}
-                                    </svg>
-                                    {{ item.visibility|capitalize }}
-                                </span>
-                                {% endif %}
                             </div>
                         </div>
-
-                        <!-- Action Bar -->
-                        <div class="bg-warm-sand/30 dark:bg-graphite/30 px-6 py-3 border-t border-warm-sand dark:border-graphite">
-                            <a href="/admin/contents/{{ item.id }}?lang={{ item.language }}" class="inline-flex items-center text-deep-terracotta dark:text-heritage-gold hover:text-civic-emerald dark:hover:text-civic-emerald font-medium text-sm transition-colors">
-                                View {{ item.type }}
-                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                </svg>
-                            </a>
-                        </div>
-                    </article>
                     {% endfor %}
                 </div>
 
                 <!-- Pagination -->
                 {% if total > per_page %}
-                <div class="mt-12 flex justify-center">
-                    <nav class="inline-flex rounded-lg shadow-sm border border-warm-sand dark:border-graphite overflow-hidden">
+                    <div class="flex items-center justify-center space-x-2 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                         {% if page > 1 %}
-                        <a href="?q={{ query }}&type={{ content_type or '' }}&lang={{ language }}&page={{ page - 1 }}" class="px-4 py-2 bg-white dark:bg-ink-blue text-heritage-charcoal dark:text-ivory-mist hover:bg-warm-sand dark:hover:bg-graphite border-r border-warm-sand dark:border-graphite transition-colors">
-                            Previous
-                        </a>
+                            <a href="?q={{ query }}&type={{ content_type }}&lang={{ language }}&page={{ page - 1 }}"
+                               class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                Zurück
+                            </a>
                         {% endif %}
 
-                        {% for p in range(1, (total // per_page) + 2) %}
-                            {% if p == page %}
-                            <span class="px-4 py-2 bg-deep-terracotta text-ivory-mist font-semibold">{{ p }}</span>
-                            {% else %}
-                            <a href="?q={{ query }}&type={{ content_type or '' }}&lang={{ language }}&page={{ p }}" class="px-4 py-2 bg-white dark:bg-ink-blue text-heritage-charcoal dark:text-ivory-mist hover:bg-warm-sand dark:hover:bg-graphite border-r border-warm-sand dark:border-graphite transition-colors">{{ p }}</a>
-                            {% endif %}
-                        {% endfor %}
+                        <span class="px-4 py-2 text-gray-600 dark:text-gray-400">
+                            Seite {{ page }} von {{ (total + per_page - 1) // per_page }}
+                        </span>
 
-                        {% if page < (total // per_page) + 1 %}
-                        <a href="?q={{ query }}&type={{ content_type or '' }}&lang={{ language }}&page={{ page + 1 }}" class="px-4 py-2 bg-white dark:bg-ink-blue text-heritage-charcoal dark:text-ivory-mist hover:bg-warm-sand dark:hover:bg-graphite transition-colors">
-                            Next
-                        </a>
+                        {% if page * per_page < total %}
+                            <a href="?q={{ query }}&type={{ content_type }}&lang={{ language }}&page={{ page + 1 }}"
+                               class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                Weiter
+                            </a>
                         {% endif %}
-                    </nav>
-                </div>
+                    </div>
                 {% endif %}
-
             {% else %}
-                <!-- No Results -->
-                <div class="text-center py-16">
-                    <svg class="w-24 h-24 mx-auto text-clay-taupe dark:text-warm-sand mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                <div class="text-center py-12">
+                    <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M12 12h.01M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
                     </svg>
-                    <h3 class="text-2xl font-display font-bold text-heritage-charcoal dark:text-ivory-mist mb-2">
-                        No results found
-                    </h3>
-                    <p class="text-graphite dark:text-warm-sand mb-6">
-                        Try adjusting your search terms or filters
+                    <p class="text-gray-600 dark:text-gray-400 mb-2">
+                        Keine Ergebnisse für "{{ query }}" gefunden
                     </p>
-                    <a href="/admin/search" class="inline-flex items-center px-6 py-3 bg-deep-terracotta hover:bg-civic-emerald text-ivory-mist font-semibold rounded-lg shadow-lg transition-colors">
-                        Clear Search
-                    </a>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                        Versuchen Sie es mit anderen Suchbegriffen oder Filtern
+                    </p>
                 </div>
             {% endif %}
-
-        {% else %}
-            <!-- Empty State - No Query -->
-            <div class="text-center py-16">
-                <svg class="w-24 h-24 mx-auto text-deep-terracotta dark:text-heritage-gold mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                </svg>
-                <h3 class="text-2xl font-display font-bold text-heritage-charcoal dark:text-ivory-mist mb-2">
-                    Start your search
-                </h3>
-                <p class="text-graphite dark:text-warm-sand">
-                    Enter keywords above to search across articles, videos, and audio transcripts
-                </p>
-            </div>
-        {% endif %}
-
-    </div>
-</section>
-
-<style>
-    .line-clamp-3 {
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-</style>
-
+        </div>
+    {% else %}
+        <div class="card text-center py-12">
+            <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <p class="text-gray-600 dark:text-gray-400 mb-2">
+                Geben Sie einen Suchbegriff ein
+            </p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+                Durchsuchen Sie Artikel, Videos, Audios und mehr
+            </p>
+        </div>
+    {% endif %}
+</div>
 {% endblock %}

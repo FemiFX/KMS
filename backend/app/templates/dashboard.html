@@ -1,127 +1,88 @@
 {% extends "base_admin.html" %}
 
-{% block title %}Dashboard - KMS{% endblock %}
+{% block title %}Dashboard - Verwaltungsportal{% endblock %}
 
-{% block content %}
-<div class="px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Welcome Section -->
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-heritage-charcoal dark:text-ivory-mist mb-2">Jump back in</h1>
-        <p class="text-clay-taupe dark:text-warm-sand/70">Your recent spaces and content</p>
+{% block admin_content %}
+<div class="space-y-8">
+    <!-- Welcome Header -->
+    <div>
+        <h1 class="text-3xl font-bold text-primary-indigo dark:text-white mb-2">
+            Willkommen im Verwaltungsportal
+        </h1>
+        <p class="text-gray-600 dark:text-gray-400">
+            Verwalten Sie Inhalte für die UN-Dekade für Menschen afrikanischer Abstammung
+        </p>
     </div>
 
-    <!-- Recent Content Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-        {% if recent_content %}
-            {% for item in recent_content %}
-            <a href="/admin/contents/{{ item.id }}?lang={{ current_language }}" class="group block">
-                <div class="bg-white dark:bg-ink-blue rounded-xl border border-warm-sand/30 dark:border-graphite/50 p-6 hover:shadow-lg hover:border-civic-emerald/50 dark:hover:border-civic-emerald/50 transition-all">
-                    <div class="flex items-start justify-between mb-3">
-                        <div class="flex items-center space-x-2 text-xs text-clay-taupe dark:text-warm-sand/70">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                {% if item.type == 'article' %}
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                {% elif item.type == 'guide' %}
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                                {% else %}
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                                {% endif %}
-                            </svg>
-                            <span>In {{ item.space_name or 'Content' }}</span>
-                        </div>
-                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-civic-emerald/10 text-civic-emerald">
-                            {{ item.type|title }}
-                        </span>
-                    </div>
-
-                    <h3 class="text-lg font-semibold text-heritage-charcoal dark:text-ivory-mist mb-2 group-hover:text-civic-emerald dark:group-hover:text-civic-emerald transition-colors">
-                        {{ item.title }}
-                    </h3>
-
-                    <div class="flex items-center space-x-2 text-xs text-clay-taupe dark:text-warm-sand/70">
-                        <div class="w-5 h-5 rounded-full bg-gradient-to-br from-deep-terracotta to-civic-emerald flex items-center justify-center text-white text-[10px] font-medium">
-                            {{ item.created_by_initials or 'U' }}
-                        </div>
-                        <span>{{ item.last_edited }}</span>
-                    </div>
-                </div>
-            </a>
-            {% endfor %}
-        {% else %}
-            <!-- Empty state -->
-            <div class="col-span-full">
-                <div class="text-center py-12">
-                    <svg class="mx-auto h-12 w-12 text-clay-taupe/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                    </svg>
-                    <h3 class="mt-2 text-sm font-medium text-heritage-charcoal dark:text-ivory-mist">No recent content</h3>
-                    <p class="mt-1 text-sm text-clay-taupe dark:text-warm-sand/70">Get started by creating your first piece of content</p>
-                    <div class="mt-6">
-                        <a href="/admin/contents/new?lang={{ current_language }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-civic-emerald hover:bg-civic-emerald/90">
-                            <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                            </svg>
-                            Create content
-                        </a>
-                    </div>
-                </div>
-            </div>
-        {% endif %}
-    </div>
-
-    <!-- Stats Overview -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-        <div class="bg-white dark:bg-ink-blue rounded-xl border border-warm-sand/30 dark:border-graphite/50 p-6">
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="card">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-clay-taupe dark:text-warm-sand/70">Total Content</p>
-                    <p class="text-2xl font-bold text-heritage-charcoal dark:text-ivory-mist mt-1">{{ stats.total_content or 0 }}</p>
+                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                        Gesamt-Inhalte
+                    </p>
+                    <p class="text-3xl font-bold text-primary-indigo dark:text-white">
+                        {{ stats.total_content or 0 }}
+                    </p>
                 </div>
-                <div class="p-3 bg-deep-terracotta/10 rounded-lg">
-                    <svg class="w-6 h-6 text-deep-terracotta" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                <div class="w-12 h-12 bg-accent-sky/20 dark:bg-accent-rose/20 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-accent-sky dark:text-accent-rose" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                     </svg>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white dark:bg-ink-blue rounded-xl border border-warm-sand/30 dark:border-graphite/50 p-6">
+        <div class="card">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-clay-taupe dark:text-warm-sand/70">Media Files</p>
-                    <p class="text-2xl font-bold text-heritage-charcoal dark:text-ivory-mist mt-1">{{ stats.total_media or 0 }}</p>
+                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                        Mediendateien
+                    </p>
+                    <p class="text-3xl font-bold text-primary-indigo dark:text-white">
+                        {{ stats.total_media or 0 }}
+                    </p>
                 </div>
-                <div class="p-3 bg-azure-breeze/10 rounded-lg">
-                    <svg class="w-6 h-6 text-azure-breeze" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                <div class="w-12 h-12 bg-accent-rose/20 dark:bg-accent-sky/20 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-accent-rose dark:text-accent-sky" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
                     </svg>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white dark:bg-ink-blue rounded-xl border border-warm-sand/30 dark:border-graphite/50 p-6">
+        <div class="card">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-clay-taupe dark:text-warm-sand/70">Languages</p>
-                    <p class="text-2xl font-bold text-heritage-charcoal dark:text-ivory-mist mt-1">{{ stats.languages_count or 0 }}</p>
+                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                        Sprachen
+                    </p>
+                    <p class="text-3xl font-bold text-primary-indigo dark:text-white">
+                        {{ stats.languages_count or 0 }}
+                    </p>
                 </div>
-                <div class="p-3 bg-civic-emerald/10 rounded-lg">
-                    <svg class="w-6 h-6 text-civic-emerald" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+                <div class="w-12 h-12 bg-accent-gold/20 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-accent-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
                     </svg>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white dark:bg-ink-blue rounded-xl border border-warm-sand/30 dark:border-graphite/50 p-6">
+        <div class="card">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-clay-taupe dark:text-warm-sand/70">Tags</p>
-                    <p class="text-2xl font-bold text-heritage-charcoal dark:text-ivory-mist mt-1">{{ stats.total_tags or 0 }}</p>
+                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                        Tags
+                    </p>
+                    <p class="text-3xl font-bold text-primary-indigo dark:text-white">
+                        {{ stats.total_tags or 0 }}
+                    </p>
                 </div>
-                <div class="p-3 bg-heritage-gold/10 rounded-lg">
-                    <svg class="w-6 h-6 text-heritage-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                <div class="w-12 h-12 bg-support-teal/20 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-support-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
                     </svg>
                 </div>
             </div>
@@ -129,45 +90,85 @@
     </div>
 
     <!-- Quick Actions -->
-    <div class="mb-8">
-        <h2 class="text-xl font-bold text-heritage-charcoal dark:text-ivory-mist mb-4">Quick actions</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <a href="/admin/search?lang={{ current_language }}" class="flex items-center p-4 bg-white dark:bg-ink-blue rounded-lg border border-warm-sand/30 dark:border-graphite/50 hover:border-civic-emerald/50 dark:hover:border-civic-emerald/50 hover:shadow-md transition-all">
-                <div class="flex-shrink-0">
-                    <svg class="w-8 h-8 text-civic-emerald" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+    <div class="card">
+        <h2 class="text-xl font-semibold text-primary-indigo dark:text-white mb-4">
+            Schnellaktionen
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <a href="{{ url_for('admin.new_content_page') }}" class="flex items-center space-x-3 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                <div class="w-10 h-10 bg-accent-sky/20 dark:bg-accent-rose/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 text-accent-sky dark:text-accent-rose" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
                 </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-heritage-charcoal dark:text-ivory-mist">Search content</p>
-                    <p class="text-xs text-clay-taupe dark:text-warm-sand/70">Find what you need quickly</p>
+                <div>
+                    <p class="font-medium text-primary-indigo dark:text-white">Neuer Artikel</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Artikel erstellen</p>
                 </div>
             </a>
 
-            <a href="/admin/contents?lang={{ current_language }}" class="flex items-center p-4 bg-white dark:bg-ink-blue rounded-lg border border-warm-sand/30 dark:border-graphite/50 hover:border-civic-emerald/50 dark:hover:border-civic-emerald/50 hover:shadow-md transition-all">
-                <div class="flex-shrink-0">
-                    <svg class="w-8 h-8 text-deep-terracotta" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+            <a href="{{ url_for('admin.media_upload_page') }}" class="flex items-center space-x-3 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                <div class="w-10 h-10 bg-accent-rose/20 dark:bg-accent-sky/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 text-accent-rose dark:text-accent-sky" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                     </svg>
                 </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-heritage-charcoal dark:text-ivory-mist">Browse all content</p>
-                    <p class="text-xs text-clay-taupe dark:text-warm-sand/70">Explore the library</p>
+                <div>
+                    <p class="font-medium text-primary-indigo dark:text-white">Medien hochladen</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Video oder Audio</p>
                 </div>
             </a>
 
-            <a href="/admin/media?lang={{ current_language }}" class="flex items-center p-4 bg-white dark:bg-ink-blue rounded-lg border border-warm-sand/30 dark:border-graphite/50 hover:border-civic-emerald/50 dark:hover:border-civic-emerald/50 hover:shadow-md transition-all">
-                <div class="flex-shrink-0">
-                    <svg class="w-8 h-8 text-azure-breeze" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+            <a href="{{ url_for('public.search_page') }}" class="flex items-center space-x-3 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                <div class="w-10 h-10 bg-accent-gold/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 text-accent-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                 </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-heritage-charcoal dark:text-ivory-mist">Media library</p>
-                    <p class="text-xs text-clay-taupe dark:text-warm-sand/70">Audio and video content</p>
+                <div>
+                    <p class="font-medium text-primary-indigo dark:text-white">Inhalte suchen</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Durchsuchen</p>
                 </div>
             </a>
         </div>
     </div>
+
+    <!-- Recent Content -->
+    {% if recent_content %}
+    <div class="card">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-semibold text-primary-indigo dark:text-white">
+                Kürzlich bearbeitet
+            </h2>
+            <a href="{{ url_for('admin.contents_page') }}" class="text-accent-sky dark:text-accent-rose hover:underline text-sm">
+                Alle anzeigen
+            </a>
+        </div>
+        <div class="space-y-3">
+            {% for item in recent_content %}
+            <div class="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                <div class="flex items-center space-x-3 flex-1 min-w-0">
+                    <div class="w-10 h-10 bg-gradient-to-br from-accent-sky to-accent-rose rounded-lg flex items-center justify-center flex-shrink-0">
+                        <span class="text-white font-semibold text-sm">{{ item.created_by_initials }}</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-medium text-primary-indigo dark:text-white truncate">
+                            {{ item.title }}
+                        </p>
+                        <div class="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+                            <span class="capitalize">{{ item.type }}</span>
+                            <span>•</span>
+                            <span>{{ item.last_edited }}</span>
+                        </div>
+                    </div>
+                </div>
+                <a href="{{ url_for('public.content_detail', content_id=item.id, lang=current_language) }}" class="text-accent-sky dark:text-accent-rose hover:underline text-sm flex-shrink-0 ml-4">
+                    Anzeigen
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

@@ -32,9 +32,9 @@ sleep 15
 # Initialize database
 echo ""
 echo "🗄️  Initializing database..."
-docker compose exec flask flask db init 2>/dev/null || echo "Migrations already initialized"
-docker compose exec flask flask db migrate -m "Initial migration" 2>/dev/null || echo "Migration already exists"
-docker compose exec flask flask db upgrade
+docker compose exec backend_admin flask db init 2>/dev/null || echo "Migrations already initialized"
+docker compose exec backend_admin flask db migrate -m "Initial migration" 2>/dev/null || echo "Migration already exists"
+docker compose exec backend_admin flask db upgrade
 
 if [ $? -ne 0 ]; then
     echo "❌ Database initialization failed!"
@@ -46,7 +46,8 @@ echo ""
 echo "✅ KMS is ready!"
 echo ""
 echo "📍 Services:"
-echo "   Flask API:      http://localhost:5000"
+echo "   Public API/UI:  http://localhost:5000"
+echo "   Admin backend:  http://localhost:5001"
 echo "   MinIO Console:  http://localhost:9001 (minioadmin/minioadmin)"
 echo "   PostgreSQL:     localhost:5432 (kms_user/kms_password)"
 echo "   Redis:          localhost:6379"
@@ -59,4 +60,5 @@ echo "   make restart    - Restart services"
 echo ""
 echo "🔗 Test the API:"
 echo "   curl http://localhost:5000/health"
+echo "   curl http://localhost:5001/health"
 echo ""

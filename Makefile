@@ -25,7 +25,8 @@ up:
 	@echo "Waiting for services to be ready..."
 	@sleep 10
 	@echo "Services started!"
-	@echo "Flask API: http://localhost:5000"
+	@echo "Public API/UI: http://localhost:5000"
+	@echo "Admin backend: http://localhost:5001"
 	@echo "MinIO Console: http://localhost:9001 (minioadmin/minioadmin)"
 
 down:
@@ -38,22 +39,22 @@ logs:
 	docker compose logs -f
 
 shell:
-	docker compose exec flask flask shell
+	docker compose exec backend_admin flask shell
 
 db-init:
-	docker compose exec flask flask db init
+	docker compose exec backend_admin flask db init
 
 db-migrate:
-	docker compose exec flask flask db migrate -m "$(msg)"
+	docker compose exec backend_admin flask db migrate -m "$(msg)"
 
 db-upgrade:
-	docker compose exec flask flask db upgrade
+	docker compose exec backend_admin flask db upgrade
 
 create-admin:
-	docker compose exec flask flask create-admin
+	docker compose exec backend_admin flask create-admin
 
 list-users:
-	docker compose exec flask flask list-users
+	docker compose exec backend_admin flask list-users
 
 clean:
 	docker compose down -v

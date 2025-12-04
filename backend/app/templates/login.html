@@ -1,141 +1,83 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - KMS</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        'heritage-charcoal': '#2C2C2C',
-                        'deep-terracotta': '#C7522A',
-                        'heritage-gold': '#E5C185',
-                        'warm-sand': '#E8D5B5',
-                        'ivory-mist': '#F5F0E8',
-                        'clay-taupe': '#8B7A6A',
-                        'ink-blue': '#2A3F54',
-                        'graphite': '#4A5568',
-                        'azure-breeze': '#5A9FD4',
-                        'civic-emerald': '#2D6A4F'
-                    }
-                }
-            }
-        }
-    </script>
-</head>
-<body class="bg-ivory-mist dark:bg-heritage-charcoal">
-    <div class="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
-        <div class="max-w-md w-full space-y-8">
-            <!-- Logo and Header -->
-            <div class="text-center">
-                <div class="mx-auto h-16 w-16 bg-gradient-to-br from-deep-terracotta to-civic-emerald rounded-2xl flex items-center justify-center">
-                    <span class="text-2xl font-bold text-white">KMS</span>
-                </div>
-                <h2 class="mt-6 text-3xl font-bold text-heritage-charcoal dark:text-ivory-mist">
-                    Welcome back
-                </h2>
-                <p class="mt-2 text-sm text-clay-taupe dark:text-warm-sand">
-                    Sign in to access your knowledge management system
-                </p>
+{% extends "base.html" %}
+
+{% block title %}Anmelden - Verwaltungsportal{% endblock %}
+
+{% block content %}
+<div class="min-h-[calc(100vh-8rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <div>
+            <div class="mx-auto w-20 h-20 bg-gradient-to-br from-accent-sky to-accent-rose rounded-2xl flex items-center justify-center">
+                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                </svg>
             </div>
-
-            <!-- Flash Messages -->
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="rounded-lg p-4 {% if category == 'error' %}bg-deep-terracotta/10 border border-deep-terracotta/20 text-deep-terracotta{% else %}bg-civic-emerald/10 border border-civic-emerald/20 text-civic-emerald{% endif %}">
-                            <div class="flex">
-                                <div class="flex-shrink-0">
-                                    {% if category == 'error' %}
-                                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                                    </svg>
-                                    {% else %}
-                                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                    </svg>
-                                    {% endif %}
-                                </div>
-                                <div class="ml-3">
-                                    <p class="text-sm font-medium">{{ message }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
-
-            <!-- Login Form -->
-            <div class="bg-white dark:bg-ink-blue rounded-2xl shadow-xl p-8 border border-warm-sand/30 dark:border-graphite/50">
-                <form method="POST" action="{{ url_for('auth.login') }}" class="space-y-6">
-                    <!-- Email -->
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-heritage-charcoal dark:text-ivory-mist mb-2">
-                            Email address
-                        </label>
-                        <input type="email"
-                               id="email"
-                               name="email"
-                               required
-                               autofocus
-                               class="appearance-none block w-full px-4 py-3 rounded-lg border border-warm-sand dark:border-graphite bg-ivory-mist dark:bg-heritage-charcoal text-heritage-charcoal dark:text-ivory-mist placeholder-clay-taupe focus:outline-none focus:ring-2 focus:ring-civic-emerald focus:border-transparent"
-                               placeholder="Enter your email">
-                    </div>
-
-                    <!-- Password -->
-                    <div>
-                        <label for="password" class="block text-sm font-medium text-heritage-charcoal dark:text-ivory-mist mb-2">
-                            Password
-                        </label>
-                        <input type="password"
-                               id="password"
-                               name="password"
-                               required
-                               class="appearance-none block w-full px-4 py-3 rounded-lg border border-warm-sand dark:border-graphite bg-ivory-mist dark:bg-heritage-charcoal text-heritage-charcoal dark:text-ivory-mist placeholder-clay-taupe focus:outline-none focus:ring-2 focus:ring-civic-emerald focus:border-transparent"
-                               placeholder="Enter your password">
-                    </div>
-
-                    <!-- Remember Me -->
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center">
-                            <input type="checkbox"
-                                   id="remember"
-                                   name="remember"
-                                   class="h-4 w-4 rounded border-warm-sand dark:border-graphite text-civic-emerald focus:ring-civic-emerald">
-                            <label for="remember" class="ml-2 block text-sm text-heritage-charcoal dark:text-warm-sand">
-                                Remember me
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Submit Button -->
-                    <div>
-                        <button type="submit"
-                                class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-civic-emerald hover:bg-civic-emerald/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-civic-emerald transition-colors">
-                            Sign in
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Footer -->
-            <p class="text-center text-xs text-clay-taupe dark:text-warm-sand/70">
-                &copy; {{ current_year }} Knowledge Management System. All rights reserved.
+            <h2 class="mt-6 text-center text-3xl font-extrabold text-primary-indigo dark:text-white">
+                Verwaltungsportal
+            </h2>
+            <p class="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+                Bitte melden Sie sich an, um fortzufahren
             </p>
         </div>
-    </div>
 
-    <script>
-        // Dark mode toggle (read from localStorage)
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark')
-        } else {
-            document.documentElement.classList.remove('dark')
-        }
-    </script>
-</body>
-</html>
+        <div class="card">
+            <form class="space-y-6" method="POST" action="{{ url_for('auth.login') }}">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        E-Mail-Adresse
+                    </label>
+                    <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        autocomplete="email"
+                        required
+                        class="input-field"
+                        placeholder="ihre@email.de"
+                    >
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Passwort
+                    </label>
+                    <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        autocomplete="current-password"
+                        required
+                        class="input-field"
+                        placeholder="••••••••"
+                    >
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input
+                            id="remember"
+                            name="remember"
+                            type="checkbox"
+                            class="h-4 w-4 text-accent-sky dark:text-accent-rose focus:ring-accent-sky dark:focus:ring-accent-rose border-gray-300 dark:border-gray-600 rounded"
+                        >
+                        <label for="remember" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                            Angemeldet bleiben
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <button type="submit" class="w-full btn-primary py-3 text-lg">
+                        Anmelden
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="text-center">
+            <a href="{{ url_for('public.index') }}" class="text-sm text-accent-sky dark:text-accent-rose hover:underline">
+                Zurück zur Startseite
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -52,18 +52,20 @@ A modern, multilingual knowledge management platform with semantic search, media
    - PostgreSQL (with pgvector) on port 5432
    - Redis on port 6379
    - MinIO on ports 9000 (API) and 9001 (Console)
-   - Flask API on port 5000
+   - Public Flask surface (read-only) on port 5000
+   - Admin Flask surface on port 5001
    - Celery worker and beat scheduler
 
 3. **Initialize the database**
    ```bash
-   docker-compose exec flask flask db init
-   docker-compose exec flask flask db migrate -m "Initial migration"
-   docker-compose exec flask flask db upgrade
+   docker-compose exec backend_admin flask db init
+   docker-compose exec backend_admin flask db migrate -m "Initial migration"
+   docker-compose exec backend_admin flask db upgrade
    ```
 
 4. **Access the services**
-   - Flask API: http://localhost:5000
+   - Public API/UI: http://localhost:5000
+   - Admin backend: http://localhost:5001
    - MinIO Console: http://localhost:9001 (minioadmin/minioadmin)
    - PostgreSQL: localhost:5432 (kms_user/kms_password)
 
@@ -105,6 +107,7 @@ A modern, multilingual knowledge management platform with semantic search, media
 ### Environment Variables
 
 See `backend/.env.example` for configuration options.
+- `APP_MODE` controls which surfaces are served (`full`, `public`, or `admin`). Docker Compose runs both `public` (port 5000) and `admin` (port 5001) services.
 
 ## Development
 
@@ -134,7 +137,7 @@ See `backend/.env.example` for configuration options.
 
 5. **Start Flask**
    ```bash
-   flask run
+   APP_MODE=admin flask run  # or APP_MODE=public for the public surface
    ```
 
 6. **Start Celery worker (separate terminal)**

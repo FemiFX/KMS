@@ -4,8 +4,14 @@ from datetime import datetime
 from app import db
 from app.models import Content, ArticleTranslation, User, Tag, MediaContent
 from app.utils import render_markdown
+from app.utils.api_access import enforce_read_only_in_public_mode
 
 content_bp = Blueprint('content', __name__)
+
+
+@content_bp.before_request
+def _protect_public_mode():
+    enforce_read_only_in_public_mode()
 
 
 @content_bp.route('', methods=['POST'])

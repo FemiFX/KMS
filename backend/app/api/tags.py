@@ -1,23 +1,40 @@
 from flask import Blueprint, request, jsonify
 from app import db
 from app.models import Tag, TagLabel
+from app.utils.api_access import enforce_read_only_in_public_mode
 
 tags_bp = Blueprint('tags', __name__)
+
+
+@tags_bp.before_request
+def _protect_public_mode():
+    enforce_read_only_in_public_mode()
 
 
 @tags_bp.route('', methods=['GET'])
 def list_tags():
     """
-    List all tags
-    GET /api/tags?lang=en&namespace=topic
+    List all tags with optional search
+    GET /api/tags?lang=en&namespace=topic&search=python
     """
     language = request.args.get('lang')
     namespace = request.args.get('namespace')
+    search = request.args.get('search', '').strip()
 
     query = Tag.query
 
     if namespace:
         query = query.filter_by(namespace=namespace)
+
+    if search:
+        # Search in both key and default_label
+        search_pattern = f"%{search}%"
+        query = query.filter(
+            db.or_(
+                Tag.key.ilike(search_pattern),
+                Tag.default_label.ilike(search_pattern)
+            )
+        )
 
     tags = query.order_by(Tag.default_label).all()
 

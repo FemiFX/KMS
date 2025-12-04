@@ -2,8 +2,14 @@ from flask import Blueprint, request, jsonify
 from app import db
 from app.models import Webhook, WebhookEvent
 import secrets
+from app.utils.api_access import enforce_read_only_in_public_mode
 
 webhooks_bp = Blueprint('webhooks', __name__)
+
+
+@webhooks_bp.before_request
+def _protect_public_mode():
+    enforce_read_only_in_public_mode()
 
 
 @webhooks_bp.route('', methods=['GET'])

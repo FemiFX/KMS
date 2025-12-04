@@ -8,6 +8,8 @@ class Config:
     # Flask
     SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
     DEBUG = os.getenv('FLASK_ENV') == 'development'
+    APP_MODE = os.getenv('APP_MODE', 'full').lower()  # full | public | admin
+    PUBLIC_API_READ_ONLY = os.getenv('PUBLIC_API_READ_ONLY', 'false').lower() == 'true'
 
     # Session configuration
     SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', 'false').lower() == 'true'
