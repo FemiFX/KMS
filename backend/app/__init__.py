@@ -47,12 +47,14 @@ def create_app(config_class=Config):
 
     # Register API blueprints
     from app.api import content_bp, media_bp, tags_bp, search_bp, webhooks_bp
+    from app.api.uploads import uploads_bp
 
     app.register_blueprint(content_bp, url_prefix='/api/contents')
     app.register_blueprint(media_bp, url_prefix='/api/media')
     app.register_blueprint(tags_bp, url_prefix='/api/tags')
     app.register_blueprint(search_bp, url_prefix='/api/search')
     app.register_blueprint(webhooks_bp, url_prefix='/api/webhooks')
+    app.register_blueprint(uploads_bp, url_prefix='/api/uploads')
 
     # Register views blueprint (HTML pages)
     from app.views import admin_bp

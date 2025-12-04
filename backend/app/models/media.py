@@ -5,14 +5,14 @@ from app import db
 
 class MediaContent(db.Model):
     """
-    Video and audio content metadata.
+    Video, audio, and publication content metadata.
     Actual files stored in S3/MinIO.
     """
     __tablename__ = 'media_content'
 
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     content_id = db.Column(db.String(36), db.ForeignKey('content.id', ondelete='CASCADE'), nullable=False, unique=True)
-    kind = db.Column(db.Enum('video', 'audio', name='media_kind'), nullable=False)
+    kind = db.Column(db.Enum('video', 'audio', 'publication', name='media_kind'), nullable=False)
     object_key = db.Column(db.String(500), nullable=False)  # S3/MinIO path
     mime_type = db.Column(db.String(100))
     file_size = db.Column(db.BigInteger)  # bytes

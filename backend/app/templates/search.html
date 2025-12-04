@@ -30,7 +30,7 @@
             </div>
 
             <!-- Filters -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Inhaltstyp
@@ -55,6 +55,19 @@
                     </select>
                 </div>
 
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Tag
+                    </label>
+                    <input
+                        type="text"
+                        name="tag"
+                        value="{{ tag_filter or '' }}"
+                        placeholder="Nach Tag filtern..."
+                        class="input-field"
+                    >
+                </div>
+
                 <div class="flex items-end">
                     <button type="submit" class="w-full btn-secondary">
                         Filter anwenden
@@ -65,7 +78,7 @@
     </div>
 
     <!-- Results -->
-    {% if query %}
+    {% if query or tag_filter %}
         <div class="card">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-lg font-semibold text-primary-indigo dark:text-white">
@@ -75,11 +88,15 @@
                         Keine Ergebnisse gefunden
                     {% endif %}
                 </h2>
-                {% if query %}
-                    <span class="text-sm text-gray-600 dark:text-gray-400">
+                <span class="text-sm text-gray-600 dark:text-gray-400">
+                    {% if query and tag_filter %}
+                        für "{{ query }}" mit Tag "{{ tag_filter }}"
+                    {% elif query %}
                         für "{{ query }}"
-                    </span>
-                {% endif %}
+                    {% elif tag_filter %}
+                        mit Tag "{{ tag_filter }}"
+                    {% endif %}
+                </span>
             </div>
 
             {% if results %}

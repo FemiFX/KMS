@@ -150,3 +150,34 @@ def test_media(app, test_user):
         db.session.delete(media)
         db.session.delete(content)
         db.session.commit()
+
+
+@pytest.fixture
+def test_publication(app, test_user):
+    """Create test publication content."""
+    with app.app_context():
+        content = Content(
+            type='publication',
+            created_by_id=test_user.id,
+            visibility='public'
+        )
+        db.session.add(content)
+        db.session.flush()
+
+        publication = MediaContent(
+            content_id=content.id,
+            kind='publication',
+            object_key='test/document.pdf',
+            mime_type='application/pdf',
+            file_size=512000,
+            original_language='de'
+        )
+        db.session.add(publication)
+        db.session.commit()
+
+        yield publication
+
+        # Cleanup
+        db.session.delete(publication)
+        db.session.delete(content)
+        db.session.commit()

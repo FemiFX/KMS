@@ -280,19 +280,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Save handlers
     async function saveContent(publish = false) {
-        const formData = {
-            title: document.getElementById('title').value,
-            markdown: markdownInput.value,
-            language: document.getElementById('content-language').value,
-            visibility: document.getElementById('visibility').value,
-            tags: selectedTags,
-            type: 'article'
-        };
+        const title = document.getElementById('title').value;
+        const markdown = markdownInput.value;
+        const language = document.getElementById('content-language').value;
 
-        if (!formData.title || !formData.markdown) {
+        if (!title || !markdown) {
             alert('Bitte füllen Sie Titel und Inhalt aus.');
             return;
         }
+
+        const formData = {
+            type: 'article',
+            visibility: document.getElementById('visibility').value,
+            tags: selectedTags,
+            translations: [
+                {
+                    language: language,
+                    title: title,
+                    markdown: markdown,
+                    is_primary: true
+                }
+            ]
+        };
 
         try {
             const response = await fetch('/api/contents', {

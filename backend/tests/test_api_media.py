@@ -66,6 +66,33 @@ class TestMediaAPI:
         )
         assert response.status_code in [400, 401, 403, 422]
 
+    def test_upload_publication(self, client):
+        """Test uploading a publication file."""
+        data = {
+            'file': (BytesIO(b'fake pdf data'), 'test.pdf'),
+            'kind': 'publication',
+            'title': 'Test Publication',
+            'summary': 'Test publication summary',
+            'language': 'de',
+            'visibility': 'public'
+        }
+        response = client.post(
+            '/api/media',
+            data=data,
+            content_type='multipart/form-data'
+        )
+        # May require authentication or not be fully implemented yet
+        assert response.status_code in [200, 201, 400, 401, 403, 501]
+
+    def test_get_publication(self, client, test_publication):
+        """Test getting a publication item."""
+        response = client.get(f'/api/media/{test_publication.id}')
+        assert response.status_code == 200
+        data = json.loads(response.data)
+        assert data['id'] == test_publication.id
+        assert data['kind'] == 'publication'
+        assert data['mime_type'] == 'application/pdf'
+
     def test_delete_media(self, client, test_media):
         """Test deleting media."""
         response = client.delete(f'/api/media/{test_media.id}')

@@ -52,19 +52,20 @@ def index():
 @login_required
 def search_page():
     """Search page with results"""
-    from app.models import Content, ArticleTranslation
+    from app.models import Content, ArticleTranslation, Tag
     from app import db
 
     current_language = request.args.get('lang', 'en')
     query = request.args.get('q', '').strip()
     content_type = request.args.get('type', '')
+    tag_filter = request.args.get('tag', '').strip()
     page = int(request.args.get('page', 1))
     per_page = 20
 
     results = []
     total = 0
 
-    if query:
+    if query or tag_filter:
         # Build query
         content_query = db.session.query(Content).join(ArticleTranslation)
 
@@ -75,12 +76,22 @@ def search_page():
         # Filter by language
         content_query = content_query.filter(ArticleTranslation.language == current_language)
 
+        # Filter by tag
+        if tag_filter:
+            content_query = content_query.join(Content.tags).filter(
+                db.or_(
+                    Tag.key == tag_filter,
+                    Tag.default_label.ilike(f'%{tag_filter}%')
+                )
+            )
+
         # Search in title and markdown
-        search_filter = db.or_(
-            ArticleTranslation.title.ilike(f'%{query}%'),
-            ArticleTranslation.markdown.ilike(f'%{query}%')
-        )
-        content_query = content_query.filter(search_filter)
+        if query:
+            search_filter = db.or_(
+                ArticleTranslation.title.ilike(f'%{query}%'),
+                ArticleTranslation.markdown.ilike(f'%{query}%')
+            )
+            content_query = content_query.filter(search_filter)
 
         # Get total count
         total = content_query.count()
@@ -97,7 +108,7 @@ def search_page():
                 excerpt = excerpt.replace('#', '').replace('*', '').strip()
 
                 # Get tags
-                tag_labels = [ct.tag.default_label for ct in content.content_tags] if hasattr(content, 'content_tags') else []
+                tag_labels = [tag.default_label for tag in content.tags] if content.tags else []
 
                 results.append({
                     'id': content.id,
@@ -116,6 +127,7 @@ def search_page():
         current_year=datetime.now().year,
         query=query,
         content_type=content_type,
+        tag_filter=tag_filter,
         language=current_language,
         results=results,
         total=total,

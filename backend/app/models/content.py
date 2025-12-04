@@ -11,7 +11,7 @@ class Content(db.Model):
     __tablename__ = 'content'
 
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    type = db.Column(db.Enum('article', 'video', 'audio', name='content_type'), nullable=False)
+    type = db.Column(db.Enum('article', 'video', 'audio', 'publication', name='content_type'), nullable=False)
     created_by_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)
     visibility = db.Column(db.Enum('private', 'org', 'public', name='visibility_type'), default='private', nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
@@ -48,7 +48,7 @@ class Content(db.Model):
                 # Get all translations
                 data['translations'] = [t.to_dict() for t in self.translations]
 
-        elif self.type in ('video', 'audio') and self.media:
+        elif self.type in ('video', 'audio', 'publication') and self.media:
             data['media'] = self.media.to_dict()
 
         return data

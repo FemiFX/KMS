@@ -190,7 +190,7 @@
         </div>
 
         <!-- Tags -->
-        <div class="card">
+        <div class="card relative">
             <h3 class="text-lg font-semibold text-primary-indigo dark:text-white mb-4">
                 Tags
             </h3>
@@ -200,10 +200,14 @@
                     id="media-tags-input"
                     placeholder="Tag hinzufügen..."
                     class="flex-1 min-w-[120px] bg-transparent border-none focus:outline-none text-sm"
+                    autocomplete="off"
                 >
             </div>
+            <!-- Tag suggestions dropdown -->
+            <div id="media-tag-suggestions" class="hidden absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+            </div>
             <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Drücken Sie Enter, um einen Tag hinzuzufügen
+                Beginnen Sie zu tippen um bestehende Tags zu sehen, oder drücken Sie Enter um einen neuen Tag zu erstellen
             </p>
         </div>
 
@@ -240,10 +244,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const transcriptSection = document.getElementById('transcript-section');
     const tagsInput = document.getElementById('media-tags-input');
     const tagsContainer = document.getElementById('media-tags-container');
+    const tagSuggestions = document.getElementById('media-tag-suggestions');
     const uploadProgress = document.getElementById('upload-progress');
 
     let selectedFile = null;
     let selectedTags = [];
+    let allTags = [];
+    let debounceTimer;
 
     // Update visibility based on media type
     mediaTypeInputs.forEach(input => {
@@ -302,32 +309,152 @@ document.addEventListener('DOMContentLoaded', () => {
         return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
     }
 
-    // Tags functionality
+    // Load all tags on page load
+    async function loadTags() {
+        try {
+            const response = await fetch('/api/tags');
+            const data = await response.json();
+            allTags = data.tags || [];
+        } catch (error) {
+            console.error('Failed to load tags:', error);
+        }
+    }
+
+    // Search tags with debounce
+    async function searchTags(query) {
+        if (!query) {
+            tagSuggestions.classList.add('hidden');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/tags?search=${encodeURIComponent(query)}`);
+            const data = await response.json();
+            const tags = data.tags || [];
+
+            if (tags.length === 0) {
+                tagSuggestions.classList.add('hidden');
+                return;
+            }
+
+            // Filter out already selected tags
+            const availableTags = tags.filter(tag =>
+                !selectedTags.some(selected =>
+                    selected.key === tag.key || selected === tag.default_label
+                )
+            );
+
+            if (availableTags.length === 0) {
+                tagSuggestions.classList.add('hidden');
+                return;
+            }
+
+            displayTagSuggestions(availableTags);
+        } catch (error) {
+            console.error('Failed to search tags:', error);
+        }
+    }
+
+    function displayTagSuggestions(tags) {
+        tagSuggestions.innerHTML = '';
+
+        tags.forEach(tag => {
+            const div = document.createElement('div');
+            div.className = 'px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer flex items-center justify-between';
+            div.innerHTML = `
+                <span class="text-sm">${tag.label || tag.default_label}</span>
+                ${tag.color ? `<span class="w-3 h-3 rounded-full ml-2" style="background-color: ${tag.color}"></span>` : ''}
+            `;
+            div.addEventListener('click', () => {
+                addTag({
+                    key: tag.key,
+                    label: tag.label || tag.default_label,
+                    color: tag.color
+                });
+                tagsInput.value = '';
+                tagSuggestions.classList.add('hidden');
+            });
+            tagSuggestions.appendChild(div);
+        });
+
+        tagSuggestions.classList.remove('hidden');
+    }
+
+    // Tags input event listeners
+    tagsInput.addEventListener('input', (e) => {
+        clearTimeout(debounceTimer);
+        const query = e.target.value.trim();
+
+        if (query.length >= 1) {
+            debounceTimer = setTimeout(() => searchTags(query), 300);
+        } else {
+            tagSuggestions.classList.add('hidden');
+        }
+    });
+
     tagsInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
-            const tag = tagsInput.value.trim();
-            if (tag && !selectedTags.includes(tag)) {
-                addTag(tag);
+            const value = tagsInput.value.trim();
+            if (value) {
+                // Create new tag
+                addTag({
+                    key: value.toLowerCase().replace(/\s+/g, '-'),
+                    label: value,
+                    isNew: true
+                });
                 tagsInput.value = '';
+                tagSuggestions.classList.add('hidden');
             }
+        } else if (e.key === 'Escape') {
+            tagSuggestions.classList.add('hidden');
+        }
+    });
+
+    // Close suggestions when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!tagsInput.contains(e.target) && !tagSuggestions.contains(e.target)) {
+            tagSuggestions.classList.add('hidden');
         }
     });
 
     function addTag(tag) {
-        selectedTags.push(tag);
+        // Support both string and object formats
+        const tagData = typeof tag === 'string' ? { key: tag, label: tag } : tag;
+
+        // Check if tag already exists
+        if (selectedTags.some(t => (typeof t === 'string' ? t : t.key) === tagData.key)) {
+            return;
+        }
+
+        selectedTags.push(tagData);
         const tagElement = document.createElement('span');
+        const bgColor = tagData.color ? `background-color: ${tagData.color}20; color: ${tagData.color};` : '';
         tagElement.className = 'inline-flex items-center px-3 py-1 rounded-full text-sm bg-accent-gold/20 text-accent-gold';
+        if (bgColor) {
+            tagElement.style.cssText = bgColor;
+        }
         tagElement.innerHTML = `
-            ${tag}
-            <button type="button" class="ml-2 hover:text-red-500" onclick="this.parentElement.remove()">
+            ${tagData.label}${tagData.isNew ? ' <span class="text-xs opacity-70">(neu)</span>' : ''}
+            <button type="button" class="ml-2 hover:text-red-500" data-tag-key="${tagData.key}">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>
         `;
+
+        // Add remove handler
+        const removeBtn = tagElement.querySelector('button');
+        removeBtn.addEventListener('click', () => {
+            selectedTags = selectedTags.filter(t => (typeof t === 'string' ? t : t.key) !== tagData.key);
+            tagElement.remove();
+        });
+
         tagsContainer.insertBefore(tagElement, tagsInput);
     }
+
+    // Load tags on page load
+    loadTags();
 
     // Form submission
     form.addEventListener('submit', async (e) => {
@@ -338,9 +465,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const mediaType = document.querySelector('input[name="media_type"]:checked').value;
+
         const formData = new FormData();
         formData.append('file', selectedFile);
-        formData.append('media_type', document.querySelector('input[name="media_type"]:checked').value);
+        formData.append('kind', mediaType);
         formData.append('title', document.getElementById('media-title').value);
         formData.append('summary', document.getElementById('summary').value);
         formData.append('language', document.getElementById('media-language').value);
