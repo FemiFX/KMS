@@ -64,7 +64,7 @@ services:
       MINIO_SECURE: "false"
       SECRET_KEY: dev-secret-key-change-in-production
     ports:
-      - "5005:5000"
+      - "5005:5005"
     volumes:
       - ./backend:/app
     depends_on:

@@ -1,40 +1,38 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="{{ current_locale or 'de' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Dashboard{% endblock %} - KMS Verwaltung</title>
-    <meta name="csrf-token" content="{{ csrf_token() if csrf_token is defined else '' }}">
+    <title>{% block title %}{{ _('Dashboard') }}{% endblock %} - Black Trans+ Fund Admin</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
         :root {
-            --primary: #1F1E1D;
-            --primary-900: #181716;
-            --primary-alt: #243C5A;
-            --sand: #E9DCC4;
-            --terracotta: #A74E39;
-            --emerald: #2F6E47;
-            --heritage: #D8A843;
-            --inkblue: #243C5A;
-            --taupe: #817567;
-            --ivory: #F6F4F0;
-            --surface: #F6F4F0;
+            --primary: #1C1A3F;
+            --primary-900: #15132e;
+            --primary-alt: #6E4A31;
+            --sky: #9BCFF1;
+            --rose: #E9B8D8;
+            --amber: #F4C85C;
+            --teal: #2A6F6B;
+            --ivory: #F7F5F2;
+            --surface: #F7F5F2;
             --card: #ffffff;
-            --border: #e3dfd9;
-            --text: #1F1E1D;
-            --muted: #817567;
-            --shadow: 0 14px 38px rgba(31, 30, 29, 0.08);
+            --border: #e5e7eb;
+            --text: #2f2f2f;
+            --muted: #4b5563;
+            --shadow: 0 14px 38px rgba(12, 10, 40, 0.08);
         }
         .dark {
-            --surface: #1F1E1D;
-            --card: #3B3A38;
-            --border: #59574f;
-            --text: #F6F4F0;
-            --muted: rgba(246, 244, 240, 0.7);
-            --shadow: 0 18px 48px rgba(24, 23, 22, 0.35);
+            --surface: #15132e;
+            --card: #1C1A3F;
+            --border: #3f3a52;
+            --text: #F7F5F2;
+            --muted: rgba(247, 245, 242, 0.7);
+            --shadow: 0 18px 48px rgba(4, 4, 10, 0.35);
         }
         body {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -44,8 +42,8 @@
         h1, h2, h3, h4, h5, h6 { font-family: 'Outfit', 'Inter', system-ui, sans-serif; }
         .card { background: var(--card); border: 1px solid var(--border); border-radius: 1rem; box-shadow: var(--shadow); }
         .sidebar-item { transition: background-color 0.15s ease, color 0.15s ease; }
-        .sidebar-item.active { background: #fdfbf7; color: var(--primary); font-weight: 600; }
-        html.dark .sidebar-item.active { background: #4b4943; color: var(--text); }
+        .sidebar-item.active { background: #fdfcfa; color: var(--primary); font-weight: 600; }
+        html.dark .sidebar-item.active { background: #232049; color: var(--text); }
         .submenu { display: none; }
         .submenu.open { display: block; }
         .dropdown { display: none; }
@@ -54,8 +52,8 @@
             position: absolute;
             top: -8px;
             right: -8px;
-            background-color: var(--heritage);
-            color: #1F1E1D;
+            background-color: var(--amber);
+            color: #15132e;
             font-size: 0.75rem;
             height: 20px;
             width: 20px;
@@ -78,13 +76,13 @@
         html.dark .text-gray-600 { color: var(--text) !important; }
         html.dark .text-gray-500 { color: var(--muted) !important; }
         html.dark input::placeholder,
-        html.dark textarea::placeholder { color: rgba(246, 244, 240, 0.5) !important; }
-        html.dark .hover\:bg-gray-50:hover { background-color: #4b4943 !important; border-color: var(--border) !important; }
+        html.dark textarea::placeholder { color: rgba(247, 245, 242, 0.5) !important; }
+        html.dark .hover\:bg-gray-50:hover { background-color: #232049 !important; border-color: var(--border) !important; }
         /* Fix text contrast in dark mode */
         html.dark [class*="text-gray-700"],
         html.dark [class*="text-gray-800"],
-        html.dark [class*="text-gray-900"] { color: #F6F4F0 !important; }
-        html.dark [class*="text-gray-600"] { color: rgba(246, 244, 240, 0.7) !important; }
+        html.dark [class*="text-gray-900"] { color: #F7F5F2 !important; }
+        html.dark [class*="text-gray-600"] { color: rgba(247, 245, 242, 0.7) !important; }
         /* Fix input/select styling in dark mode */
         html.dark input[type="text"],
         html.dark input[type="number"],
@@ -93,9 +91,9 @@
         html.dark input[type="date"],
         html.dark select,
         html.dark textarea {
-            background-color: #4b4943 !important;
-            border-color: #59574f !important;
-            color: #F6F4F0 !important;
+            background-color: #232049 !important;
+            border-color: #3f3a52 !important;
+            color: #F7F5F2 !important;
         }
         /* Fix button contrast */
         .btn-primary, .btn-secondary {
@@ -105,34 +103,48 @@
             transition: all 0.2s;
         }
         .btn-primary {
-            background: linear-gradient(135deg, #2F6E47, #D8A843);
+            background: linear-gradient(135deg, #1C1A3F, #2A6F6B);
             color: var(--ivory);
-            border: 1px solid #2F6E47;
-            box-shadow: 0 12px 24px rgba(47, 110, 71, 0.15);
+            border: 1px solid #2A6F6B;
+            box-shadow: 0 12px 24px rgba(12, 10, 40, 0.15);
         }
         .btn-primary:hover {
-            background: linear-gradient(135deg, #357352, #e4bc5a);
+            background: linear-gradient(135deg, #2A6F6B, #9BCFF1);
             color: var(--ivory);
             transform: translateY(-1px);
-            box-shadow: 0 14px 28px rgba(47, 110, 71, 0.2);
+            box-shadow: 0 14px 28px rgba(12, 10, 40, 0.2);
         }
         .btn-secondary {
             background-color: var(--card);
             color: var(--primary);
             border: 1px solid var(--border);
-            box-shadow: 0 4px 12px rgba(31, 30, 29, 0.06);
+            box-shadow: 0 4px 12px rgba(12, 10, 40, 0.06);
         }
         .btn-secondary:hover {
-            background-color: #fdfbf7;
-            border-color: #cfc6bb;
+            background-color: #fdfcfa;
+            border-color: #cfc4b5;
         }
         html.dark .btn-secondary {
-            background-color: #4b4943;
-            color: #F6F4F0;
-            border-color: #59574f;
+            background-color: #232049;
+            color: #F7F5F2;
+            border-color: #3f3a52;
         }
         html.dark .btn-secondary:hover {
-            background-color: #59574f;
+            background-color: #2f2b5c;
+        }
+        /* Force white background and indigo text in dark mode (opt-in) */
+        html.dark .force-dark-white-indigo {
+            background-color: #ffffff !important;
+            color: #1C1A3F !important;
+        }
+        html.dark .force-dark-white-indigo:hover {
+            background-color: #f5f5f5 !important;
+            color: #1C1A3F !important;
+        }
+        /* Fix active nav item in dark mode */
+        html.dark a[class*="text-gray-700"] {
+            color: #F7F5F2 !important;
+            font-weight: 600;
         }
         input, select, textarea {
             color: var(--text);
@@ -140,20 +152,16 @@
             border-color: var(--border);
         }
         option { color: var(--text); background: var(--card); }
-        .submenu a.active { color: var(--emerald); font-weight: 600; }
-        html.dark .submenu a.active { color: var(--heritage); }
+        .submenu a.active { color: var(--primary); font-weight: 600; }
+        html.dark .submenu a.active { color: var(--text); }
     </style>
 
     {% macro fa_icon(name) -%}
         {% if name == 'home' %}fa-house
         {% elif name == 'table' %}fa-table-cells
-        {% elif name == 'file' %}fa-file-lines
-        {% elif name == 'plus' %}fa-plus
-        {% elif name == 'language' %}fa-language
-        {% elif name == 'photo' %}fa-images
-        {% elif name == 'upload' %}fa-upload
-        {% elif name == 'tag' %}fa-tag
-        {% elif name == 'search' %}fa-magnifying-glass
+        {% elif name == 'users' %}fa-users
+        {% elif name == 'credit-card' %}fa-credit-card
+        {% elif name == 'user' %}fa-user
         {% elif name == 'settings' %}fa-gear
         {% else %}fa-circle-dot{% endif %}
     {%- endmacro %}
@@ -162,13 +170,14 @@
 <body class="bg-gray-50 min-h-screen flex">
 
     <!-- Desktop Sidebar -->
-    <aside id="sidebar" class="hidden lg:block w-64 bg-white border-r border-gray-200 min-h-screen dark:bg-charcoal-800 dark:border-graphite-700">
-        <div class="px-6 py-5 border-b border-gray-200 dark:border-graphite-700">
+    <aside id="sidebar" class="hidden lg:block w-64 bg-white border-r border-gray-200 min-h-screen dark:bg-indigo-800 dark:border-indigo-700">
+        <div class="px-6 py-5 border-b border-gray-200 dark:border-indigo-700">
             <div class="flex items-center space-x-3">
-                <div class="w-9 h-9 rounded-full bg-primary text-white font-bold flex items-center justify-center">K</div>
+                <!-- Logo placeholder: <img src="{{ url_for('static', filename='images/btf_logo.svg') }}" alt="Black Trans+ Fund" class="h-10 w-auto"> -->
+                <div class="w-9 h-9 rounded-full bg-primary text-white font-bold flex items-center justify-center">B+</div>
                 <div>
-                    <p class="text-xs text-gray-600 dark:text-ivory/80 uppercase tracking-wide">Admin</p>
-                    <h1 class="text-lg font-semibold text-gray-900 dark:text-ivory">KMS Portal</h1>
+                    <p class="text-xs text-gray-600 dark:text-ivory/80 uppercase tracking-wide">{{ _('Admin') }}</p>
+                    <h1 class="text-lg font-semibold text-gray-900 dark:text-ivory">Black Trans+ Fund</h1>
                 </div>
             </div>
         </div>
@@ -178,22 +187,22 @@
                     <div class="mb-1">
                         {% if section.single %}
                             {# Single-link item like Dashboard #}
-                            <a href="{{ section.url }}" class="sidebar-item {% if section.active %}active{% endif %} flex items-center w-full px-4 py-2 rounded-lg text-sm text-gray-800 dark:text-ivory hover:bg-gray-50 dark:hover:bg-graphite-700 font-semibold">
+                            <a href="{{ section.url }}" class="sidebar-item {% if section.active %}active{% endif %} flex items-center w-full px-4 py-2 rounded-lg text-sm text-gray-800 dark:text-ivory hover:bg-gray-50 dark:hover:bg-indigo-700 font-semibold">
                                 <i class="fa-solid {{ fa_icon(section.icon) }} mr-3 text-gray-800 dark:text-ivory"></i>
                                 <span>{{ section.label }}</span>
                             </a>
                         {% else %}
                             {# Expandable section with children #}
-                            <button class="sidebar-item flex items-center justify-between w-full px-4 py-2 rounded-lg text-sm text-gray-800 dark:text-ivory hover:bg-gray-50 dark:hover:bg-graphite-700 font-semibold" data-toggle="section" data-target="section-{{ section.id }}">
+                            <button class="sidebar-item flex items-center justify-between w-full px-4 py-2 rounded-lg text-sm text-gray-800 dark:text-ivory hover:bg-gray-50 dark:hover:bg-indigo-700 font-semibold" data-toggle="section" data-target="section-{{ section.id }}">
                                 <div class="flex items-center">
                                     <i class="fa-solid {{ fa_icon(section.icon) }} mr-3 text-gray-800 dark:text-ivory"></i>
                                     <span>{{ section.label }}</span>
                                 </div>
                                 <i class="fa-solid fa-chevron-down text-gray-400 text-xs {% if section.open %}transform rotate-180{% endif %}"></i>
                             </button>
-                            <div id="section-{{ section.id }}" class="submenu {% if section.open %}open{% endif %} mt-1 ml-7 pl-3 border-l border-gray-200 dark:border-graphite-600">
+                            <div id="section-{{ section.id }}" class="submenu {% if section.open %}open{% endif %} mt-1 ml-7 pl-3 border-l border-gray-200 dark:border-indigo-600">
                                 {% for child in section.children %}
-                                    <a href="{{ child.url }}" class="block py-2 text-sm {% if child.active %}text-emerald-600 dark:text-heritage-300 font-semibold{% else %}text-gray-700 dark:text-ivory/90 hover:text-gray-900 dark:hover:text-ivory{% endif %}">{{ child.label }}</a>
+                                    <a href="{{ child.url }}" class="block py-2 text-sm {% if child.active %}text-indigo-600 dark:text-cyan-300 font-semibold{% else %}text-gray-700 dark:text-ivory/90 hover:text-gray-900 dark:hover:text-ivory{% endif %}">{{ child.label }}</a>
                                 {% endfor %}
                             </div>
                         {% endif %}
@@ -205,26 +214,28 @@
 
     <div class="flex-1 flex flex-col min-h-screen">
         <!-- Header -->
-        <header class="bg-white dark:bg-charcoal-800 border-b border-gray-200 dark:border-graphite-700 px-6 py-4">
+        <header class="bg-white dark:bg-indigo-800 border-b border-gray-200 dark:border-indigo-700 px-6 py-4">
             <div class="flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <button id="openSidebar" class="lg:hidden text-gray-600 hover:text-gray-800" aria-label="Menü öffnen">
+                <button id="openSidebar" class="lg:hidden text-gray-600 hover:text-gray-800" aria-label="{{ _('Menü öffnen') }}">
                     <i class="fa-solid fa-bars"></i>
                 </button>
                 <div class="flex items-center space-x-3">
+                    <!-- Logo placeholder: <img src="{{ url_for('static', filename='images/btf_logo.svg') }}" alt="Black Trans+ Fund" class="h-10 w-auto"> -->
+                    <!--div class="w-9 h-9 rounded-full bg-primary text-white font-bold flex items-center justify-center">B+</div-->
                     <div>
-                        <h2 class="text-xl font-semibold text-gray-900 dark:text-ivory">{% block page_title %}Dashboard{% endblock %}</h2>
-                        <p class="text-sm text-gray-600 dark:text-ivory/80">{% block page_subtitle %}Verwaltung{% endblock %}</p>
+                        <h2 class="text-xl font-semibold text-gray-900 dark:text-ivory">{% block page_title %}{{ _('Dashboard') }}{% endblock %}</h2>
+                        <p class="text-sm text-gray-600 dark:text-ivory/80">{% block page_subtitle %}{{ _('Backend') }}{% endblock %}</p>
                         {% block page_subtitle_detail %}{% endblock %}
                     </div>
                 </div>
             </div>
                 <div class="flex items-center space-x-6">
-                    <div class="hidden md:flex items-center bg-gray-50 dark:bg-graphite-700 border border-gray-200 dark:border-graphite-600 rounded-lg px-3 py-2">
+                    <div class="hidden md:flex items-center bg-gray-50 dark:bg-indigo-700 border border-gray-200 dark:border-indigo-600 rounded-lg px-3 py-2">
                         <i class="fa-solid fa-magnifying-glass text-gray-400 dark:text-ivory/60 mr-2"></i>
-                        <input aria-label="Suche" type="search" placeholder="Suche..." class="bg-transparent focus:outline-none text-sm text-gray-800 dark:text-ivory placeholder:text-gray-400 dark:placeholder:text-ivory/50" />
+                        <input aria-label="{{ _('Suche') }}" type="search" placeholder="{{ _('Search...') }}" class="bg-transparent focus:outline-none text-sm text-gray-800 dark:text-ivory placeholder:text-gray-400 dark:placeholder:text-ivory/50" />
                     </div>
-                    <button id="themeToggle" aria-label="Theme umschalten" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-graphite-700">
+                    <button id="themeToggle" aria-label="{{ _('Theme umschalten') }}" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-indigo-700">
                         <i class="fa-solid fa-moon text-gray-500 dark:text-ivory/80" id="themeIcon"></i>
                     </button>
                     <div class="relative">
@@ -232,62 +243,62 @@
                             <i class="fas fa-bell text-gray-500 hover:text-gray-700 dark:text-ivory/80 dark:hover:text-ivory text-lg"></i>
                             <span id="notification-badge" class="notification-badge" {% if not unread_count %}style="display:none"{% endif %}>{{ unread_count or 0 }}</span>
                         </button>
-                        <div id="notification-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white dark:bg-charcoal-800 border border-gray-200 dark:border-graphite-700 rounded-lg shadow-lg py-2 z-50">
+                        <div id="notification-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white dark:bg-indigo-800 border border-gray-200 dark:border-indigo-700 rounded-lg shadow-lg py-2 z-50">
                             <div class="px-4 py-2 flex items-center justify-between">
-                                <p class="text-sm font-semibold text-gray-900 dark:text-ivory">Benachrichtigungen</p>
-                                <button id="mark-all-read" class="text-xs text-emerald-600 dark:text-heritage-300 hover:underline">Alle als gelesen</button>
+                                <p class="text-sm font-semibold text-gray-900 dark:text-ivory">{{ _('Benachrichtigungen') }}</p>
+                                <button id="mark-all-read" class="text-xs text-indigo-600 dark:text-skyblue-300 hover:underline">{{ _('Alle als gelesen') }}</button>
                             </div>
-                            <div class="border-t border-gray-200 dark:border-graphite-700"></div>
-                            <div id="notifications-list" class="max-h-80 overflow-y-auto divide-y divide-gray-200 dark:divide-graphite-700">
+                            <div class="border-t border-gray-200 dark:border-indigo-700"></div>
+                            <div id="notifications-list" class="max-h-80 overflow-y-auto divide-y divide-gray-200 dark:divide-indigo-700">
                                 {% if notifications and notifications|length > 0 %}
                                     {% for notification in notifications %}
-                                        <div class="notification-item px-4 py-3 flex space-x-3 {% if notification.status.value == 'unread' %}bg-sand-50 dark:bg-graphite-700/40{% else %}bg-white dark:bg-charcoal-800{% endif %}" data-notification-id="{{ notification.id }}">
+                                        <div class="notification-item px-4 py-3 flex space-x-3 {% if notification.status.value == 'unread' %}bg-blue-50 dark:bg-indigo-700/40{% else %}bg-white dark:bg-indigo-800{% endif %}" data-notification-id="{{ notification.id }}">
                                             <div class="pt-1">
-                                                <span class="notification-status inline-block w-2 h-2 rounded-full {% if notification.status.value == 'unread' %}bg-heritage-500{% else %}bg-gray-300{% endif %}"></span>
+                                                <span class="notification-status inline-block w-2 h-2 rounded-full {% if notification.status.value == 'unread' %}bg-blue-500{% else %}bg-gray-300{% endif %}"></span>
                                             </div>
                                             <div class="flex-1">
                                                 <p class="text-sm font-semibold text-gray-900 dark:text-ivory">{{ notification.title }}</p>
                                                 <p class="text-sm text-gray-600 dark:text-ivory/80">{{ notification.message }}</p>
                                                 <p class="text-xs text-gray-400 dark:text-ivory/60 mt-1">{{ notification.time_ago }}</p>
                                                 {% if notification.link %}
-                                                    <a href="{{ notification.link }}" class="text-xs text-emerald-600 dark:text-heritage-300 hover:underline">Zur Ansicht</a>
+                                                    <a href="{{ notification.link }}" class="text-xs text-indigo-600 dark:text-skyblue-300 hover:underline">{{ _('Zur Ansicht') }}</a>
                                                 {% endif %}
                                             </div>
                                             {% if notification.status.value == 'unread' %}
-                                                <button class="notification-read text-gray-400 hover:text-emerald-500 dark:text-ivory/70 dark:hover:text-heritage-300" data-notification-id="{{ notification.id }}" title="Als gelesen markieren" aria-label="Als gelesen markieren">
+                                                <button class="notification-read text-gray-400 hover:text-indigo-500 dark:text-ivory/70 dark:hover:text-skyblue-300" data-notification-id="{{ notification.id }}" title="{{ _('Als gelesen markieren') }}" aria-label="{{ _('Als gelesen markieren') }}">
                                                     <i class="fa-solid fa-check"></i>
                                                 </button>
                                             {% else %}
                                                 <span class="text-xs text-gray-400 flex items-center gap-1">
                                                     <i class="fa-solid fa-check"></i>
-                                                    Gelesen
+                                                    {{ _('Gelesen') }}
                                                 </span>
                                             {% endif %}
                                         </div>
                                     {% endfor %}
                                 {% else %}
-                                    <div class="px-4 py-3 text-sm text-gray-600 dark:text-ivory/80">Keine Benachrichtigungen</div>
+                                    <div class="px-4 py-3 text-sm text-gray-600 dark:text-ivory/80">{{ _('Keine Benachrichtigungen') }}</div>
                                 {% endif %}
                             </div>
                         </div>
                     </div>
                     <div class="relative">
                         <button id="userMenuButton" class="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-50" aria-haspopup="true" aria-expanded="false">
-                            <div class="w-9 h-9 rounded-full bg-inkblue-600 text-white font-semibold flex items-center justify-center">
+                            <div class="w-9 h-9 rounded-full bg-indigo-600 text-white font-semibold flex items-center justify-center">
                                 {{ user_initials|default('U') }}
                             </div>
                             <div class="hidden md:block text-left">
                                 <p class="text-sm font-semibold text-gray-900 dark:text-ivory">{{ user_name|default('User') }}</p>
-                                <p class="text-xs text-gray-500 dark:text-ivory/70">{{ user_role|default('Admin') }}</p>
+                                <p class="text-xs text-gray-500 dark:text-ivory/70">{{ user_role|default('Role') }}</p>
                             </div>
                             <i id="user-dropdown-icon" class="fa-solid fa-chevron-down text-gray-500 dark:text-ivory/80 text-xs"></i>
                         </button>
-                        <div id="userMenu" class="dropdown absolute right-0 mt-2 w-48 bg-white dark:bg-graphite-700 border border-gray-200 dark:border-graphite-600 rounded-lg shadow-lg py-2 z-50">
-                            <p class="px-4 py-2 text-xs text-gray-500 dark:text-ivory/70">Angemeldet als</p>
+                        <div id="userMenu" class="dropdown absolute right-0 mt-2 w-48 bg-white dark:bg-indigo-700 border border-gray-200 dark:border-indigo-600 rounded-lg shadow-lg py-2 z-50">
+                            <p class="px-4 py-2 text-xs text-gray-500 dark:text-ivory/70">{{ _('Signed in as') }}</p>
                             <p class="px-4 text-sm font-semibold text-gray-900 dark:text-ivory truncate">{{ user_name|default('User') }}</p>
-                            <div class="border-t border-gray-200 dark:border-graphite-600 my-2"></div>
-                            <a href="{{ url_for('admin.index') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-ivory hover:bg-gray-50 dark:hover:bg-graphite-600">Dashboard</a>
-                            <a href="{{ url_for('auth.logout') }}" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30">Abmelden</a>
+                            <div class="border-t border-gray-200 dark:border-indigo-600 my-2"></div>
+                            <a href="{{ url_for('admin_dashboard') if nav_sections else '#' }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-ivory hover:bg-gray-50 dark:hover:bg-indigo-600">{{ _('Dashboard') }}</a>
+                            <a href="{{ url_for('auth.logout') }}" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30">{{ _('Logout') }}</a>
                         </div>
                     </div>
                 </div>
@@ -296,19 +307,19 @@
 
         <!-- Main Content -->
         <main class="flex-1 overflow-y-auto p-6 space-y-4">
-            {% include 'partials/flash_messages.html' %}
+            {% include 'backend/partials/flash_messages.html' %}
             {% block content %}{% endblock %}
         </main>
     </div>
 
     <!-- Mobile Sidebar -->
     <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-40 z-40 hidden lg:hidden"></div>
-    <aside id="mobileSidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform -translate-x-full transition-transform duration-200 lg:hidden dark:bg-charcoal-800 dark:border-graphite-700">
-        <div class="px-6 py-5 border-b border-gray-200 dark:border-graphite-700 flex items-center justify-between">
+    <aside id="mobileSidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform -translate-x-full transition-transform duration-200 lg:hidden dark:bg-indigo-800 dark:border-indigo-700">
+        <div class="px-6 py-5 border-b border-gray-200 dark:border-indigo-700 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <h1 class="text-lg font-semibold text-gray-900 dark:text-ivory">KMS Portal</h1>
+                <h1 class="text-lg font-semibold text-gray-900 dark:text-ivory">Black Trans+ Fund</h1>
             </div>
-            <button id="closeSidebar" class="text-gray-500 hover:text-gray-700" aria-label="Menü schließen">
+            <button id="closeSidebar" class="text-gray-500 hover:text-gray-700" aria-label="{{ _('Menü schließen') }}">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
@@ -318,22 +329,22 @@
                     <div class="mb-1">
                         {% if section.single %}
                             {# Single-link item like Dashboard #}
-                            <a href="{{ section.url }}" class="sidebar-item {% if section.active %}active{% endif %} flex items-center w-full px-4 py-2 rounded-lg text-sm text-gray-800 dark:text-ivory hover:bg-gray-50 dark:hover:bg-graphite-700 font-semibold">
+                            <a href="{{ section.url }}" class="sidebar-item {% if section.active %}active{% endif %} flex items-center w-full px-4 py-2 rounded-lg text-sm text-gray-800 dark:text-ivory hover:bg-gray-50 dark:hover:bg-indigo-700 font-semibold">
                                 <i class="fa-solid {{ fa_icon(section.icon) }} mr-3 text-gray-800 dark:text-ivory"></i>
                                 <span>{{ section.label }}</span>
                             </a>
                         {% else %}
                             {# Expandable section with children #}
-                            <button class="sidebar-item flex items-center justify-between w-full px-4 py-2 rounded-lg text-sm text-gray-800 dark:text-ivory hover:bg-gray-50 dark:hover:bg-graphite-700 font-semibold" data-toggle="mobile-{{ section.id }}" data-target="mobile-section-{{ section.id }}">
+                            <button class="sidebar-item flex items-center justify-between w-full px-4 py-2 rounded-lg text-sm text-gray-800 dark:text-ivory hover:bg-gray-50 dark:hover:bg-indigo-700 font-semibold" data-toggle="mobile-{{ section.id }}" data-target="mobile-section-{{ section.id }}">
                                 <div class="flex items-center">
                                     <i class="fa-solid {{ fa_icon(section.icon) }} mr-3 text-gray-800 dark:text-ivory"></i>
                                     <span>{{ section.label }}</span>
                                 </div>
                                 <i class="fa-solid fa-chevron-down text-gray-400 text-xs {% if section.open %}transform rotate-180{% endif %}"></i>
                             </button>
-                            <div id="mobile-section-{{ section.id }}" class="submenu {% if section.open %}open{% endif %} mt-1 ml-7 pl-3 border-l border-gray-200 dark:border-graphite-600">
+                            <div id="mobile-section-{{ section.id }}" class="submenu {% if section.open %}open{% endif %} mt-1 ml-7 pl-3 border-l border-gray-200 dark:border-indigo-600">
                                 {% for child in section.children %}
-                                    <a href="{{ child.url }}" class="block py-2 text-sm {% if child.active %}text-emerald-600 dark:text-heritage-300 font-semibold{% else %}text-gray-700 dark:text-ivory/90 hover:text-gray-900 dark:hover:text-ivory{% endif %}">{{ child.label }}</a>
+                                    <a href="{{ child.url }}" class="block py-2 text-sm {% if child.active %}text-indigo-600 dark:text-cyan-300 font-semibold{% else %}text-gray-700 dark:text-ivory/90 hover:text-gray-900 dark:hover:text-ivory{% endif %}">{{ child.label }}</a>
                                 {% endfor %}
                             </div>
                         {% endif %}
@@ -424,10 +435,10 @@
         const notificationDropdown = document.getElementById('notification-dropdown');
         const notificationBadge = document.getElementById('notification-badge');
         const markAllBtn = document.getElementById('mark-all-read');
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-        const readLabel = "Gelesen";
-        const readBgClasses = ['bg-white', 'dark:bg-charcoal-800'];
-        const unreadBgClasses = ['bg-sand-50', 'dark:bg-graphite-700/40'];
+        const csrfToken = document.querySelector('meta[name=\"csrf-token\"]')?.getAttribute('content');
+        const readLabel = "{{ _('Gelesen') }}";
+        const readBgClasses = ['bg-white', 'dark:bg-indigo-800'];
+        const unreadBgClasses = ['bg-blue-50', 'dark:bg-indigo-700/40'];
 
         function toggleDropdown(forceOpen = null) {
             if (!notificationDropdown) return;
@@ -483,7 +494,7 @@
                         item.classList.add(...readBgClasses);
                     }
                     if (statusDot) {
-                        statusDot.classList.remove('bg-heritage-500');
+                        statusDot.classList.remove('bg-blue-500');
                         statusDot.classList.add('bg-gray-300');
                     }
                     const current = parseInt(notificationBadge?.textContent || '0', 10);
@@ -499,7 +510,7 @@
                     item.classList.remove(...unreadBgClasses);
                     item.classList.add(...readBgClasses);
                     const badge = item.querySelector('.notification-status');
-                    badge?.classList.remove('bg-heritage-500');
+                    badge?.classList.remove('bg-blue-500');
                     badge?.classList.add('bg-gray-300');
                     const actionBtn = item.querySelector('.notification-read');
                     if (actionBtn) {

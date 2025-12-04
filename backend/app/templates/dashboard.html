@@ -1,12 +1,14 @@
 {% extends "base_admin.html" %}
 
-{% block title %}Dashboard - Verwaltungsportal{% endblock %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block page_subtitle %}Verwaltungsportal{% endblock %}
 
-{% block admin_content %}
+{% block content %}
 <div class="space-y-8">
     <!-- Welcome Header -->
     <div>
-        <h1 class="text-3xl font-bold text-primary-indigo dark:text-white mb-2">
+        <h1 class="text-3xl font-bold text-charcoal dark:text-ivory mb-2">
             Willkommen im Verwaltungsportal
         </h1>
         <p class="text-gray-600 dark:text-gray-400">
@@ -22,12 +24,12 @@
                     <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                         Gesamt-Inhalte
                     </p>
-                    <p class="text-3xl font-bold text-primary-indigo dark:text-white">
+                    <p class="text-3xl font-bold text-charcoal dark:text-ivory">
                         {{ stats.total_content or 0 }}
                     </p>
                 </div>
-                <div class="w-12 h-12 bg-accent-sky/20 dark:bg-accent-rose/20 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-accent-sky dark:text-accent-rose" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-12 h-12 bg-emerald/20 dark:bg-heritage/20 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-emerald dark:text-heritage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                     </svg>
                 </div>
@@ -40,12 +42,12 @@
                     <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                         Mediendateien
                     </p>
-                    <p class="text-3xl font-bold text-primary-indigo dark:text-white">
+                    <p class="text-3xl font-bold text-charcoal dark:text-ivory">
                         {{ stats.total_media or 0 }}
                     </p>
                 </div>
-                <div class="w-12 h-12 bg-accent-rose/20 dark:bg-accent-sky/20 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-accent-rose dark:text-accent-sky" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-12 h-12 bg-terracotta/20 dark:bg-sand/20 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-terracotta dark:text-sand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
                     </svg>
                 </div>
@@ -58,12 +60,12 @@
                     <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                         Sprachen
                     </p>
-                    <p class="text-3xl font-bold text-primary-indigo dark:text-white">
+                    <p class="text-3xl font-bold text-charcoal dark:text-ivory">
                         {{ stats.languages_count or 0 }}
                     </p>
                 </div>
-                <div class="w-12 h-12 bg-accent-gold/20 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-accent-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-12 h-12 bg-heritage/20 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-heritage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
                     </svg>
                 </div>
@@ -76,12 +78,12 @@
                     <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                         Tags
                     </p>
-                    <p class="text-3xl font-bold text-primary-indigo dark:text-white">
+                    <p class="text-3xl font-bold text-charcoal dark:text-ivory">
                         {{ stats.total_tags or 0 }}
                     </p>
                 </div>
-                <div class="w-12 h-12 bg-support-teal/20 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-support-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-12 h-12 bg-inkblue/20 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-inkblue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
                     </svg>
                 </div>
@@ -91,43 +93,43 @@
 
     <!-- Quick Actions -->
     <div class="card">
-        <h2 class="text-xl font-semibold text-primary-indigo dark:text-white mb-4">
+        <h2 class="text-xl font-semibold text-charcoal dark:text-ivory mb-4">
             Schnellaktionen
         </h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <a href="{{ url_for('admin.new_content_page') }}" class="flex items-center space-x-3 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                <div class="w-10 h-10 bg-accent-sky/20 dark:bg-accent-rose/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <svg class="w-5 h-5 text-accent-sky dark:text-accent-rose" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-10 h-10 bg-emerald/20 dark:bg-heritage/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 text-emerald dark:text-heritage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
                 </div>
                 <div>
-                    <p class="font-medium text-primary-indigo dark:text-white">Neuer Artikel</p>
+                    <p class="font-medium text-charcoal dark:text-ivory">Neuer Artikel</p>
                     <p class="text-sm text-gray-600 dark:text-gray-400">Artikel erstellen</p>
                 </div>
             </a>
 
             <a href="{{ url_for('admin.media_upload_page') }}" class="flex items-center space-x-3 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                <div class="w-10 h-10 bg-accent-rose/20 dark:bg-accent-sky/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <svg class="w-5 h-5 text-accent-rose dark:text-accent-sky" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-10 h-10 bg-terracotta/20 dark:bg-sand/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 text-terracotta dark:text-sand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                     </svg>
                 </div>
                 <div>
-                    <p class="font-medium text-primary-indigo dark:text-white">Medien hochladen</p>
+                    <p class="font-medium text-charcoal dark:text-ivory">Medien hochladen</p>
                     <p class="text-sm text-gray-600 dark:text-gray-400">Video oder Audio</p>
                 </div>
             </a>
 
-            <a href="{{ url_for('public.search_page') }}" class="flex items-center space-x-3 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                <div class="w-10 h-10 bg-accent-gold/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <svg class="w-5 h-5 text-accent-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <a href="{{ url_for('admin.contents_page') }}" class="flex items-center space-x-3 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                <div class="w-10 h-10 bg-heritage/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 text-heritage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                 </div>
                 <div>
-                    <p class="font-medium text-primary-indigo dark:text-white">Inhalte suchen</p>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Durchsuchen</p>
+                    <p class="font-medium text-charcoal dark:text-ivory">Inhalte verwalten</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Listen & filtern</p>
                 </div>
             </a>
         </div>
@@ -137,10 +139,10 @@
     {% if recent_content %}
     <div class="card">
         <div class="flex items-center justify-between mb-4">
-            <h2 class="text-xl font-semibold text-primary-indigo dark:text-white">
+            <h2 class="text-xl font-semibold text-charcoal dark:text-ivory">
                 Kürzlich bearbeitet
             </h2>
-            <a href="{{ url_for('admin.contents_page') }}" class="text-accent-sky dark:text-accent-rose hover:underline text-sm">
+            <a href="{{ url_for('admin.contents_page') }}" class="text-emerald dark:text-heritage hover:underline text-sm">
                 Alle anzeigen
             </a>
         </div>
@@ -148,11 +150,11 @@
             {% for item in recent_content %}
             <div class="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                 <div class="flex items-center space-x-3 flex-1 min-w-0">
-                    <div class="w-10 h-10 bg-gradient-to-br from-accent-sky to-accent-rose rounded-lg flex items-center justify-center flex-shrink-0">
+                    <div class="w-10 h-10 bg-gradient-to-br from-emerald to-heritage rounded-lg flex items-center justify-center flex-shrink-0">
                         <span class="text-white font-semibold text-sm">{{ item.created_by_initials }}</span>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="font-medium text-primary-indigo dark:text-white truncate">
+                        <p class="font-medium text-charcoal dark:text-ivory truncate">
                             {{ item.title }}
                         </p>
                         <div class="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
@@ -162,8 +164,8 @@
                         </div>
                     </div>
                 </div>
-                <a href="{{ url_for('public.content_detail', content_id=item.id, lang=current_language) }}" class="text-accent-sky dark:text-accent-rose hover:underline text-sm flex-shrink-0 ml-4">
-                    Anzeigen
+                <a href="{{ url_for('admin.contents_page') }}" class="text-emerald dark:text-heritage hover:underline text-sm flex-shrink-0 ml-4">
+                    Öffnen
                 </a>
             </div>
             {% endfor %}

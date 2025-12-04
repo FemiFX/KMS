@@ -4,36 +4,36 @@
 
 @layer base {
   body {
-    @apply bg-neutral-ivory dark:bg-neutral-charcoal text-neutral-charcoal dark:text-neutral-ivory transition-colors duration-200;
+    @apply bg-ivory dark:bg-charcoal text-charcoal dark:text-ivory transition-colors duration-200;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply px-4 py-2 bg-primary-indigo dark:bg-primary-cocoa text-white rounded-lg hover:opacity-90 transition-opacity font-medium;
+    @apply px-4 py-2 bg-emerald dark:bg-heritage text-white rounded-lg hover:opacity-90 transition-opacity font-medium;
   }
 
   .btn-secondary {
-    @apply px-4 py-2 bg-accent-sky dark:bg-accent-rose text-primary-indigo dark:text-white rounded-lg hover:opacity-90 transition-opacity font-medium;
+    @apply px-4 py-2 bg-sand dark:bg-taupe text-charcoal dark:text-ivory rounded-lg hover:opacity-90 transition-opacity font-medium;
   }
 
   .btn-accent {
-    @apply px-4 py-2 bg-accent-gold text-primary-indigo rounded-lg hover:opacity-90 transition-opacity font-medium;
+    @apply px-4 py-2 bg-heritage text-charcoal rounded-lg hover:opacity-90 transition-opacity font-medium;
   }
 
   .input-field {
-    @apply w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-neutral-charcoal dark:text-neutral-ivory focus:outline-none focus:ring-2 focus:ring-accent-sky dark:focus:ring-accent-rose;
+    @apply w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-graphite-800 text-charcoal dark:text-ivory focus:outline-none focus:ring-2 focus:ring-emerald dark:focus:ring-heritage;
   }
 
   .card {
-    @apply bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors duration-200;
+    @apply bg-white dark:bg-graphite-800 rounded-lg shadow-md p-6 transition-colors duration-200;
   }
 
   .nav-link {
-    @apply px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors;
+    @apply px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-graphite-700 transition-colors;
   }
 
   .nav-link-active {
-    @apply bg-accent-sky/20 dark:bg-accent-rose/20 text-primary-indigo dark:text-accent-rose font-medium;
+    @apply bg-emerald/20 dark:bg-heritage/20 text-charcoal dark:text-heritage font-medium;
   }
 }

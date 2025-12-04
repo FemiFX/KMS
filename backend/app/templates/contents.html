@@ -127,10 +127,10 @@
                         <span class="text-xs text-gray-500 dark:text-gray-400">
                             {{ content.created_at }}
                         </span>
-                        <a href="{{ url_for('public.content_detail', content_id=content.id, lang=current_language) }}"
+                        <a href="{{ url_for('admin.contents_page') }}"
                            class="text-accent-sky dark:text-accent-rose hover:underline text-sm font-medium">
-                            Anzeigen →
-                        </a>
+                           Öffnen →
+                       </a>
                     </div>
                 </div>
             {% endfor %}

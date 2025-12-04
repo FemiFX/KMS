@@ -147,10 +147,10 @@
                                 Übersetzung hinzufügen
                             </button>
                         {% endif %}
-                        <a href="{{ url_for('public.content_detail', content_id=content.id, lang=current_language) }}"
+                        <a href="{{ url_for('admin.contents_page') }}"
                            class="text-gray-600 dark:text-gray-400 hover:underline text-sm">
-                            Anzeigen
-                        </a>
+                           Öffnen
+                       </a>
                     </div>
                 </div>
             {% endfor %}
