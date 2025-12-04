@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_admin.html" %}
 
 {% block title %}Search - Knowledge Management System{% endblock %}
 
@@ -108,7 +108,7 @@
 
                             <!-- Title -->
                             <h3 class="text-2xl font-display font-bold text-heritage-charcoal dark:text-ivory-mist mb-3 hover:text-deep-terracotta dark:hover:text-heritage-gold transition-colors">
-                                <a href="/contents/{{ item.id }}?lang={{ item.language }}">
+                                <a href="/admin/contents/{{ item.id }}?lang={{ item.language }}">
                                     {{ item.title }}
                                 </a>
                             </h3>
@@ -165,7 +165,7 @@
 
                         <!-- Action Bar -->
                         <div class="bg-warm-sand/30 dark:bg-graphite/30 px-6 py-3 border-t border-warm-sand dark:border-graphite">
-                            <a href="/contents/{{ item.id }}?lang={{ item.language }}" class="inline-flex items-center text-deep-terracotta dark:text-heritage-gold hover:text-civic-emerald dark:hover:text-civic-emerald font-medium text-sm transition-colors">
+                            <a href="/admin/contents/{{ item.id }}?lang={{ item.language }}" class="inline-flex items-center text-deep-terracotta dark:text-heritage-gold hover:text-civic-emerald dark:hover:text-civic-emerald font-medium text-sm transition-colors">
                                 View {{ item.type }}
                                 <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -215,7 +215,7 @@
                     <p class="text-graphite dark:text-warm-sand mb-6">
                         Try adjusting your search terms or filters
                     </p>
-                    <a href="/search" class="inline-flex items-center px-6 py-3 bg-deep-terracotta hover:bg-civic-emerald text-ivory-mist font-semibold rounded-lg shadow-lg transition-colors">
+                    <a href="/admin/search" class="inline-flex items-center px-6 py-3 bg-deep-terracotta hover:bg-civic-emerald text-ivory-mist font-semibold rounded-lg shadow-lg transition-colors">
                         Clear Search
                     </a>
                 </div>

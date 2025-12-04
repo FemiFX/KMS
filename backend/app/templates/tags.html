@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_admin.html" %}
 
 {% block title %}Tags - Knowledge Management System{% endblock %}
 
@@ -9,7 +9,7 @@
             <div>
                 <p class="text-sm uppercase tracking-wide text-clay-taupe">Taxonomy</p>
                 <h1 class="font-display font-bold text-4xl text-heritage-charcoal dark:text-ivory-mist">Tags &amp; Namespaces</h1>
-                <p class="text-graphite dark:text-warm-sand mt-2">Create and organize tags. (Static placeholder)</p>
+                <p class="text-graphite dark:text-warm-sand mt-2">Manage tags and organize content taxonomy across {{ tags|length }} tag{{ 's' if tags|length != 1 else '' }}.</p>
             </div>
             <button class="inline-flex items-center px-4 py-2 rounded-lg bg-deep-terracotta text-ivory-mist hover:bg-civic-emerald transition-colors text-sm font-semibold">
                 + New Tag
@@ -41,19 +41,102 @@
             </div>
         </div>
 
+        <!-- Namespace Filter -->
+        {% if namespaces %}
         <div class="bg-white dark:bg-ink-blue border border-warm-sand dark:border-graphite rounded-2xl shadow-xl p-6">
-            <h2 class="font-semibold text-heritage-charcoal dark:text-ivory-mist text-lg mb-4">Existing Tags</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {% for ns in ['topic','audience','type','department'] %}
-                <div class="rounded-xl border border-warm-sand dark:border-graphite bg-ivory-mist dark:bg-heritage-charcoal p-4">
-                    <p class="text-xs uppercase tracking-wide text-clay-taupe">{{ ns }}</p>
-                    <div class="flex flex-wrap gap-2 mt-2">
-                        {% for i in range(1,4) %}
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs bg-deep-terracotta/10 text-deep-terracotta border border-deep-terracotta/20">Tag {{ i }}</span>
-                        {% endfor %}
+            <h2 class="font-semibold text-heritage-charcoal dark:text-ivory-mist text-lg mb-4">Filter by Namespace</h2>
+            <div class="flex flex-wrap gap-2">
+                <a href="?lang={{ current_language }}"
+                   class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-colors
+                          {% if not current_namespace %}bg-deep-terracotta text-ivory-mist{% else %}bg-ivory-mist dark:bg-heritage-charcoal text-heritage-charcoal dark:text-ivory-mist border border-warm-sand dark:border-graphite hover:bg-warm-sand dark:hover:bg-graphite{% endif %}">
+                    All Tags
+                </a>
+                {% for ns in namespaces %}
+                <a href="?lang={{ current_language }}&namespace={{ ns }}"
+                   class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-colors
+                          {% if current_namespace == ns %}bg-deep-terracotta text-ivory-mist{% else %}bg-ivory-mist dark:bg-heritage-charcoal text-heritage-charcoal dark:text-ivory-mist border border-warm-sand dark:border-graphite hover:bg-warm-sand dark:hover:bg-graphite{% endif %}">
+                    {{ ns }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Tags Grid -->
+        <div class="bg-white dark:bg-ink-blue border border-warm-sand dark:border-graphite rounded-2xl shadow-xl p-6">
+            <h2 class="font-semibold text-heritage-charcoal dark:text-ivory-mist text-lg mb-4">
+                {% if current_namespace %}Tags in "{{ current_namespace }}" namespace{% else %}All Tags{% endif %}
+            </h2>
+
+            {% if tags %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for tag in tags %}
+                <div class="rounded-xl border border-warm-sand dark:border-graphite bg-ivory-mist dark:bg-heritage-charcoal p-4 hover:shadow-lg transition-shadow">
+                    <div class="flex items-start justify-between mb-2">
+                        <div>
+                            <p class="text-xs uppercase tracking-wide text-clay-taupe">{{ tag.namespace or 'general' }}</p>
+                            <h3 class="font-semibold text-heritage-charcoal dark:text-ivory-mist mt-1">{{ tag.label }}</h3>
+                        </div>
+                        <div class="w-6 h-6 rounded-full border-2 border-white dark:border-ink-blue"
+                             style="background-color: {{ tag.color or '#A74E39' }}"></div>
                     </div>
+
+                    <div class="text-xs text-graphite dark:text-warm-sand/80 mb-3">
+                        <p>Key: <code class="px-1 py-0.5 rounded bg-warm-sand/30 dark:bg-graphite/50">{{ tag.key }}</code></p>
+                        {% if tag.default_label != tag.label %}
+                        <p class="mt-1">Default: {{ tag.default_label }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-graphite dark:text-warm-sand/80">
+                            {{ tag.content_count }} content item{{ 's' if tag.content_count != 1 else '' }}
+                        </span>
+                        <a href="/admin/search?lang={{ current_language }}&q={{ tag.label }}"
+                           class="text-xs text-deep-terracotta hover:text-civic-emerald font-medium">
+                            View →
+                        </a>
+                    </div>
+
+                    {% if tag.created_at %}
+                    <p class="text-xs text-clay-taupe mt-2">Created {{ tag.created_at }}</p>
+                    {% endif %}
                 </div>
                 {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-center text-graphite dark:text-warm-sand/80 py-8">
+                No tags found{% if current_namespace %} in "{{ current_namespace }}" namespace{% endif %}.
+            </p>
+            {% endif %}
+        </div>
+
+        <!-- API Usage Example -->
+        <div class="bg-white dark:bg-ink-blue border border-warm-sand dark:border-graphite rounded-2xl shadow-xl p-6">
+            <h2 class="font-semibold text-heritage-charcoal dark:text-ivory-mist text-lg mb-4">API Usage</h2>
+            <div class="space-y-4">
+                <div>
+                    <p class="text-sm text-graphite dark:text-warm-sand mb-2">Get all tags:</p>
+                    <pre class="bg-heritage-charcoal dark:bg-graphite text-ivory-mist p-4 rounded-lg text-xs overflow-x-auto">GET /api/tags</pre>
+                </div>
+                <div>
+                    <p class="text-sm text-graphite dark:text-warm-sand mb-2">Create a new tag:</p>
+                    <pre class="bg-heritage-charcoal dark:bg-graphite text-ivory-mist p-4 rounded-lg text-xs overflow-x-auto">POST /api/tags
+{
+  "key": "python",
+  "default_label": "Python",
+  "namespace": "topic",
+  "color": "#3776ab"
+}</pre>
+                </div>
+                <div>
+                    <p class="text-sm text-graphite dark:text-warm-sand mb-2">Add localized label:</p>
+                    <pre class="bg-heritage-charcoal dark:bg-graphite text-ivory-mist p-4 rounded-lg text-xs overflow-x-auto">POST /api/tags/{tag_id}/labels
+{
+  "language": "de",
+  "label": "Python"
+}</pre>
+                </div>
             </div>
         </div>
     </div>

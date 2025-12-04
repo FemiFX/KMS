@@ -2,9 +2,10 @@ import uuid
 from datetime import datetime
 from app import db
 import bcrypt
+from flask_login import UserMixin
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     """
     User model for authentication and content ownership.
     """
@@ -34,6 +35,25 @@ class User(db.Model):
     def check_password(self, password):
         """Verify password"""
         return bcrypt.checkpw(password.encode('utf-8'), self.password_hash.encode('utf-8'))
+
+    # Flask-Login methods
+    def get_id(self):
+        """Return the user ID as a string"""
+        return str(self.id)
+
+    @property
+    def is_authenticated(self):
+        """Return True if the user is authenticated"""
+        return True
+
+    @property
+    def is_anonymous(self):
+        """Return False for authenticated users"""
+        return False
+
+    def get_active(self):
+        """Return True if the user is active"""
+        return self.is_active
 
     def to_dict(self):
         """Serialize to dictionary (exclude password)"""

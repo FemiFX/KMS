@@ -1,51 +1,193 @@
-{% extends "base.html" %}
+{% extends "base_admin.html" %}
 
 {% block title %}Upload Media - Knowledge Management System{% endblock %}
 
 {% block content %}
 <section class="py-16 bg-ivory-mist dark:bg-heritage-charcoal min-h-screen">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <!-- Header -->
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm uppercase tracking-wide text-clay-taupe">Media</p>
                 <h1 class="font-display font-bold text-4xl text-heritage-charcoal dark:text-ivory-mist">Upload Media</h1>
-                <p class="text-graphite dark:text-warm-sand mt-2">Upload video/audio files and attach metadata. (Static placeholder)</p>
+                <p class="text-graphite dark:text-warm-sand mt-2">Upload video or audio files with automatic transcription.</p>
             </div>
-            <a href="/media" class="inline-flex items-center px-4 py-2 rounded-lg bg-warm-sand dark:bg-graphite text-heritage-charcoal dark:text-ivory-mist hover:bg-deep-terracotta hover:text-ivory-mist transition-colors text-sm font-semibold">
+            <a href="/admin/media?lang={{ current_language }}"
+               class="inline-flex items-center px-4 py-2 rounded-lg bg-warm-sand dark:bg-graphite text-heritage-charcoal dark:text-ivory-mist hover:bg-deep-terracotta hover:text-ivory-mist transition-colors text-sm font-semibold">
                 ← Back to Library
             </a>
         </div>
 
+        <!-- Upload Form -->
         <div class="bg-white dark:bg-ink-blue border border-warm-sand dark:border-graphite rounded-2xl shadow-xl p-6 space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <label class="block text-sm font-medium text-heritage-charcoal dark:text-warm-sand">File</label>
-                <input type="file" class="col-span-1 md:col-span-2 rounded-lg border border-warm-sand dark:border-graphite bg-ivory-mist dark:bg-heritage-charcoal text-sm p-3">
+            <form id="media-upload-form" enctype="multipart/form-data">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- File Input -->
+                    <label class="block text-sm font-medium text-heritage-charcoal dark:text-warm-sand">File *</label>
+                    <div class="col-span-1 md:col-span-2">
+                        <input type="file"
+                               id="file-input"
+                               name="file"
+                               accept="video/*,audio/*"
+                               required
+                               class="w-full rounded-lg border border-warm-sand dark:border-graphite bg-ivory-mist dark:bg-heritage-charcoal text-sm p-3 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-deep-terracotta file:text-ivory-mist hover:file:bg-civic-emerald">
+                        <p class="text-xs text-clay-taupe mt-2">Accepted formats: MP4, MOV, AVI, MP3, WAV, etc.</p>
+                    </div>
 
-                <label class="block text-sm font-medium text-heritage-charcoal dark:text-warm-sand">Kind</label>
-                <select class="rounded-lg border border-warm-sand dark:border-graphite bg-ivory-mist dark:bg-heritage-charcoal text-sm p-3">
-                    <option>video</option>
-                    <option>audio</option>
-                </select>
+                    <!-- Media Type -->
+                    <label for="kind-select" class="block text-sm font-medium text-heritage-charcoal dark:text-warm-sand">Type *</label>
+                    <select id="kind-select"
+                            name="kind"
+                            required
+                            class="rounded-lg border border-warm-sand dark:border-graphite bg-ivory-mist dark:bg-heritage-charcoal text-sm p-3">
+                        <option value="video">Video</option>
+                        <option value="audio">Audio</option>
+                    </select>
 
-                <label class="block text-sm font-medium text-heritage-charcoal dark:text-warm-sand">Visibility</label>
-                <select class="rounded-lg border border-warm-sand dark:border-graphite bg-ivory-mist dark:bg-heritage-charcoal text-sm p-3">
-                    <option>public</option>
-                    <option>org</option>
-                    <option>private</option>
-                </select>
+                    <!-- Visibility -->
+                    <label for="visibility-select" class="block text-sm font-medium text-heritage-charcoal dark:text-warm-sand">Visibility</label>
+                    <select id="visibility-select"
+                            name="visibility"
+                            class="rounded-lg border border-warm-sand dark:border-graphite bg-ivory-mist dark:bg-heritage-charcoal text-sm p-3">
+                        <option value="public">Public</option>
+                        <option value="internal">Internal</option>
+                        <option value="private">Private</option>
+                    </select>
 
-                <label class="block text-sm font-medium text-heritage-charcoal dark:text-warm-sand">Title</label>
-                <input type="text" class="rounded-lg border border-warm-sand dark:border-graphite bg-ivory-mist dark:bg-heritage-charcoal text-sm p-3" placeholder="Media title">
+                    <!-- Original Language -->
+                    <label for="language-input" class="block text-sm font-medium text-heritage-charcoal dark:text-warm-sand">Original Language</label>
+                    <input type="text"
+                           id="language-input"
+                           name="language"
+                           value="{{ current_language }}"
+                           maxlength="10"
+                           class="rounded-lg border border-warm-sand dark:border-graphite bg-ivory-mist dark:bg-heritage-charcoal text-sm p-3"
+                           placeholder="en">
+                </div>
 
-                <label class="block text-sm font-medium text-heritage-charcoal dark:text-warm-sand">Original Language</label>
-                <input type="text" class="rounded-lg border border-warm-sand dark:border-graphite bg-ivory-mist dark:bg-heritage-charcoal text-sm p-3" placeholder="en">
-            </div>
+                <!-- Upload Progress -->
+                <div id="upload-progress" class="hidden mt-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm text-heritage-charcoal dark:text-ivory-mist font-medium">Uploading...</span>
+                        <span id="progress-text" class="text-sm text-clay-taupe">0%</span>
+                    </div>
+                    <div class="w-full bg-warm-sand/30 dark:bg-graphite/30 rounded-full h-3">
+                        <div id="progress-bar" class="bg-civic-emerald h-3 rounded-full transition-all" style="width: 0%"></div>
+                    </div>
+                </div>
 
-            <div class="flex items-center justify-between pt-2">
-                <p class="text-sm text-graphite dark:text-warm-sand/80">Transcription and embedding will run asynchronously.</p>
-                <button class="inline-flex items-center px-6 py-3 rounded-lg bg-deep-terracotta text-ivory-mist hover:bg-civic-emerald transition-colors font-semibold">Upload</button>
-            </div>
+                <!-- Status Messages -->
+                <div id="status-message" class="hidden mt-4 p-4 rounded-lg"></div>
+
+                <!-- Submit Button -->
+                <div class="flex items-center justify-between pt-6 border-t border-warm-sand dark:border-graphite">
+                    <p class="text-sm text-graphite dark:text-warm-sand/80">
+                        <span class="font-medium">Note:</span> Transcription will run asynchronously after upload.
+                    </p>
+                    <button type="submit"
+                            id="submit-button"
+                            class="inline-flex items-center px-6 py-3 rounded-lg bg-deep-terracotta text-ivory-mist hover:bg-civic-emerald transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed">
+                        Upload Media
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- API Information -->
+        <div class="bg-white dark:bg-ink-blue border border-warm-sand dark:border-graphite rounded-2xl shadow-xl p-6">
+            <h2 class="font-semibold text-heritage-charcoal dark:text-ivory-mist text-lg mb-4">Upload via API</h2>
+            <p class="text-sm text-graphite dark:text-warm-sand mb-3">You can also upload media programmatically:</p>
+            <pre class="bg-heritage-charcoal dark:bg-graphite text-ivory-mist p-4 rounded-lg text-xs overflow-x-auto">curl -X POST http://localhost:5000/api/media \
+  -F "file=@video.mp4" \
+  -F "kind=video" \
+  -F "visibility=public" \
+  -F "language=en"</pre>
         </div>
     </div>
 </section>
+
+<script>
+document.getElementById('media-upload-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const formData = new FormData(form);
+    const submitButton = document.getElementById('submit-button');
+    const progressDiv = document.getElementById('upload-progress');
+    const progressBar = document.getElementById('progress-bar');
+    const progressText = document.getElementById('progress-text');
+    const statusMessage = document.getElementById('status-message');
+
+    // Disable submit button
+    submitButton.disabled = true;
+    submitButton.textContent = 'Uploading...';
+
+    // Show progress bar
+    progressDiv.classList.remove('hidden');
+    statusMessage.classList.add('hidden');
+
+    try {
+        const xhr = new XMLHttpRequest();
+
+        // Track upload progress
+        xhr.upload.addEventListener('progress', (e) => {
+            if (e.lengthComputable) {
+                const percent = Math.round((e.loaded / e.total) * 100);
+                progressBar.style.width = percent + '%';
+                progressText.textContent = percent + '%';
+            }
+        });
+
+        // Handle completion
+        xhr.addEventListener('load', () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                const response = JSON.parse(xhr.responseText);
+
+                // Show success message
+                statusMessage.className = 'block mt-4 p-4 rounded-lg bg-civic-emerald/10 border border-civic-emerald/20 text-civic-emerald';
+                statusMessage.innerHTML = `
+                    <p class="font-semibold mb-1">Upload successful!</p>
+                    <p class="text-sm">Media ID: ${response.id}</p>
+                    <a href="/admin/media?lang={{ current_language }}" class="inline-block mt-2 text-sm underline">Go to Media Library</a>
+                `;
+                statusMessage.classList.remove('hidden');
+
+                // Reset form
+                form.reset();
+                progressBar.style.width = '0%';
+                progressDiv.classList.add('hidden');
+            } else {
+                throw new Error(xhr.responseText || 'Upload failed');
+            }
+        });
+
+        // Handle errors
+        xhr.addEventListener('error', () => {
+            throw new Error('Network error during upload');
+        });
+
+        // Send request
+        xhr.open('POST', '/api/media');
+        xhr.send(formData);
+
+    } catch (error) {
+        console.error('Upload error:', error);
+
+        // Show error message
+        statusMessage.className = 'block mt-4 p-4 rounded-lg bg-deep-terracotta/10 border border-deep-terracotta/20 text-deep-terracotta';
+        statusMessage.innerHTML = `
+            <p class="font-semibold mb-1">Upload failed</p>
+            <p class="text-sm">${error.message}</p>
+        `;
+        statusMessage.classList.remove('hidden');
+
+        progressBar.style.width = '0%';
+        progressDiv.classList.add('hidden');
+    } finally {
+        // Re-enable submit button
+        submitButton.disabled = false;
+        submitButton.textContent = 'Upload Media';
+    }
+});
+</script>
 {% endblock %}

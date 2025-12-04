@@ -1,40 +1,192 @@
-{% extends "base.html" %}
+{% extends "base_admin.html" %}
 
 {% block title %}Media Library - Knowledge Management System{% endblock %}
 
 {% block content %}
 <section class="py-16 bg-ivory-mist dark:bg-heritage-charcoal min-h-screen">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <!-- Header -->
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm uppercase tracking-wide text-clay-taupe">Media</p>
                 <h1 class="font-display font-bold text-4xl text-heritage-charcoal dark:text-ivory-mist">Media Library</h1>
-                <p class="text-graphite dark:text-warm-sand mt-2">Browse and manage video/audio assets. (Static placeholder)</p>
+                <p class="text-graphite dark:text-warm-sand mt-2">{{ total }} media file{{ 's' if total != 1 else '' }} in library</p>
             </div>
-            <a href="/media/upload" class="inline-flex items-center px-4 py-2 rounded-lg bg-deep-terracotta text-ivory-mist hover:bg-civic-emerald transition-colors text-sm font-semibold">
+            <a href="/admin/media/upload?lang={{ current_language }}"
+               class="inline-flex items-center px-4 py-2 rounded-lg bg-deep-terracotta text-ivory-mist hover:bg-civic-emerald transition-colors text-sm font-semibold">
                 + Upload Media
             </a>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {% for i in range(1,7) %}
-            <div class="rounded-2xl bg-white dark:bg-ink-blue border border-warm-sand dark:border-graphite shadow-lg overflow-hidden">
-                <div class="h-32 bg-gradient-to-br from-ink-blue to-heritage-charcoal/80 flex items-center justify-center text-ivory-mist text-lg font-semibold">
-                    Thumbnail {{ i }}
+        <!-- Filters -->
+        <div class="bg-white dark:bg-ink-blue border border-warm-sand dark:border-graphite rounded-2xl shadow-xl p-6">
+            <h2 class="font-semibold text-heritage-charcoal dark:text-ivory-mist text-lg mb-4">Filters</h2>
+            <form method="get" class="flex flex-wrap items-end gap-4">
+                <input type="hidden" name="lang" value="{{ current_language }}">
+
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-sm font-medium text-heritage-charcoal dark:text-warm-sand mb-2">Media Type</label>
+                    <select name="type" class="w-full rounded-lg border border-warm-sand dark:border-graphite bg-ivory-mist dark:bg-heritage-charcoal text-sm p-3">
+                        <option value="">All Types</option>
+                        <option value="video" {% if media_type == 'video' %}selected{% endif %}>Video</option>
+                        <option value="audio" {% if media_type == 'audio' %}selected{% endif %}>Audio</option>
+                    </select>
                 </div>
-                <div class="p-4 space-y-2">
-                    <div class="flex items-center justify-between">
-                        <h3 class="font-semibold text-heritage-charcoal dark:text-ivory-mist">Media Item {{ i }}</h3>
-                        <span class="px-2 py-1 rounded-full text-xs bg-heritage-gold/20 text-heritage-charcoal">Video</span>
+
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-sm font-medium text-heritage-charcoal dark:text-warm-sand mb-2">Transcript Status</label>
+                    <select name="transcript" class="w-full rounded-lg border border-warm-sand dark:border-graphite bg-ivory-mist dark:bg-heritage-charcoal text-sm p-3">
+                        <option value="">All</option>
+                        <option value="yes" {% if has_transcript == 'yes' %}selected{% endif %}>Has Transcript</option>
+                        <option value="no" {% if has_transcript == 'no' %}selected{% endif %}>No Transcript</option>
+                    </select>
+                </div>
+
+                <button type="submit"
+                        class="px-4 py-2 rounded-lg bg-deep-terracotta text-ivory-mist text-sm hover:bg-civic-emerald">
+                    Apply Filters
+                </button>
+                <a href="?lang={{ current_language }}"
+                   class="px-4 py-2 rounded-lg bg-warm-sand dark:bg-graphite text-heritage-charcoal dark:text-ivory-mist text-sm hover:opacity-80">
+                    Clear
+                </a>
+            </form>
+        </div>
+
+        <!-- Media Grid -->
+        {% if media_items %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for item in media_items %}
+            <div class="rounded-2xl bg-white dark:bg-ink-blue border border-warm-sand dark:border-graphite shadow-xl hover:shadow-2xl transition-shadow overflow-hidden">
+                <!-- Thumbnail / Type Indicator -->
+                <div class="h-40 bg-gradient-to-br
+                          {% if item.media_type == 'video' %}from-azure-breeze to-ink-blue
+                          {% else %}from-civic-emerald to-heritage-charcoal{% endif %}
+                          flex flex-col items-center justify-center text-ivory-mist">
+                    <div class="text-5xl mb-2">
+                        {% if item.media_type == 'video' %}🎬{% else %}🎵{% endif %}
                     </div>
-                    <p class="text-sm text-graphite dark:text-warm-sand/80">Duration: 03:12 • Language: EN</p>
-                    <div class="flex items-center gap-2 pt-2">
-                        <button class="px-3 py-2 rounded-lg bg-warm-sand dark:bg-graphite text-sm text-heritage-charcoal dark:text-ivory-mist">View</button>
-                        <button class="px-3 py-2 rounded-lg bg-ivory-mist dark:bg-heritage-charcoal border border-warm-sand dark:border-graphite text-sm">Transcripts</button>
+                    <p class="text-sm font-medium uppercase tracking-wide">{{ item.media_type }}</p>
+                </div>
+
+                <!-- Details -->
+                <div class="p-4 space-y-3">
+                    <div>
+                        <div class="flex items-start justify-between mb-1">
+                            <h3 class="font-semibold text-heritage-charcoal dark:text-ivory-mist line-clamp-2 flex-1">
+                                {{ item.filename }}
+                            </h3>
+                            {% if item.has_transcript %}
+                            <span class="ml-2 text-sm" title="Has transcript">📄</span>
+                            {% endif %}
+                        </div>
+                        <p class="text-xs text-clay-taupe">{{ item.mime_type }}</p>
+                    </div>
+
+                    <!-- Metadata -->
+                    <div class="grid grid-cols-2 gap-2 text-xs text-graphite dark:text-warm-sand/80">
+                        {% if item.duration %}
+                        <div>
+                            <span class="font-medium">Duration:</span> {{ item.duration }}
+                        </div>
+                        {% endif %}
+                        {% if item.file_size_mb %}
+                        <div>
+                            <span class="font-medium">Size:</span> {{ item.file_size_mb }} MB
+                        </div>
+                        {% endif %}
+                        {% if item.transcript_count %}
+                        <div>
+                            <span class="font-medium">Transcripts:</span> {{ item.transcript_count }}
+                        </div>
+                        {% endif %}
+                        <div class="col-span-2">
+                            <span class="font-medium">Uploaded:</span> {{ item.created_at }}
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex items-center gap-2 pt-2 border-t border-warm-sand dark:border-graphite">
+                        <a href="/api/media/{{ item.id }}/download"
+                           class="px-3 py-2 rounded-lg bg-warm-sand dark:bg-graphite text-sm text-heritage-charcoal dark:text-ivory-mist hover:opacity-80">
+                            Download
+                        </a>
+                        <a href="/api/media/{{ item.id }}/transcripts"
+                           class="px-3 py-2 rounded-lg bg-ivory-mist dark:bg-heritage-charcoal border border-warm-sand dark:border-graphite text-sm hover:bg-warm-sand dark:hover:bg-graphite">
+                            Transcripts
+                        </a>
                     </div>
                 </div>
             </div>
             {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if total_pages > 1 %}
+        <div class="flex items-center justify-center gap-2">
+            {% if page > 1 %}
+            <a href="?lang={{ current_language }}&type={{ media_type }}&transcript={{ has_transcript }}&page={{ page - 1 }}"
+               class="px-4 py-2 rounded-lg bg-white dark:bg-ink-blue border border-warm-sand dark:border-graphite text-heritage-charcoal dark:text-ivory-mist hover:bg-warm-sand dark:hover:bg-graphite">
+                Previous
+            </a>
+            {% endif %}
+
+            <span class="px-4 py-2 text-sm text-graphite dark:text-warm-sand">
+                Page {{ page }} of {{ total_pages }}
+            </span>
+
+            {% if page < total_pages %}
+            <a href="?lang={{ current_language }}&type={{ media_type }}&transcript={{ has_transcript }}&page={{ page + 1 }}"
+               class="px-4 py-2 rounded-lg bg-white dark:bg-ink-blue border border-warm-sand dark:border-graphite text-heritage-charcoal dark:text-ivory-mist hover:bg-warm-sand dark:hover:bg-graphite">
+                Next
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% else %}
+        <!-- Empty State -->
+        <div class="bg-white dark:bg-ink-blue border border-warm-sand dark:border-graphite rounded-2xl shadow-xl p-12 text-center">
+            <div class="text-6xl mb-4">🎬</div>
+            <p class="text-xl text-graphite dark:text-warm-sand mb-4">No media files found</p>
+            <p class="text-sm text-clay-taupe mb-6">Upload video or audio files to get started</p>
+            <a href="/admin/media/upload?lang={{ current_language }}"
+               class="inline-flex items-center px-6 py-3 rounded-lg bg-deep-terracotta text-ivory-mist hover:bg-civic-emerald transition-colors text-sm font-semibold">
+                + Upload Media
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- API Guide -->
+        <div class="bg-white dark:bg-ink-blue border border-warm-sand dark:border-graphite rounded-2xl shadow-xl p-6">
+            <h2 class="font-semibold text-heritage-charcoal dark:text-ivory-mist text-lg mb-4">Media API</h2>
+            <div class="space-y-4">
+                <div>
+                    <p class="text-sm text-graphite dark:text-warm-sand mb-2">Upload media file:</p>
+                    <pre class="bg-heritage-charcoal dark:bg-graphite text-ivory-mist p-4 rounded-lg text-xs overflow-x-auto">POST /api/media
+Content-Type: multipart/form-data
+
+file: [video or audio file]
+media_type: "video" | "audio"</pre>
+                </div>
+                <div>
+                    <p class="text-sm text-graphite dark:text-warm-sand mb-2">Get media details:</p>
+                    <pre class="bg-heritage-charcoal dark:bg-graphite text-ivory-mist p-4 rounded-lg text-xs overflow-x-auto">GET /api/media/{media_id}</pre>
+                </div>
+                <div>
+                    <p class="text-sm text-graphite dark:text-warm-sand mb-2">Add transcript:</p>
+                    <pre class="bg-heritage-charcoal dark:bg-graphite text-ivory-mist p-4 rounded-lg text-xs overflow-x-auto">POST /api/media/{media_id}/transcripts
+{
+  "language": "en",
+  "text": "Full transcript text..."
+}</pre>
+                </div>
+                <div>
+                    <p class="text-sm text-graphite dark:text-warm-sand mb-2">Download or stream media:</p>
+                    <pre class="bg-heritage-charcoal dark:bg-graphite text-ivory-mist p-4 rounded-lg text-xs overflow-x-auto">GET /api/media/{media_id}/download
+GET /api/media/{media_id}/stream</pre>
+                </div>
+            </div>
         </div>
     </div>
 </section>

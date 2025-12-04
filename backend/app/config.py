@@ -9,6 +9,12 @@ class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
     DEBUG = os.getenv('FLASK_ENV') == 'development'
 
+    # Session configuration
+    SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', 'false').lower() == 'true'
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    REMEMBER_COOKIE_DURATION = timedelta(days=30)
+
     # Database
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'postgresql://kms_user:kms_password@localhost:5432/kms')
     SQLALCHEMY_TRACK_MODIFICATIONS = False

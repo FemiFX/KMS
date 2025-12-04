@@ -1,19 +1,21 @@
-.PHONY: help build up down restart logs shell db-init db-migrate db-upgrade clean prune
+.PHONY: help build up down restart logs shell db-init db-migrate db-upgrade clean prune create-admin list-users
 
 help:
 	@echo "KMS Development Commands"
 	@echo "========================"
-	@echo "make build       - Build Docker images"
-	@echo "make up          - Start all services"
-	@echo "make down        - Stop all services"
-	@echo "make restart     - Restart all services"
-	@echo "make logs        - View logs (Ctrl+C to exit)"
-	@echo "make shell       - Open Flask shell"
-	@echo "make db-init     - Initialize database migrations"
-	@echo "make db-migrate  - Create new migration"
-	@echo "make db-upgrade  - Run migrations"
-	@echo "make clean       - Remove containers and volumes"
-	@echo "make prune       - Clean Docker cache and free disk space"
+	@echo "make build        - Build Docker images"
+	@echo "make up           - Start all services"
+	@echo "make down         - Stop all services"
+	@echo "make restart      - Restart all services"
+	@echo "make logs         - View logs (Ctrl+C to exit)"
+	@echo "make shell        - Open Flask shell"
+	@echo "make db-init      - Initialize database migrations"
+	@echo "make db-migrate   - Create new migration"
+	@echo "make db-upgrade   - Run migrations"
+	@echo "make create-admin - Create an admin user"
+	@echo "make list-users   - List all users"
+	@echo "make clean        - Remove containers and volumes"
+	@echo "make prune        - Clean Docker cache and free disk space"
 
 build:
 	docker compose build
@@ -46,6 +48,12 @@ db-migrate:
 
 db-upgrade:
 	docker compose exec flask flask db upgrade
+
+create-admin:
+	docker compose exec flask flask create-admin
+
+list-users:
+	docker compose exec flask flask list-users
 
 clean:
 	docker compose down -v
