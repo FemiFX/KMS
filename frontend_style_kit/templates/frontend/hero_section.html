@@ -1,0 +1,49 @@
+{% comment %}
+  Homepage hero section with geometric shapes and CTA buttons.
+  Depends on Tailwind tokens defined in tailwind.config.js (indigo, skyblue, rosequartz, goldamber, teal, ivory).
+{% endcomment %}
+<section class="relative bg-ivory dark:bg-indigo-900 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <!-- Hero Text -->
+            <div class="space-y-8">
+                <div class="space-y-6">
+                    <h1 class="text-5xl sm:text-6xl lg:text-7xl font-display font-extrabold text-indigo-800 dark:text-ivory leading-[1.1] tracking-tight">
+                        {% trans %}Finanzielle<br>
+                        Unterstützung<br>
+                        <span class="text-skyblue-400 dark:text-skyblue-300">für Schwarze<br>Trans+ Personen</span>{% endtrans %}
+                    </h1>
+                    <p class="text-lg sm:text-xl text-indigo-600 dark:text-ivory/80 leading-relaxed max-w-xl font-medium">
+                        {% trans %}Der Black Trans+ Fund ist ein Mikrofund, der Schwarzen Trans+ Personen in finanziell schwierigen Situationen konkret hilft.{% endtrans %}
+                    </p>
+                </div>
+                <!-- CTA Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="/apply" class="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-xl bg-indigo-800 hover:bg-indigo-700 text-ivory shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">
+                        {{ _('Jetzt bewerben') }}
+                    </a>
+                    <a href="/about" class="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-xl bg-white dark:bg-indigo-800 text-indigo-800 dark:text-ivory border-2 border-indigo-200 dark:border-indigo-700 hover:border-indigo-300 dark:hover:border-indigo-600 transition-all duration-200">
+                        {{ _('Mehr erfahren') }}
+                    </a>
+                </div>
+            </div>
+            <!-- Hero Visual -->
+            <div class="relative h-[500px] lg:h-[550px]">
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <div class="absolute w-80 h-80 lg:w-96 lg:h-96 rounded-full bg-skyblue-200 dark:bg-skyblue-600/30 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0"></div>
+                    <div class="absolute w-48 h-32 bg-rosequartz-400 dark:bg-rosequartz-600/40 -top-4 right-8 lg:-top-8 lg:right-4 rounded-2xl z-10"></div>
+                    <div class="absolute w-24 h-24 rounded-full bg-goldamber-400 dark:bg-goldamber-500/50 top-0 -right-4 lg:top-4 lg:right-0 z-20"></div>
+                    <div class="absolute w-28 h-14 bg-teal-400 dark:bg-teal-500/40 bottom-24 -left-4 lg:bottom-28 lg:left-0 rounded-t-full z-10"></div>
+                    <div class="absolute w-40 h-40 bg-goldamber-300 dark:bg-goldamber-400/30 -bottom-8 right-12 lg:-bottom-12 lg:right-8 rounded-2xl z-10"></div>
+                    <div class="absolute w-48 h-48 rounded-full bg-rosequartz-500 dark:bg-rosequartz-600/40 bottom-0 -right-4 lg:bottom-4 lg:right-0 z-15"></div>
+                    <div class="absolute w-20 h-20 rounded-full bg-goldamber-500 dark:bg-goldamber-400/50 bottom-12 right-36 lg:bottom-16 lg:right-44 z-20"></div>
+                </div>
+                <div class="absolute inset-0 flex items-center justify-center z-30">
+                    <div class="relative w-[400px] h-[480px] lg:w-[450px] lg:h-[520px] bg-white/95 dark:bg-white/90 rounded-3xl shadow-2xl p-8 lg:p-10 transform hover:scale-[1.02] transition-transform duration-300">
+                        <img src="/static/images/btf-image.svg" alt="Black Trans+ Fund" class="w-full h-full object-contain">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

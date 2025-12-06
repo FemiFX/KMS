@@ -1,0 +1,185 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Publikationen - Verwaltungsportal{% endblock %}
+{% block page_title %}Publikationen{% endblock %}
+{% block page_subtitle %}{{ total }} Publikation{% if total != 1 %}en{% endif %} gefunden{% endblock %}
+
+{% block nav_extra %}
+<a href="{{ url_for('admin.publications_upload_page') }}" class="btn-primary hidden lg:inline-flex items-center">
+    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+    </svg>
+    Neue Publikation
+</a>
+{% endblock %}
+
+{% block admin_content %}
+<!-- Mobile action button -->
+<div class="lg:hidden mb-6">
+    <a href="{{ url_for('admin.publications_upload_page') }}" class="btn-primary w-full flex items-center justify-center">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        Neue Publikation
+    </a>
+</div>
+
+<!-- Filters -->
+<div class="card mb-6">
+    <form method="GET" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input type="hidden" name="lang" value="{{ current_language }}">
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Format
+            </label>
+            <select name="format" class="input-field" onchange="this.form.submit()">
+                <option value="">Alle Formate</option>
+                <option value="pdf" {% if mime_filter == 'pdf' %}selected{% endif %}>PDF</option>
+                <option value="docx" {% if mime_filter == 'docx' %}selected{% endif %}>DOCX</option>
+                <option value="epub" {% if mime_filter == 'epub' %}selected{% endif %}>EPUB</option>
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Sortierung
+            </label>
+            <select name="sort" class="input-field" onchange="this.form.submit()">
+                <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>Neueste zuerst</option>
+                <option value="oldest" {% if sort_by == 'oldest' %}selected{% endif %}>Älteste zuerst</option>
+                <option value="title" {% if sort_by == 'title' %}selected{% endif %}>Alphabetisch</option>
+            </select>
+        </div>
+    </form>
+</div>
+
+<!-- Publications Grid -->
+{% if publications %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for pub in publications %}
+            <div class="card hover:shadow-xl transition-shadow">
+                <!-- Document Icon/Thumbnail -->
+                <div class="w-full h-40 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded-lg flex items-center justify-center mb-4 relative overflow-hidden">
+                    <!-- Decorative elements -->
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-accent-sky/20 to-accent-rose/20 blur-2xl"></div>
+                    <div class="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-accent-gold/20 to-primary-indigo/20 blur-2xl"></div>
+
+                    <svg class="w-16 h-16 text-gray-400 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+
+                <!-- Format Badge -->
+                <div class="flex items-center justify-between mb-3">
+                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium
+                        {% if pub.format == 'PDF' %}bg-primary-indigo/20 text-primary-indigo dark:bg-emerald/20 dark:text-emerald
+                        {% elif pub.format == 'DOCX' %}bg-accent-sky/20 text-accent-sky dark:bg-accent-rose/20 dark:text-accent-rose
+                        {% else %}bg-accent-gold/20 text-accent-gold{% endif %}">
+                        {{ pub.format }}
+                    </span>
+                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+                        {{ pub.visibility|capitalize }}
+                    </span>
+                </div>
+
+                <!-- Title -->
+                <h3 class="text-lg font-semibold text-primary-indigo dark:text-white mb-2 line-clamp-2">
+                    {{ pub.title }}
+                </h3>
+
+                <!-- Excerpt -->
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
+                    {{ pub.excerpt }}
+                </p>
+
+                <!-- Tags -->
+                {% if pub.tags %}
+                    <div class="flex flex-wrap gap-1 mb-4">
+                        {% for tag in pub.tags[:3] %}
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+                                {{ tag }}
+                            </span>
+                        {% endfor %}
+                        {% if pub.tags|length > 3 %}
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+                                +{{ pub.tags|length - 3 }}
+                            </span>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                <!-- Footer -->
+                <div class="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <div class="flex flex-col">
+                        <span class="text-xs text-gray-500 dark:text-gray-400">
+                            {{ pub.created_at }}
+                        </span>
+                        {% if pub.file_size_mb %}
+                            <span class="text-xs text-gray-500 dark:text-gray-400">
+                                {{ pub.file_size_mb }} MB
+                            </span>
+                        {% endif %}
+                    </div>
+                    <a href="{{ url_for('public.publication_detail', content_id=pub.id, lang=current_language) }}"
+                       class="text-accent-sky dark:text-accent-rose hover:underline text-sm font-medium">
+                       Öffnen →
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if total_pages > 1 %}
+        <div class="flex items-center justify-center space-x-2 mt-6">
+            {% if page > 1 %}
+                <a href="?page={{ page - 1 }}&format={{ mime_filter }}&sort={{ sort_by }}&lang={{ current_language }}"
+                   class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    Zurück
+                </a>
+            {% endif %}
+
+            {% for p in range(1, total_pages + 1) %}
+                {% if p == page %}
+                    <span class="px-4 py-2 bg-accent-sky dark:bg-accent-rose text-white rounded-lg">
+                        {{ p }}
+                    </span>
+                {% elif p == 1 or p == total_pages or (p >= page - 2 and p <= page + 2) %}
+                    <a href="?page={{ p }}&format={{ mime_filter }}&sort={{ sort_by }}&lang={{ current_language }}"
+                       class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        {{ p }}
+                    </a>
+                {% elif p == page - 3 or p == page + 3 %}
+                    <span class="px-4 py-2 text-gray-500">...</span>
+                {% endif %}
+            {% endfor %}
+
+            {% if page < total_pages %}
+                <a href="?page={{ page + 1 }}&format={{ mime_filter }}&sort={{ sort_by }}&lang={{ current_language }}"
+                   class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    Weiter
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+{% else %}
+    <div class="card text-center py-12">
+        <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+        </svg>
+        <p class="text-gray-600 dark:text-gray-400 mb-2">
+            Keine Publikationen gefunden
+        </p>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+            Laden Sie PDF-, DOCX- oder EPUB-Dateien hoch
+        </p>
+        <a href="{{ url_for('admin.publications_upload_page') }}" class="btn-primary inline-flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Neue Publikation
+        </a>
+    </div>
+{% endif %}
+{% endblock %}

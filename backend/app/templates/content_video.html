@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}{{ content.title }} - UN-Dekade{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Back Button -->
+    <a href="{{ url_for('public.index') }}" class="inline-flex items-center text-accent-sky dark:text-accent-rose hover:underline mb-6">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        Zurück zur Startseite
+    </a>
+
+    <!-- Video Header -->
+    <article class="card">
+        <!-- Meta Information -->
+        <div class="flex flex-wrap items-center gap-2 mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <span class="inline-flex items-center px-3 py-1 rounded text-sm font-medium bg-terracotta/20 text-terracotta dark:bg-accent-rose/20 dark:text-accent-rose">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                Video
+            </span>
+
+            {% if content.created_at %}
+                <span class="text-sm text-gray-600 dark:text-gray-400">
+                    {{ content.created_at }}
+                </span>
+            {% endif %}
+
+            <!-- Language Selector -->
+            {% if available_languages and available_languages|length > 1 %}
+                <div class="ml-auto">
+                    <select id="language-selector" class="text-sm bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-1">
+                        {% for lang in available_languages %}
+                            <option value="{{ lang }}" {% if lang == content.language %}selected{% endif %}>
+                                {% if lang == 'de' %}Deutsch
+                                {% elif lang == 'en' %}English
+                                {% elif lang == 'fr' %}Français
+                                {% elif lang == 'pt' %}Português
+                                {% endif %}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Title -->
+        <h1 class="text-4xl font-bold text-primary-indigo dark:text-white mb-6">
+            {{ content.title }}
+        </h1>
+
+        <!-- Tags -->
+        {% if content.tags %}
+            <div class="flex flex-wrap gap-2 mb-8">
+                {% for tag in content.tags %}
+                    <span class="tag-chip">
+                        <i class="fa-solid fa-tag"></i>
+                        {{ tag }}
+                    </span>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Video Player -->
+        {% if content.media_content %}
+            {% set media = content.media_content %}
+            {% set file_path = media.object_key.replace('/static/', '') %}
+            {% set file_url = url_for('static', filename=file_path) %}
+
+            <div class="mb-8 bg-black rounded-lg overflow-hidden shadow-2xl">
+                <video
+                    controls
+                    class="w-full aspect-video"
+                    preload="metadata"
+                    poster="{{ url_for('static', filename='img/video-placeholder.jpg') if content.media_content else '' }}">
+                    <source src="{{ file_url }}" type="video/mp4">
+                    <source src="{{ file_url }}" type="video/webm">
+                    <source src="{{ file_url }}" type="video/ogg">
+                    Ihr Browser unterstützt das Video-Tag nicht.
+                </video>
+            </div>
+
+            <!-- Video Info -->
+            <div class="flex items-center justify-between mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div class="flex items-center space-x-4">
+                    <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                    </svg>
+                    <div>
+                        <p class="text-sm font-medium text-gray-900 dark:text-white">Video-Datei</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ (media.file_size / (1024 * 1024))|round(2) }} MB</p>
+                    </div>
+                </div>
+                <a href="{{ file_url }}" download class="px-4 py-2 bg-emerald dark:bg-heritage text-white rounded-lg hover:opacity-90 transition-opacity text-sm font-medium inline-flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                    </svg>
+                    Download
+                </a>
+            </div>
+        {% else %}
+            <!-- Placeholder if no video file -->
+            <div class="mb-8 bg-gray-100 dark:bg-gray-800 rounded-lg p-12 text-center">
+                <svg class="w-20 h-20 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                <p class="text-gray-600 dark:text-gray-400">Video nicht verfügbar</p>
+            </div>
+        {% endif %}
+
+        <!-- Description -->
+        {% if content.markdown %}
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Beschreibung</h2>
+                <div id="markdown-viewer" class="prose prose-lg dark:prose-invert max-w-none"></div>
+                <script type="application/json" id="markdown-data">
+                    {{ content.markdown|default('')|tojson }}
+                </script>
+            </div>
+        {% endif %}
+    </article>
+
+    <!-- Related Content or Actions -->
+    <div class="mt-8 text-center">
+        <a href="{{ url_for('public.index') }}" class="btn-primary inline-flex items-center">
+            Weitere Inhalte erkunden
+            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+            </svg>
+        </a>
+    </div>
+</div>
+
+<script>
+// Language selector functionality
+const languageSelector = document.getElementById('language-selector');
+if (languageSelector) {
+    languageSelector.addEventListener('change', (e) => {
+        const newLang = e.target.value;
+        const url = new URL(window.location.href);
+        url.searchParams.set('lang', newLang);
+        window.location.href = url.toString();
+    });
+}
+</script>
+
+<!-- Load Rich Markdown Editor -->
+<script type="module" src="{{ url_for('static', filename='dist/main.js') }}"></script>
+{% endblock %}

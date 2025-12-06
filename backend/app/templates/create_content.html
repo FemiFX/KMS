@@ -1,29 +1,11 @@
 {% extends "base_admin.html" %}
 
 {% block title %}Neuer Artikel - Verwaltungsportal{% endblock %}
+{% block page_title %}Neuen Artikel erstellen{% endblock %}
+{% block page_subtitle %}Verfassen Sie einen neuen Artikel mit Rich-Text-Editor{% endblock %}
 
 {% block admin_content %}
 <div class="max-w-6xl mx-auto">
-    <!-- Header with Actions -->
-    <div class="flex items-center justify-between mb-6">
-        <div>
-            <h1 class="text-2xl font-bold text-primary-indigo dark:text-white">
-                Neuen Artikel erstellen
-            </h1>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Verfassen Sie einen neuen Artikel mit Rich-Text-Editor
-            </p>
-        </div>
-        <div class="flex items-center space-x-3">
-            <button id="save-draft-btn" class="btn-secondary">
-                Entwurf speichern
-            </button>
-            <button id="publish-btn" class="btn-primary">
-                Veröffentlichen
-            </button>
-        </div>
-    </div>
-
     <!-- Content Creation Form -->
     <form id="content-form" class="space-y-6">
         <!-- Title Input -->
@@ -112,6 +94,16 @@
             <!-- Rich Markdown Editor -->
             <div id="markdown-editor" data-input-id="markdown-input" class="min-h-[500px]"></div>
             <input type="hidden" id="markdown-input" name="markdown">
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center justify-end space-x-4">
+            <button type="button" id="save-draft-btn" class="px-6 py-2 text-gray-600 dark:text-gray-400 hover:underline">
+                Entwurf speichern
+            </button>
+            <button type="button" id="publish-btn" class="btn-primary px-8">
+                Veröffentlichen
+            </button>
         </div>
     </form>
 </div>
@@ -251,14 +243,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
         selectedTags.push(tagData);
         const tagElement = document.createElement('span');
-        const bgColor = tagData.color ? `background-color: ${tagData.color}20; color: ${tagData.color};` : '';
-        tagElement.className = 'inline-flex items-center px-3 py-1 rounded-full text-sm bg-accent-sky/20 dark:bg-accent-rose/20 text-accent-sky dark:text-accent-rose';
-        if (bgColor) {
-            tagElement.style.cssText = bgColor;
+
+        // Style based on whether it's a new tag or has a custom color
+        let className, style;
+        if (tagData.isNew) {
+            // New tags get a distinct skyblue color
+            className = 'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium';
+            style = 'background-color: #4A9EDD; color: #ffffff;';
+        } else if (tagData.color) {
+            // Existing tags with custom colors
+            className = 'inline-flex items-center px-3 py-1 rounded-full text-sm';
+            style = `background-color: ${tagData.color}20; color: ${tagData.color};`;
+        } else {
+            // Default existing tags
+            className = 'inline-flex items-center px-3 py-1 rounded-full text-sm bg-accent-sky/20 dark:bg-accent-rose/20 text-accent-sky dark:text-accent-rose';
+            style = '';
         }
+
+        tagElement.className = className;
+        if (style) {
+            tagElement.style.cssText = style;
+        }
+
         tagElement.innerHTML = `
-            ${tagData.label}${tagData.isNew ? ' <span class="text-xs opacity-70">(neu)</span>' : ''}
-            <button type="button" class="ml-2 hover:text-red-500" data-tag-key="${tagData.key}">
+            ${tagData.label}${tagData.isNew ? ' <span class="text-xs opacity-90 font-normal">(neu)</span>' : ''}
+            <button type="button" class="ml-2 hover:opacity-70 transition-opacity" data-tag-key="${tagData.key}">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
@@ -313,8 +322,10 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (response.ok) {
-                alert(publish ? 'Artikel veröffentlicht!' : 'Entwurf gespeichert!');
-                window.location.href = '{{ url_for("admin.contents_page") }}';
+                const message = publish ? 'Artikel erfolgreich veröffentlicht!' : 'Entwurf gespeichert!';
+                const lang = document.getElementById('content-language').value;
+                // Redirect with language parameter and flash message
+                window.location.href = '{{ url_for("admin.contents_page") }}?lang=' + lang + '&flash_success=' + encodeURIComponent(message);
             } else {
                 const error = await response.json();
                 alert('Fehler: ' + (error.error || 'Unbekannter Fehler'));
@@ -325,8 +336,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    publishBtn.addEventListener('click', () => saveContent(true));
-    saveDraftBtn.addEventListener('click', () => saveContent(false));
+    // Add event listeners for buttons
+    publishBtn?.addEventListener('click', () => saveContent(true));
+    saveDraftBtn?.addEventListener('click', () => saveContent(false));
 });
 </script>
 

@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}{{ content.title }} - UN-Dekade{% endblock %}
+
+{% block content %}
+<div class="text-white" style="background:#1f3b2d;">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <div class="space-y-4 lg:space-y-6 lg:pr-6">
+                <div class="flex flex-wrap items-center gap-3 text-sm uppercase tracking-wide text-gray-300">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white/10 border border-white/20 text-white">
+                        Artikel
+                    </span>
+
+                </div>
+
+                <h1 class="text-4xl sm:text-5xl font-bold leading-tight text-white">
+                    {{ content.title }}
+                </h1>
+
+                <!-- Language Selector -->
+                {% if available_languages and available_languages|length > 1 %}
+                    <div>
+                        <label for="language-selector" class="text-xs uppercase tracking-wide text-gray-400">Sprache</label>
+                        <select id="language-selector" class="mt-1 text-sm bg-white/10 border border-white/20 rounded px-3 py-2 text-white">
+                            {% for lang in available_languages %}
+                                <option value="{{ lang }}" {% if lang == content.language %}selected{% endif %} class="text-charcoal">
+                                    {% if lang == 'de' %}Deutsch
+                                    {% elif lang == 'en' %}English
+                                    {% elif lang == 'fr' %}Français
+                                    {% elif lang == 'pt' %}Português
+                                    {% else %}{{ lang|upper }}{% endif %}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="relative flex justify-end">
+                {% set hero_media = content.media_content if content.media_content else None %}
+                {% if hero_media and hero_media.object_key %}
+                    {% set hero_path = hero_media.object_key.replace('/static/', '') %}
+                    {% set hero_url = url_for('static', filename=hero_path) %}
+                {% else %}
+                    {% set hero_url = url_for('static', filename='img/hero-section.jpg') %}
+                {% endif %}
+                <div class="rounded-3xl overflow-hidden shadow-2xl border border-white/10 bg-white/5 max-w-xl w-full">
+                    <img src="{{ hero_url }}" alt="Artikel Illustration" class="w-full h-full object-cover max-h-[360px]">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bg-white dark:bg-charcoal-900">
+    <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+        <div class="grid grid-cols-1 md:grid-cols-[1fr_2fr_1fr] gap-10 items-start">
+            <!-- Left rail -->
+            <div class="text-sm text-gray-600 dark:text-gray-300 lg:sticky lg:top-24 self-start space-y-4">
+                {% if content.created_at %}
+                    <div class="font-semibold text-charcoal dark:text-ivory">{{ content.created_at }}</div>
+                {% endif %}
+                {% if content.language %}
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-globe text-emerald"></i>
+                        <span>{{ content.language|upper }}</span>
+                    </div>
+                {% endif %}
+                {% if content.read_time_minutes %}
+                    <div class="flex items-center gap-2">
+                        <i class="fa-regular fa-clock text-emerald"></i>
+                        <span>{{ content.read_time_minutes }} min read</span>
+                    </div>
+                {% endif %}
+                {% if content.tags %}
+                    <div class="flex flex-col items-start gap-2">
+                        {% for tag in content.tags %}
+                            <span class="tag-chip">
+                                <i class="fa-solid fa-tag"></i>
+                                {{ tag }}
+                            </span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Article -->
+            <article class="space-y-10">
+                <div id="markdown-viewer" class="prose prose-lg lg:prose-xl dark:prose-invert max-w-none"></div>
+                <script type="application/json" id="markdown-data">
+                    {{ content.markdown|default('')|tojson }}
+                </script>
+            </article>
+
+            <!-- Right rail -->
+            <div class="hidden lg:block lg:sticky lg:top-24 self-start">
+                <div class="card p-4 bg-white dark:bg-graphite-800 border border-gray-200 dark:border-graphite-700 rounded-2xl shadow-sm">
+                    <h3 class="text-sm font-semibold text-gray-700 dark:text-ivory mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-list-ul text-emerald"></i> Inhalt
+                    </h3>
+                    <div id="toc" class="space-y-2 text-sm text-gray-700 dark:text-ivory"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 text-center">
+            <a href="{{ url_for('public.index') }}" class="inline-flex items-center px-6 py-3 rounded-full border border-gray-300 dark:border-graphite-700 text-charcoal dark:text-ivory hover:bg-gray-100 dark:hover:bg-graphite-700 transition">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Zurück zur Startseite
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+// Language selector functionality
+const languageSelector = document.getElementById('language-selector');
+if (languageSelector) {
+    languageSelector.addEventListener('change', (e) => {
+        const newLang = e.target.value;
+        const url = new URL(window.location.href);
+        url.searchParams.set('lang', newLang);
+        window.location.href = url.toString();
+    });
+}
+</script>
+
+<!-- Load Rich Markdown Editor -->
+<script type="module" src="{{ url_for('static', filename='dist/main.js') }}"></script>
+<script>
+    // Build simple table of contents from rendered headings
+    document.addEventListener('DOMContentLoaded', () => {
+        const viewer = document.getElementById('markdown-viewer');
+        const toc = document.getElementById('toc');
+        if (!viewer || !toc) return;
+
+        const headings = viewer.querySelectorAll('h1, h2, h3');
+        const items = [];
+
+        const slugify = (text) => text.toLowerCase().trim()
+            .replace(/[^a-z0-9\\s-]/g, '')
+            .replace(/\\s+/g, '-')
+            .replace(/-+/g, '-');
+
+        headings.forEach((h, idx) => {
+            const label = h.textContent.trim();
+            if (!label) return;
+            let id = h.id || slugify(label);
+            if (document.getElementById(id)) {
+                // Ensure uniqueness
+                id = `${id}-${idx}`;
+            }
+            h.id = id;
+            items.push({ id, label, level: h.tagName.toLowerCase() });
+        });
+
+        toc.innerHTML = '';
+        items.forEach(item => {
+            const a = document.createElement('a');
+            a.href = `#${item.id}`;
+            a.textContent = item.label;
+            a.className = 'block py-1 hover:text-emerald transition-colors';
+            if (item.level === 'h2') a.classList.add('pl-2');
+            if (item.level === 'h3') a.classList.add('pl-4', 'text-sm');
+            toc.appendChild(a);
+        });
+    });
+</script>
+{% endblock %}

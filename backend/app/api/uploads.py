@@ -1,5 +1,5 @@
 """File upload endpoints for editor embeds."""
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app, url_for
 from werkzeug.utils import secure_filename
 import os
 import uuid
@@ -48,7 +48,7 @@ def upload_image():
         filename = f"{uuid.uuid4()}.{ext}"
 
         # Create uploads directory if it doesn't exist
-        upload_dir = os.path.join('backend', 'app', 'static', 'uploads', 'images')
+        upload_dir = os.path.join(current_app.static_folder, 'uploads', 'images')
         os.makedirs(upload_dir, exist_ok=True)
 
         # Save file
@@ -56,7 +56,7 @@ def upload_image():
         file.save(filepath)
 
         # Return URL
-        url = f"/static/uploads/images/{filename}"
+        url = url_for('static', filename=f'uploads/images/{filename}')
 
         return jsonify({'url': url}), 200
 
@@ -90,7 +90,7 @@ def upload_file():
         filename = f"{original_name.rsplit('.', 1)[0]}_{unique_id}.{ext}" if ext else f"{original_name}_{unique_id}"
 
         # Create uploads directory if it doesn't exist
-        upload_dir = os.path.join('backend', 'app', 'static', 'uploads', 'files')
+        upload_dir = os.path.join(current_app.static_folder, 'uploads', 'files')
         os.makedirs(upload_dir, exist_ok=True)
 
         # Save file
@@ -98,7 +98,7 @@ def upload_file():
         file.save(filepath)
 
         # Return URL and metadata
-        url = f"/static/uploads/files/{filename}"
+        url = url_for('static', filename=f'uploads/files/{filename}')
         file_size = os.path.getsize(filepath)
 
         return jsonify({

@@ -83,6 +83,110 @@ class TestMediaPage:
         response = authenticated_client.get('/admin/media?transcript=yes')
         assert response.status_code == 200
 
+    def test_media_page_includes_content_id(self, authenticated_client, app, test_user):
+        """Test that media page includes content_id in media data for building URLs."""
+        from app.models import Content, MediaContent, ArticleTranslation
+        from app import db
+
+        with app.app_context():
+            # Create video content with media
+            content = Content(
+                type='video',
+                created_by_id=test_user.id,
+                visibility='public'
+            )
+            db.session.add(content)
+            db.session.flush()
+
+            media = MediaContent(
+                content_id=content.id,
+                kind='video',
+                object_key='/static/uploads/videos/test.mp4',
+                mime_type='video/mp4',
+                file_size=1024000,
+                original_language='de'
+            )
+            db.session.add(media)
+
+            translation = ArticleTranslation(
+                content_id=content.id,
+                language='de',
+                title='Test Video for Media Library',
+                markdown='Test',
+                is_primary=True
+            )
+            translation.generate_slug()
+            db.session.add(translation)
+            db.session.commit()
+            content_id = content.id
+
+        response = authenticated_client.get('/admin/media?lang=de')
+        assert response.status_code == 200
+
+        # Check that the page contains content_id in a usable format for URL building
+        # The template uses url_for('public.' + media.media_type + '_detail', content_id=media.content_id)
+        # So the HTML should contain the content_id somewhere in the Details link
+        assert str(content_id).encode() in response.data
+
+        # Cleanup
+        with app.app_context():
+            MediaContent.query.filter_by(content_id=content_id).delete()
+            ArticleTranslation.query.filter_by(content_id=content_id).delete()
+            Content.query.filter_by(id=content_id).delete()
+            db.session.commit()
+
+    def test_media_page_details_link_works(self, authenticated_client, app, test_user):
+        """Test that the Details button links to the correct type-specific route."""
+        from app.models import Content, MediaContent, ArticleTranslation
+        from app import db
+
+        with app.app_context():
+            # Create audio content
+            content = Content(
+                type='audio',
+                created_by_id=test_user.id,
+                visibility='public'
+            )
+            db.session.add(content)
+            db.session.flush()
+
+            media = MediaContent(
+                content_id=content.id,
+                kind='audio',
+                object_key='/static/uploads/audios/test.mp3',
+                mime_type='audio/mpeg',
+                file_size=512000,
+                original_language='de'
+            )
+            db.session.add(media)
+
+            translation = ArticleTranslation(
+                content_id=content.id,
+                language='de',
+                title='Test Audio for Link',
+                markdown='Test',
+                is_primary=True
+            )
+            translation.generate_slug()
+            db.session.add(translation)
+            db.session.commit()
+            content_id = content.id
+
+        response = authenticated_client.get('/admin/media?type=audio&lang=de')
+        assert response.status_code == 200
+
+        # Check that the page contains a link to the audio detail page
+        # The link should be: /contents/audio/{content_id}?lang=de
+        expected_link = f'/contents/audio/{content_id}'
+        assert expected_link.encode() in response.data
+
+        # Cleanup
+        with app.app_context():
+            MediaContent.query.filter_by(content_id=content_id).delete()
+            ArticleTranslation.query.filter_by(content_id=content_id).delete()
+            Content.query.filter_by(id=content_id).delete()
+            db.session.commit()
+
 
 class TestMediaUploadPage:
     """Test media upload page."""

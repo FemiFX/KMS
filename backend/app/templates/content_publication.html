@@ -1,0 +1,313 @@
+{% extends "base.html" %}
+
+{% block title %}{{ content.title }} - UN-Dekade{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Back Button -->
+    <a href="{{ url_for('public.index') }}" class="inline-flex items-center text-accent-sky dark:text-accent-rose hover:underline mb-6">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        Zurück zur Startseite
+    </a>
+
+    <!-- Publication Header -->
+    <article class="card">
+        <!-- Meta Information -->
+        <div class="flex flex-wrap items-center gap-2 mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <span class="inline-flex items-center px-3 py-1 rounded text-sm font-medium bg-inkblue/20 text-inkblue dark:bg-accent-gold/20 dark:text-accent-gold">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                </svg>
+                Publikation
+            </span>
+
+            {% if content.created_at %}
+                <span class="text-sm text-gray-600 dark:text-gray-400">
+                    {{ content.created_at }}
+                </span>
+            {% endif %}
+
+            <!-- Language Selector -->
+            {% if available_languages and available_languages|length > 1 %}
+                <div class="ml-auto">
+                    <select id="language-selector" class="text-sm bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-1">
+                        {% for lang in available_languages %}
+                            <option value="{{ lang }}" {% if lang == content.language %}selected{% endif %}>
+                                {% if lang == 'de' %}Deutsch
+                                {% elif lang == 'en' %}English
+                                {% elif lang == 'fr' %}Français
+                                {% elif lang == 'pt' %}Português
+                                {% endif %}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Title -->
+        <h1 class="text-4xl font-bold text-primary-indigo dark:text-white mb-6">
+            {{ content.title }}
+        </h1>
+
+        <!-- Tags -->
+        {% if content.tags %}
+            <div class="flex flex-wrap gap-2 mb-8">
+                {% for tag in content.tags %}
+                    <span class="tag-chip">
+                        <i class="fa-solid fa-tag"></i>
+                        {{ tag }}
+                    </span>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Publication File Viewer -->
+        {% if content.media_content %}
+            {% set media = content.media_content %}
+            {% set file_path = media.object_key.replace('/static/', '') %}
+            {% set file_url = url_for('static', filename=file_path) %}
+            {% set filename = media.object_key.split('/')[-1] %}
+            {% set original_filename = filename.split('_', 1)[1] if '_' in filename else filename %}
+            {% set file_ext = filename.split('.')[-1]|lower %}
+
+            <div class="mb-8 bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ original_filename }}</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ (media.file_size / (1024 * 1024))|round(2) }} MB • {{ file_ext|upper }}</p>
+                    </div>
+                    <a href="{{ file_url }}" download class="px-4 py-2 bg-emerald dark:bg-heritage text-white rounded-lg hover:opacity-90 transition-opacity text-sm font-medium inline-flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        Download
+                    </a>
+                </div>
+
+                <!-- File Preview -->
+                {% if file_ext in ['png', 'jpg', 'jpeg', 'webp', 'gif'] %}
+                    <div class="mt-4">
+                        <img src="{{ file_url }}" alt="{{ original_filename }}" class="rounded-lg border border-gray-300 dark:border-gray-600 max-h-96 object-contain mx-auto hover:shadow-lg transition-shadow cursor-pointer" onclick="openFileModal('{{ file_url }}', '{{ file_ext }}')">
+                    </div>
+                {% elif file_ext == 'pdf' %}
+                    <div class="mt-4">
+                        <embed src="{{ file_url }}#toolbar=1" type="application/pdf" class="w-full h-[900px] rounded-lg border border-gray-300 dark:border-gray-600" />
+                        <div class="mt-3 flex gap-3">
+                            <a href="{{ file_url }}" target="_blank" class="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 text-sm font-medium text-center">
+                                In neuem Tab öffnen
+                            </a>
+                            <button onclick="openFileModal('{{ file_url }}', 'pdf')" class="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 text-sm font-medium">
+                                Im Vollbild öffnen
+                            </button>
+                        </div>
+                    </div>
+                {% elif file_ext in ['docx', 'doc'] %}
+                    <div class="mt-4 text-center p-8 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg">
+                        <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">DOCX-Dokument</p>
+                        <button onclick="openFileModal('{{ file_url }}', '{{ file_ext }}')" class="px-4 py-2 bg-emerald dark:bg-heritage text-white rounded-lg hover:opacity-90 transition-opacity text-sm font-medium">
+                            Dokument anzeigen
+                        </button>
+                    </div>
+                {% else %}
+                    <div class="mt-4 text-center p-8 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg">
+                        <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                        <p class="text-gray-600 dark:text-gray-400">{{ file_ext|upper }}-Datei</p>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        <!-- Description/Abstract -->
+        {% if content.markdown %}
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Beschreibung</h2>
+                <div id="markdown-viewer" class="prose prose-lg dark:prose-invert max-w-none"></div>
+                <script type="application/json" id="markdown-data">
+                    {{ content.markdown|default('')|tojson }}
+                </script>
+            </div>
+        {% endif %}
+    </article>
+
+    <!-- Related Content or Actions -->
+    <div class="mt-8 text-center">
+        <a href="{{ url_for('public.index') }}" class="btn-primary inline-flex items-center">
+            Weitere Inhalte erkunden
+            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+            </svg>
+        </a>
+    </div>
+</div>
+
+<script>
+// Language selector functionality
+const languageSelector = document.getElementById('language-selector');
+if (languageSelector) {
+    languageSelector.addEventListener('change', (e) => {
+        const newLang = e.target.value;
+        const url = new URL(window.location.href);
+        url.searchParams.set('lang', newLang);
+        window.location.href = url.toString();
+    });
+}
+</script>
+
+<!-- Mammoth.js for DOCX support -->
+<script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
+
+<!-- File Modal Viewer -->
+<style>
+.file-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.9);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+.file-modal-backdrop.show { display: flex; }
+.file-modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    color: #111827;
+    background: #f8fafc;
+    border-radius: 9999px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    cursor: pointer;
+    border: 1px solid rgba(17,24,39,0.15);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+    z-index: 10000;
+    font-weight: bold;
+}
+.file-modal-body {
+    position: relative;
+    width: 95vw;
+    height: 95vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.file-modal-content {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    border: none;
+    background: transparent;
+    object-fit: contain;
+    margin: 0;
+    display: block;
+}
+</style>
+
+<div id="fileModal" class="file-modal-backdrop">
+    <div class="file-modal-body">
+        <button id="fileModalClose" class="file-modal-close" aria-label="Schließen">&times;</button>
+        <div id="fileModalBody" class="w-full h-full flex items-center justify-center">
+            <p class="text-sm text-gray-100">Laden…</p>
+        </div>
+    </div>
+</div>
+
+<script>
+async function openFileModal(src, type) {
+    const modal = document.getElementById('fileModal');
+    const body = document.getElementById('fileModalBody');
+    body.innerHTML = '<p class="text-sm text-gray-100">Laden…</p>';
+
+    const isImage = ['png','jpg','jpeg','webp','gif'].includes(type);
+    const isPdf = type === 'pdf';
+    const isDocx = ['docx', 'doc'].includes(type);
+
+    if (isImage) {
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = 'Dokument';
+        img.className = 'file-modal-content';
+        img.style.objectFit = 'contain';
+        body.innerHTML = '';
+        body.appendChild(img);
+    } else if (isPdf) {
+        const iframe = document.createElement('iframe');
+        iframe.src = src + '#toolbar=1';
+        iframe.type = 'application/pdf';
+        iframe.className = 'file-modal-content';
+        body.innerHTML = '';
+        body.appendChild(iframe);
+    } else if (isDocx && typeof mammoth !== 'undefined') {
+        try {
+            const response = await fetch(src);
+            const arrayBuffer = await response.arrayBuffer();
+            const result = await mammoth.convertToHtml({arrayBuffer});
+            const container = document.createElement('div');
+            container.className = 'file-modal-content overflow-auto p-8 bg-white dark:bg-gray-800 rounded-lg';
+            container.style.maxWidth = '900px';
+            container.style.height = '100%';
+            container.innerHTML = result.value;
+
+            const style = document.createElement('style');
+            style.textContent = `
+                #fileModalBody .file-modal-content { font-family: 'Inter', system-ui, -apple-system, sans-serif; line-height: 1.6; color: #1f2937; }
+                .dark #fileModalBody .file-modal-content { color: #f9fafb; }
+                #fileModalBody .file-modal-content p { margin-bottom: 1em; }
+                #fileModalBody .file-modal-content h1, #fileModalBody .file-modal-content h2, #fileModalBody .file-modal-content h3 { font-weight: 600; margin-top: 1.5em; margin-bottom: 0.5em; }
+                #fileModalBody .file-modal-content ul, #fileModalBody .file-modal-content ol { margin-left: 1.5em; margin-bottom: 1em; }
+                #fileModalBody .file-modal-content table { border-collapse: collapse; width: 100%; margin-bottom: 1em; }
+                #fileModalBody .file-modal-content td, #fileModalBody .file-modal-content th { border: 1px solid #d1d5db; padding: 0.5em; }
+                .dark #fileModalBody .file-modal-content td, .dark #fileModalBody .file-modal-content th { border-color: #4b5563; }
+            `;
+            document.head.appendChild(style);
+            body.innerHTML = '';
+            body.appendChild(container);
+        } catch (error) {
+            console.error('Error rendering DOCX:', error);
+            body.innerHTML = `
+                <div class="text-center p-8 bg-white dark:bg-gray-800 rounded-lg">
+                    <p class="text-red-600 dark:text-red-400 mb-4">Fehler beim Laden des Dokuments</p>
+                    <a href="${src}" download class="px-4 py-2 bg-emerald dark:bg-heritage text-white rounded-lg hover:opacity-90 transition-opacity">
+                        Stattdessen herunterladen
+                    </a>
+                </div>
+            `;
+        }
+    } else {
+        const iframe = document.createElement('iframe');
+        iframe.src = src;
+        iframe.className = 'file-modal-content';
+        body.innerHTML = '';
+        body.appendChild(iframe);
+    }
+    modal.classList.add('show');
+}
+
+document.getElementById('fileModalClose').addEventListener('click', () => {
+    document.getElementById('fileModal').classList.remove('show');
+});
+
+document.getElementById('fileModal').addEventListener('click', (e) => {
+    if (e.target.id === 'fileModal') {
+        document.getElementById('fileModal').classList.remove('show');
+    }
+});
+</script>
+
+<!-- Load Rich Markdown Editor -->
+<script type="module" src="{{ url_for('static', filename='dist/main.js') }}"></script>
+{% endblock %}

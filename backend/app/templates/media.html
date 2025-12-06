@@ -1,29 +1,31 @@
 {% extends "base_admin.html" %}
 
 {% block title %}Medien - Verwaltungsportal{% endblock %}
+{% block page_title %}Medienbibliothek{% endblock %}
+{% block page_subtitle %}{{ total }} Mediendatei{% if total != 1 %}en{% endif %} gefunden{% endblock %}
+
+{% block nav_extra %}
+<a href="{{ url_for('admin.media_upload_page') }}" class="btn-primary hidden lg:inline-flex items-center">
+    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+    </svg>
+    Medien hochladen
+</a>
+{% endblock %}
 
 {% block admin_content %}
-<div class="space-y-6">
-    <!-- Header -->
-    <div class="flex items-center justify-between">
-        <div>
-            <h1 class="text-2xl font-bold text-primary-indigo dark:text-white">
-                Medienbibliothek
-            </h1>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                {{ total }} Mediendatei{% if total != 1 %}en{% endif %} gefunden
-            </p>
-        </div>
-        <a href="{{ url_for('admin.media_upload_page') }}" class="btn-primary">
-            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-            </svg>
-            Medien hochladen
-        </a>
-    </div>
+<!-- Mobile action button -->
+<div class="lg:hidden mb-6">
+    <a href="{{ url_for('admin.media_upload_page') }}" class="btn-primary w-full flex items-center justify-center">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+        </svg>
+        Medien hochladen
+    </a>
+</div>
 
-    <!-- Filters -->
-    <div class="card">
+<!-- Filters -->
+<div class="card mb-6">
         <form method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <input type="hidden" name="lang" value="{{ current_language }}">
 
@@ -35,7 +37,6 @@
                     <option value="">Alle Typen</option>
                     <option value="video" {% if media_type == 'video' %}selected{% endif %}>Video</option>
                     <option value="audio" {% if media_type == 'audio' %}selected{% endif %}>Audio</option>
-                    <option value="publication" {% if media_type == 'publication' %}selected{% endif %}>Publikation</option>
                 </select>
             </div>
 
@@ -66,10 +67,6 @@
                         {% elif media.media_type == 'audio' %}
                             <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
-                            </svg>
-                        {% elif media.media_type == 'publication' %}
-                            <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                             </svg>
                         {% endif %}
                     </div>
@@ -126,14 +123,36 @@
                         {% endif %}
                     </div>
 
+                    <!-- Tags -->
+                    {% if media.tags %}
+                        <div class="flex flex-wrap gap-1 mb-4">
+                            {% for tag in media.tags[:3] %}
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+                                    {{ tag }}
+                                </span>
+                            {% endfor %}
+                            {% if media.tags|length > 3 %}
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+                                    +{{ media.tags|length - 3 }}
+                                </span>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
                     <!-- Footer -->
                     <div class="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
                         <span class="text-xs text-gray-500 dark:text-gray-400">
                             {{ media.created_at }}
                         </span>
-                        <button class="text-accent-sky dark:text-accent-rose hover:underline text-sm font-medium">
-                            Details
-                        </button>
+                        {% if media.detail_url %}
+                            <a href="{{ media.detail_url }}" class="text-accent-sky dark:text-accent-rose hover:underline text-sm font-medium">
+                                Details →
+                            </a>
+                        {% else %}
+                            <span class="text-sm text-gray-400 dark:text-gray-500">
+                                Details nicht verfügbar
+                            </span>
+                        {% endif %}
                     </div>
                 </div>
             {% endfor %}
@@ -180,5 +199,4 @@
             </a>
         </div>
     {% endif %}
-</div>
 {% endblock %}

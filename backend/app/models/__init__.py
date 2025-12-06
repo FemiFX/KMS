@@ -1,5 +1,5 @@
 from .content import Content
-from .article import ArticleTranslation
+from .article import ArticleTranslation, ArticleTranslationVersion
 from .media import MediaContent, Transcript
 from .tag import Tag, TagLabel, ContentTag
 from .embedding import Embedding
@@ -9,6 +9,7 @@ from .user import User
 __all__ = [
     'Content',
     'ArticleTranslation',
+    'ArticleTranslationVersion',
     'MediaContent',
     'Transcript',
     'Tag',

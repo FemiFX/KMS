@@ -173,11 +173,108 @@ def test_publication(app, test_user):
             original_language='de'
         )
         db.session.add(publication)
+
+        translation = ArticleTranslation(
+            content_id=content.id,
+            language='de',
+            title='Test Publication',
+            markdown='Test publication content',
+            is_primary=True
+        )
+        translation.generate_slug()
+        db.session.add(translation)
         db.session.commit()
 
         yield publication
 
         # Cleanup
+        ArticleTranslation.query.filter_by(content_id=content.id).delete()
         db.session.delete(publication)
+        db.session.delete(content)
+        db.session.commit()
+
+
+@pytest.fixture
+def test_video(app, test_user):
+    """Create test video content."""
+    with app.app_context():
+        content = Content(
+            type='video',
+            created_by_id=test_user.id,
+            visibility='public'
+        )
+        db.session.add(content)
+        db.session.flush()
+
+        video = MediaContent(
+            content_id=content.id,
+            kind='video',
+            object_key='/static/uploads/videos/test.mp4',
+            mime_type='video/mp4',
+            file_size=2048000,
+            duration_seconds=180.5,
+            original_language='de'
+        )
+        db.session.add(video)
+
+        translation = ArticleTranslation(
+            content_id=content.id,
+            language='de',
+            title='Test Video',
+            markdown='Test video description',
+            is_primary=True
+        )
+        translation.generate_slug()
+        db.session.add(translation)
+        db.session.commit()
+
+        yield video
+
+        # Cleanup
+        ArticleTranslation.query.filter_by(content_id=content.id).delete()
+        db.session.delete(video)
+        db.session.delete(content)
+        db.session.commit()
+
+
+@pytest.fixture
+def test_audio(app, test_user):
+    """Create test audio content."""
+    with app.app_context():
+        content = Content(
+            type='audio',
+            created_by_id=test_user.id,
+            visibility='public'
+        )
+        db.session.add(content)
+        db.session.flush()
+
+        audio = MediaContent(
+            content_id=content.id,
+            kind='audio',
+            object_key='/static/uploads/audios/test.mp3',
+            mime_type='audio/mpeg',
+            file_size=768000,
+            duration_seconds=240.0,
+            original_language='de'
+        )
+        db.session.add(audio)
+
+        translation = ArticleTranslation(
+            content_id=content.id,
+            language='de',
+            title='Test Audio',
+            markdown='Test audio description',
+            is_primary=True
+        )
+        translation.generate_slug()
+        db.session.add(translation)
+        db.session.commit()
+
+        yield audio
+
+        # Cleanup
+        ArticleTranslation.query.filter_by(content_id=content.id).delete()
+        db.session.delete(audio)
         db.session.delete(content)
         db.session.commit()

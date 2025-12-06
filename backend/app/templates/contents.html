@@ -1,31 +1,43 @@
 {% extends "base_admin.html" %}
 
-{% block title %}Inhalte - Verwaltungsportal{% endblock %}
+{% block title %}{{ page_title|default('Inhalte - Verwaltungsportal') }}{% endblock %}
+{% block page_title %}{{ page_heading|default('Inhalte verwalten') }}{% endblock %}
+{% block page_subtitle %}{{ page_subtitle|default(total ~ ' Inhalt' ~ ('e' if total != 1 else '') ~ ' gefunden') }}{% endblock %}
+
+{% block nav_extra %}
+<a href="{{ url_for(nav_new_url or 'admin.new_content_page') }}" class="btn-primary hidden lg:inline-flex items-center">
+    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+    </svg>
+    {{ nav_new_label|default('Neuer Artikel') }}
+</a>
+{% endblock %}
 
 {% block admin_content %}
-<div class="space-y-6">
-    <!-- Header -->
-    <div class="flex items-center justify-between">
-        <div>
-            <h1 class="text-2xl font-bold text-primary-indigo dark:text-white">
-                Inhalte verwalten
-            </h1>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                {{ total }} Inhalt{% if total != 1 %}e{% endif %} gefunden
-            </p>
-        </div>
-        <a href="{{ url_for('admin.new_content_page') }}" class="btn-primary">
-            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-            </svg>
-            Neuer Artikel
-        </a>
-    </div>
+<!-- Mobile action button -->
+<div class="lg:hidden mb-6">
+    <a href="{{ url_for(nav_new_url or 'admin.new_content_page') }}" class="btn-primary w-full flex items-center justify-center">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        {{ nav_new_label|default('Neuer Artikel') }}
+    </a>
+</div>
 
-    <!-- Filters -->
-    <div class="card">
-        <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <input type="hidden" name="lang" value="{{ current_language }}">
+<!-- Filters -->
+<div class="card mb-6">
+        <form method="GET" class="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Sprache
+                </label>
+                <select name="lang" class="input-field" onchange="this.form.submit()">
+                    <option value="de" {% if current_language == 'de' %}selected{% endif %}>Deutsch</option>
+                    <option value="en" {% if current_language == 'en' %}selected{% endif %}>English</option>
+                    <option value="fr" {% if current_language == 'fr' %}selected{% endif %}>Français</option>
+                    <option value="pt" {% if current_language == 'pt' %}selected{% endif %}>Português</option>
+                </select>
+            </div>
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -127,7 +139,7 @@
                         <span class="text-xs text-gray-500 dark:text-gray-400">
                             {{ content.created_at }}
                         </span>
-                        <a href="{{ url_for('admin.contents_page') }}"
+                        <a href="{{ url_for('admin.edit_content', content_id=content.id, lang=current_language) }}"
                            class="text-accent-sky dark:text-accent-rose hover:underline text-sm font-medium">
                            Öffnen →
                        </a>
@@ -188,5 +200,4 @@
             </a>
         </div>
     {% endif %}
-</div>
 {% endblock %}

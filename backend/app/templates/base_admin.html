@@ -105,16 +105,26 @@
             transition: all 0.2s;
         }
         .btn-primary {
-            background: linear-gradient(135deg, #2F6E47, #D8A843);
-            color: var(--ivory);
-            border: 1px solid #2F6E47;
-            box-shadow: 0 12px 24px rgba(47, 110, 71, 0.15);
+            background: #243C5A;
+            color: #F6F4F0;
+            border: 1px solid #243C5A;
+            box-shadow: 0 4px 12px rgba(36, 60, 90, 0.2);
         }
         .btn-primary:hover {
-            background: linear-gradient(135deg, #357352, #e4bc5a);
-            color: var(--ivory);
+            background: #2d4a6f;
+            color: #F6F4F0;
             transform: translateY(-1px);
-            box-shadow: 0 14px 28px rgba(47, 110, 71, 0.2);
+            box-shadow: 0 6px 16px rgba(36, 60, 90, 0.3);
+        }
+        html.dark .btn-primary {
+            background: #2F6E47;
+            border-color: #2F6E47;
+            color: #F6F4F0;
+            box-shadow: 0 4px 12px rgba(47, 110, 71, 0.2);
+        }
+        html.dark .btn-primary:hover {
+            background: #357352;
+            box-shadow: 0 6px 16px rgba(47, 110, 71, 0.3);
         }
         .btn-secondary {
             background-color: var(--card);
@@ -297,7 +307,7 @@
         <!-- Main Content -->
         <main class="flex-1 overflow-y-auto p-6 space-y-4">
             {% include 'partials/flash_messages.html' %}
-            {% block content %}{% endblock %}
+            {% block admin_content %}{% endblock %}
         </main>
     </div>
 

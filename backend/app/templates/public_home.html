@@ -1,154 +1,339 @@
 {% extends "base.html" %}
 
-{% block title %}UN-Dekade für Menschen afrikanischer Abstammung - Startseite{% endblock %}
+{% block title %}UN-Dekade für Menschen afrikanischer Abstammung{% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<div class="bg-gradient-to-br from-primary-indigo via-primary-cocoa to-support-teal text-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
-        <div class="text-center">
-            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-                UN-Dekade für Menschen afrikanischer Abstammung
-            </h1>
-            <p class="text-xl md:text-2xl mb-4 text-gray-100">
-                Anerkennung, Gerechtigkeit und Entwicklung
-            </p>
-            <p class="text-lg md:text-xl mb-12 text-gray-200 max-w-3xl mx-auto">
-                Entdecken Sie eine umfassende Sammlung von Ressourcen, Artikeln und Multimedia-Inhalten
-                über die UN-Dekade für Menschen afrikanischer Abstammung (2015-2024).
-            </p>
+<!-- Hero Section with Background Image -->
+<section class="relative bg-ivory dark:bg-charcoal-900 overflow-hidden">
+    <!-- Background Image with Overlay -->
+    <div class="absolute inset-0 z-0">
+        <img src="{{ url_for('static', filename='img/hero-section.jpg') }}" alt="UN-Dekade Hero" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-br from-charcoal/95 via-inkblue/90 to-emerald-900/85 dark:from-charcoal/98 dark:via-inkblue/95 dark:to-emerald-900/90"></div>
+    </div>
 
-            <!-- Search Box -->
-            <div class="max-w-3xl mx-auto">
-                <form action="{{ url_for('public.search_page') }}" method="GET" class="relative">
-                    <input type="hidden" name="lang" value="{{ current_language or 'de' }}">
-                    <div class="flex items-center bg-white rounded-full shadow-xl overflow-hidden">
-                        <input
-                            type="text"
-                            name="q"
-                            placeholder="Durchsuchen Sie Artikel, Videos, Audio und mehr..."
-                            class="flex-1 px-6 py-4 md:py-5 text-gray-900 placeholder-gray-500 focus:outline-none text-base md:text-lg"
-                            required
-                        >
-                        <button
-                            type="submit"
-                            class="px-6 md:px-8 py-4 md:py-5 bg-accent-gold hover:bg-accent-gold/90 transition-colors"
-                        >
-                            <svg class="w-6 h-6 text-primary-indigo" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                            </svg>
+    <!-- Hero Content -->
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <!-- Hero Text -->
+            <div class="space-y-8 text-white">
+                <div class="space-y-6">
+                    <h1 class="text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-tight tracking-tight">
+                        Entdecken Sie die<br>
+                        <span class="text-heritage">UN-Dekade</span>
+                    </h1>
+                    <p class="text-xl sm:text-2xl text-sand-100 leading-relaxed max-w-2xl font-medium">
+                        Anerkennung · Gerechtigkeit · Entwicklung
+                    </p>
+                    <p class="text-base sm:text-lg text-sand-200 leading-relaxed max-w-xl">
+                        Eine umfassende Sammlung von Ressourcen über die UN-Dekade für Menschen afrikanischer Abstammung (2015-2024).
+                    </p>
+                </div>
+
+                <!-- CTA Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="{{ url_for('public.search_page', lang=current_language) }}" class="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-xl bg-heritage hover:bg-heritage-600 text-charcoal shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">
+                        <i class="fas fa-magnifying-glass mr-2"></i> Jetzt durchsuchen
+                    </a>
+                    <a href="#featured" class="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-xl bg-white/10 hover:bg-white/20 text-white border-2 border-white/30 hover:border-white/50 backdrop-blur-sm transition-all duration-200">
+                        <i class="fas fa-arrow-down mr-2"></i> Mehr erfahren
+                    </a>
+                </div>
+            </div>
+
+            <!-- Search Box Card -->
+            <div class="relative">
+                <div class="bg-white dark:bg-graphite-800 rounded-2xl shadow-2xl p-8 transform hover:scale-[1.02] transition-transform duration-300">
+                    <h2 class="text-2xl font-bold text-charcoal dark:text-ivory mb-6">Inhalte durchsuchen</h2>
+
+                    <!-- Category Pills -->
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <button class="category-pill-compact active" data-type="">
+                            <i class="fas fa-border-all mr-1"></i>Alle
+                        </button>
+                        <button class="category-pill-compact" data-type="article">
+                            <i class="fas fa-file-lines mr-1"></i>Artikel
+                        </button>
+                        <button class="category-pill-compact" data-type="video">
+                            <i class="fas fa-video mr-1"></i>Videos
+                        </button>
+                        <button class="category-pill-compact" data-type="audio">
+                            <i class="fas fa-microphone mr-1"></i>Audio
+                        </button>
+                        <button class="category-pill-compact" data-type="publication">
+                            <i class="fas fa-book mr-1"></i>Publikationen
                         </button>
                     </div>
-                </form>
+
+                    <!-- Search Form -->
+                    <form action="{{ url_for('public.search_page') }}" method="GET">
+                        <input type="hidden" name="lang" value="{{ current_language or 'de' }}">
+                        <input type="hidden" name="type" id="search-type" value="">
+                        <div class="flex items-center bg-sand-50 dark:bg-charcoal-900 rounded-xl overflow-hidden border-2 border-sand-200 dark:border-graphite-600 focus-within:border-emerald dark:focus-within:border-heritage transition-colors">
+                            <div class="pl-4 text-taupe dark:text-sand-400">
+                                <i class="fas fa-magnifying-glass text-lg"></i>
+                            </div>
+                            <input
+                                type="text"
+                                name="q"
+                                placeholder="Suchen Sie nach Themen oder Schlüsselwörtern..."
+                                class="flex-1 px-3 py-4 text-charcoal dark:text-ivory placeholder-taupe dark:placeholder-sand-400 focus:outline-none text-base bg-transparent"
+                            >
+                            <button
+                                type="submit"
+                                class="px-6 py-4 bg-emerald hover:bg-emerald-600 dark:bg-heritage dark:hover:bg-heritage-600 transition-colors text-white font-semibold"
+                            >
+                                Suchen
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 
-<!-- Features Section -->
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-    <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-primary-indigo dark:text-white">
-        Erforschen Sie unsere Ressourcen
-    </h2>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- Articles Card -->
-        <div class="card hover:shadow-xl transition-shadow cursor-pointer">
-            <div class="w-12 h-12 bg-accent-sky/20 dark:bg-accent-rose/20 rounded-lg flex items-center justify-center mb-4">
-                <svg class="w-6 h-6 text-accent-sky dark:text-accent-rose" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
-            </div>
-            <h3 class="text-xl font-semibold mb-2 text-primary-indigo dark:text-white">Artikel & Berichte</h3>
-            <p class="text-gray-600 dark:text-gray-300">
-                Ausführliche Artikel über Geschichte, Kultur und aktuelle Entwicklungen der afrikanischen Diaspora.
-            </p>
-        </div>
-
-        <!-- Video Content Card -->
-        <div class="card hover:shadow-xl transition-shadow cursor-pointer">
-            <div class="w-12 h-12 bg-accent-rose/20 dark:bg-accent-sky/20 rounded-lg flex items-center justify-center mb-4">
-                <svg class="w-6 h-6 text-accent-rose dark:text-accent-sky" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                </svg>
-            </div>
-            <h3 class="text-xl font-semibold mb-2 text-primary-indigo dark:text-white">Video-Inhalte</h3>
-            <p class="text-gray-600 dark:text-gray-300">
-                Dokumentationen, Interviews und Bildungsmaterialien in Videoformat mit Transkripten.
-            </p>
-        </div>
-
-        <!-- Audio Content Card -->
-        <div class="card hover:shadow-xl transition-shadow cursor-pointer">
-            <div class="w-12 h-12 bg-accent-gold/20 rounded-lg flex items-center justify-center mb-4">
-                <svg class="w-6 h-6 text-accent-gold dark:text-accent-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
-                </svg>
-            </div>
-            <h3 class="text-xl font-semibold mb-2 text-primary-indigo dark:text-white">Audio & Podcasts</h3>
-            <p class="text-gray-600 dark:text-gray-300">
-                Hörbeiträge, Podcasts und gesprochene Inhalte mit durchsuchbaren Transkripten.
-            </p>
-        </div>
-
-        <!-- Publications Card -->
-        <div class="card hover:shadow-xl transition-shadow cursor-pointer">
-            <div class="w-12 h-12 bg-support-teal/20 rounded-lg flex items-center justify-center mb-4">
-                <svg class="w-6 h-6 text-support-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                </svg>
-            </div>
-            <h3 class="text-xl font-semibold mb-2 text-primary-indigo dark:text-white">Publikationen</h3>
-            <p class="text-gray-600 dark:text-gray-300">
-                Offizielle UN-Dokumente, Forschungsberichte und wissenschaftliche Publikationen.
-            </p>
-        </div>
-
-        <!-- Multilingual Card -->
-        <div class="card hover:shadow-xl transition-shadow cursor-pointer">
-            <div class="w-12 h-12 bg-primary-cocoa/20 rounded-lg flex items-center justify-center mb-4">
-                <svg class="w-6 h-6 text-primary-cocoa dark:text-accent-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
-                </svg>
-            </div>
-            <h3 class="text-xl font-semibold mb-2 text-primary-indigo dark:text-white">Mehrsprachig</h3>
-            <p class="text-gray-600 dark:text-gray-300">
-                Inhalte verfügbar auf Deutsch, Englisch, Französisch und Portugiesisch.
-            </p>
-        </div>
-
-        <!-- Search Card -->
-        <div class="card hover:shadow-xl transition-shadow cursor-pointer bg-gradient-to-br from-accent-sky/10 to-accent-rose/10">
-            <div class="w-12 h-12 bg-white dark:bg-gray-700 rounded-lg flex items-center justify-center mb-4">
-                <svg class="w-6 h-6 text-primary-indigo dark:text-accent-sky" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                </svg>
-            </div>
-            <h3 class="text-xl font-semibold mb-2 text-primary-indigo dark:text-white">Semantische Suche</h3>
-            <p class="text-gray-600 dark:text-gray-300">
-                KI-gestützte Suche findet relevante Inhalte basierend auf der Bedeutung Ihrer Anfrage.
-            </p>
-        </div>
+<!-- Featured Content Section -->
+<div id="featured" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+    <div class="flex items-center justify-between mb-8">
+        <h2 class="text-2xl md:text-3xl font-bold text-charcoal dark:text-ivory font-heading">
+            Ausgewählte Inhalte
+        </h2>
+        <a href="{{ url_for('public.search_page', lang=current_language) }}" class="text-emerald dark:text-heritage hover:underline text-sm font-medium">
+            Alle anzeigen <i class="fas fa-arrow-right ml-1"></i>
+        </a>
     </div>
+
+    {% if featured_content and featured_content|length > 0 %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for item in featured_content %}
+        <a href="{{ url_for('public.' + item.type + '_detail', content_id=item.id, lang=current_language) }}" class="content-card group">
+            <div class="content-card-image bg-gradient-to-br {{ item.gradient }} relative overflow-hidden">
+                <div class="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors"></div>
+                <div class="absolute top-4 left-4">
+                    <span class="content-badge content-badge-{{ item.type }}">
+                        <i class="fas {{ item.icon }} mr-2"></i>{{ item.type_label }}
+                    </span>
+                </div>
+                <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent">
+                    <h3 class="text-white text-xl font-bold mb-2 line-clamp-2">{{ item.title }}</h3>
+                </div>
+            </div>
+            <div class="p-5">
+                <p class="text-sm text-taupe dark:text-sand-300 mb-3 line-clamp-3">{{ item.excerpt }}</p>
+                <div class="flex items-center justify-between text-xs text-taupe dark:text-sand-400">
+                    <span>{{ item.created_at }}</span>
+                    {% if item.tags and item.tags|length > 0 %}
+                    <div class="flex gap-1">
+                        {% for tag in item.tags[:2] %}
+                        <span class="tag">{{ tag }}</span>
+                        {% endfor %}
+                        {% if item.tags|length > 2 %}
+                        <span class="tag">+{{ item.tags|length - 2 }}</span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-12">
+        <div class="w-16 h-16 bg-sand-200 dark:bg-graphite-700 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-inbox text-taupe dark:text-sand-400 text-2xl"></i>
+        </div>
+        <p class="text-taupe dark:text-sand-300">Noch keine Inhalte verfügbar. Schauen Sie bald wieder vorbei!</p>
+    </div>
+    {% endif %}
 </div>
 
 <!-- About Section -->
-<div class="bg-gray-50 dark:bg-gray-900 py-16 md:py-24">
+<div class="bg-sand-50 dark:bg-charcoal-900 py-12 md:py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="max-w-3xl mx-auto text-center">
-            <h2 class="text-3xl md:text-4xl font-bold mb-6 text-primary-indigo dark:text-white">
+            <h2 class="text-2xl md:text-3xl font-bold mb-6 text-charcoal dark:text-ivory font-heading">
                 Über die UN-Dekade
             </h2>
-            <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+            <p class="text-base md:text-lg text-taupe dark:text-sand-300 mb-4">
                 Die Internationale Dekade für Menschen afrikanischer Abstammung (2015-2024) wurde von den
                 Vereinten Nationen proklamiert, um die Menschenrechte und Grundfreiheiten von Menschen
                 afrikanischer Abstammung anzuerkennen und zu fördern.
             </p>
-            <p class="text-lg text-gray-700 dark:text-gray-300">
+            <p class="text-base md:text-lg text-taupe dark:text-sand-300">
                 Diese Plattform dient als zentrale Ressource für Informationen, Bildungsmaterialien und
-                Dokumentation über die Dekade und ihre Ziele: Anerkennung, Gerechtigkeit und Entwicklung.
+                Dokumentation über die Dekade und ihre Ziele.
             </p>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.category-pill-compact {
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.813rem;
+    font-weight: 600;
+    border: 2px solid #E9DCC4;
+    color: #817567;
+    background: transparent;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+html.dark .category-pill-compact {
+    border-color: #817567;
+    color: #E9DCC4;
+}
+
+.category-pill-compact:hover {
+    background: rgba(47, 110, 71, 0.1);
+    border-color: #2F6E47;
+    color: #2F6E47;
+}
+
+html.dark .category-pill-compact:hover {
+    background: rgba(216, 168, 67, 0.1);
+    border-color: #D8A843;
+    color: #D8A843;
+}
+
+.category-pill-compact.active {
+    background: #2F6E47;
+    border-color: #2F6E47;
+    color: white;
+}
+
+html.dark .category-pill-compact.active {
+    background: #D8A843;
+    border-color: #D8A843;
+    color: #1F1E1D;
+}
+
+.content-card {
+    display: block;
+    background: white;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+    transition: all 0.3s;
+}
+
+html.dark .content-card {
+    background: #3B3A38;
+}
+
+.content-card:hover {
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px);
+}
+
+.content-card-image {
+    width: 100%;
+    height: 200px;
+    position: relative;
+}
+
+.content-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.content-badge-article {
+    background: rgba(47, 110, 71, 0.9);
+    color: white;
+}
+
+.content-badge-video {
+    background: rgba(167, 78, 57, 0.9);
+    color: white;
+}
+
+.content-badge-audio {
+    background: rgba(216, 168, 67, 0.9);
+    color: #1F1E1D;
+}
+
+.content-badge-publication {
+    background: rgba(36, 60, 90, 0.9);
+    color: white;
+}
+
+.tag {
+    padding: 0.25rem 0.5rem;
+    background: rgba(233, 220, 196, 0.2);
+    border-radius: 0.375rem;
+    font-weight: 500;
+}
+
+html.dark .tag {
+    background: rgba(129, 117, 103, 0.3);
+}
+
+.from-emerald {
+    background: linear-gradient(135deg, #2F6E47, #478f67);
+}
+
+.from-terracotta {
+    background: linear-gradient(135deg, #A74E39, #d26449);
+}
+
+.from-heritage {
+    background: linear-gradient(135deg, #D8A843, #e4bc5a);
+}
+
+.from-inkblue {
+    background: linear-gradient(135deg, #243C5A, #4c7392);
+}
+
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Category filter functionality
+document.querySelectorAll('.category-pill-compact').forEach(pill => {
+    pill.addEventListener('click', function() {
+        // Remove active from all pills
+        document.querySelectorAll('.category-pill-compact').forEach(p => p.classList.remove('active'));
+        // Add active to clicked pill
+        this.classList.add('active');
+        // Update hidden input
+        document.getElementById('search-type').value = this.dataset.type;
+    });
+});
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
+</script>
 {% endblock %}

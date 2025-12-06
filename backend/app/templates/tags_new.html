@@ -1,0 +1,165 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Neuer Tag - Verwaltungsportal{% endblock %}
+{% block page_title %}Neuer Tag erstellen{% endblock %}
+{% block page_subtitle %}Tag-Verwaltung{% endblock %}
+
+{% block nav_extra %}
+<div class="hidden lg:flex items-center space-x-3">
+    <a href="{{ url_for('admin.tags_page', lang=current_language) }}" class="btn-secondary">
+        Abbrechen
+    </a>
+    <button type="submit" form="tag-form" class="btn-primary inline-flex items-center">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+        Tag erstellen
+    </button>
+</div>
+{% endblock %}
+
+{% block admin_content %}
+<!-- Mobile action buttons -->
+<div class="lg:hidden mb-6 flex space-x-3">
+    <a href="{{ url_for('admin.tags_page', lang=current_language) }}" class="btn-secondary flex-1 text-center">
+        Abbrechen
+    </a>
+    <button type="submit" form="tag-form" class="btn-primary flex-1 inline-flex items-center justify-center">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+        Erstellen
+    </button>
+</div>
+
+<div class="card">
+    <form id="tag-form" method="POST" action="{{ url_for('admin.tags_create') }}" class="space-y-6">
+        <!-- Key -->
+        <div>
+            <label for="key" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Schlüssel (Key) <span class="text-red-500">*</span>
+            </label>
+            <input
+                type="text"
+                id="key"
+                name="key"
+                required
+                pattern="[a-z0-9_-]+"
+                placeholder="z.B. menschenrechte, bildung, gesundheit"
+                class="input-field"
+                title="Nur Kleinbuchstaben, Zahlen, Bindestriche und Unterstriche erlaubt"
+            >
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                Eindeutiger interner Bezeichner (nur Kleinbuchstaben, Zahlen, '-' und '_')
+            </p>
+        </div>
+
+        <!-- Default Label -->
+        <div>
+            <label for="default_label" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Standard-Label <span class="text-red-500">*</span>
+            </label>
+            <input
+                type="text"
+                id="default_label"
+                name="default_label"
+                required
+                placeholder="z.B. Menschenrechte, Bildung, Gesundheit"
+                class="input-field"
+            >
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                Anzeigename für den Tag (kann später in verschiedenen Sprachen übersetzt werden)
+            </p>
+        </div>
+
+        <!-- Namespace -->
+        <div>
+            <label for="namespace" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Namespace (optional)
+            </label>
+            <input
+                type="text"
+                id="namespace"
+                name="namespace"
+                placeholder="z.B. topic, department, audience"
+                class="input-field"
+            >
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                Gruppierung für Tags (z.B. 'topic', 'department', 'audience')
+            </p>
+        </div>
+
+        <!-- Color -->
+        <div>
+            <label for="color" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Farbe (optional)
+            </label>
+            <div class="flex items-center space-x-3">
+                <input
+                    type="color"
+                    id="color"
+                    name="color"
+                    value="#2F6E47"
+                    class="h-10 w-20 rounded border border-gray-300 dark:border-gray-600 cursor-pointer"
+                >
+                <input
+                    type="text"
+                    id="color-hex"
+                    placeholder="#2F6E47"
+                    maxlength="7"
+                    pattern="#[0-9A-Fa-f]{6}"
+                    class="input-field flex-1"
+                    title="Hex-Farbe (z.B. #2F6E47)"
+                >
+            </div>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                Optionale Farbe für die Tag-Darstellung (Hex-Format)
+            </p>
+        </div>
+
+        <!-- Hidden field for language -->
+        <input type="hidden" name="lang" value="{{ current_language }}">
+    </form>
+</div>
+
+<script>
+// Sync color picker with text input
+const colorPicker = document.getElementById('color');
+const colorHex = document.getElementById('color-hex');
+
+colorPicker.addEventListener('input', function() {
+    colorHex.value = this.value.toUpperCase();
+});
+
+colorHex.addEventListener('input', function() {
+    if (/^#[0-9A-Fa-f]{6}$/.test(this.value)) {
+        colorPicker.value = this.value;
+    }
+});
+
+// Initialize hex input with picker value
+colorHex.value = colorPicker.value.toUpperCase();
+
+// Auto-generate key from label
+const defaultLabel = document.getElementById('default_label');
+const keyInput = document.getElementById('key');
+let keyManuallyEdited = false;
+
+keyInput.addEventListener('input', function() {
+    keyManuallyEdited = true;
+});
+
+defaultLabel.addEventListener('input', function() {
+    if (!keyManuallyEdited && this.value) {
+        // Convert label to key format: lowercase, replace spaces/special chars with hyphen
+        const generatedKey = this.value
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, ''); // Trim hyphens
+        keyInput.value = generatedKey;
+    }
+});
+</script>
+{% endblock %}

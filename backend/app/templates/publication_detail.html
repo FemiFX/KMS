@@ -1,0 +1,60 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Publikation ansehen - Verwaltungsportal{% endblock %}
+{% block page_title %}Publikation{% endblock %}
+{% block page_subtitle %}Details & Download{% endblock %}
+
+{% block admin_content %}
+<div class="max-w-5xl mx-auto space-y-6">
+    <div class="card p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-primary-indigo dark:text-white mb-2">{{ content.media.title if content.media and content.media.title else 'Publikation' }}</h1>
+            <p class="text-gray-600 dark:text-gray-300">Typ: Publikation • Sichtbarkeit: {{ content.visibility|capitalize }}</p>
+        </div>
+        {% if content.media and content.media.object_key %}
+            <a href="{{ content.media.object_key }}" class="btn-primary" target="_blank" rel="noopener">Ansehen/Download</a>
+        {% endif %}
+    </div>
+
+    <div class="card p-6 space-y-4">
+        <h2 class="text-lg font-semibold text-primary-indigo dark:text-white">Metadaten</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700 dark:text-gray-300">
+            <div>
+                <p class="font-semibold">ID</p>
+                <p class="text-gray-600 dark:text-gray-400">{{ content.id }}</p>
+            </div>
+            <div>
+                <p class="font-semibold">Erstellt am</p>
+                <p class="text-gray-600 dark:text-gray-400">{{ content.created_at.strftime('%d.%m.%Y') if content.created_at else 'n/a' }}</p>
+            </div>
+            <div>
+                <p class="font-semibold">Aktualisiert am</p>
+                <p class="text-gray-600 dark:text-gray-400">{{ content.updated_at.strftime('%d.%m.%Y') if content.updated_at else 'n/a' }}</p>
+            </div>
+            {% if content.media %}
+            <div>
+                <p class="font-semibold">Dateigröße</p>
+                <p class="text-gray-600 dark:text-gray-400">
+                    {% if content.media.file_size %}
+                        {{ (content.media.file_size / (1024 * 1024))|round(2) }} MB
+                    {% else %}
+                        n/a
+                    {% endif %}
+                </p>
+            </div>
+            <div>
+                <p class="font-semibold">Format</p>
+                <p class="text-gray-600 dark:text-gray-400">{{ content.media.mime_type or 'n/a' }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if content.media and content.media.thumbnail_key %}
+    <div class="card p-6">
+        <h2 class="text-lg font-semibold text-primary-indigo dark:text-white mb-4">Vorschau</h2>
+        <img src="{{ content.media.thumbnail_key }}" alt="Thumbnail" class="rounded-lg max-w-full">
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

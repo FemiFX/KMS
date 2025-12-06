@@ -2,6 +2,7 @@ import uuid
 from datetime import datetime
 from slugify import slugify
 from app import db
+from sqlalchemy import func
 
 
 class ArticleTranslation(db.Model):
@@ -67,3 +68,33 @@ class ArticleTranslation(db.Model):
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat(),
         }
+
+
+class ArticleTranslationVersion(db.Model):
+    """
+    Point-in-time snapshot of an article translation for versioning/revert/preview.
+    """
+    __tablename__ = 'article_translation_version'
+
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    translation_id = db.Column(db.String(36), db.ForeignKey('article_translation.id', ondelete='CASCADE'), nullable=False)
+    content_id = db.Column(db.String(36), db.ForeignKey('content.id', ondelete='CASCADE'), nullable=False)
+    language = db.Column(db.String(10), nullable=False)
+    version_number = db.Column(db.Integer, nullable=False)
+    title = db.Column(db.String(500), nullable=False)
+    markdown = db.Column(db.Text, nullable=False)
+    rendered_html = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    created_by_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=True)
+
+    translation = db.relationship('ArticleTranslation', backref='versions')
+
+    __table_args__ = (
+        db.UniqueConstraint('translation_id', 'version_number', name='uq_translation_version_number'),
+        db.Index('idx_article_translation_version_translation', 'translation_id'),
+    )
+
+    @classmethod
+    def next_version_number(cls, translation_id):
+        current_max = db.session.query(func.max(cls.version_number)).filter_by(translation_id=translation_id).scalar()
+        return (current_max or 0) + 1

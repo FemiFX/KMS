@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Publikation{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 p-8">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+            <div>
+                <p class="text-sm uppercase tracking-wide text-accent-gold font-semibold mb-2">Publikation</p>
+                <h1 class="text-3xl font-bold text-primary-indigo dark:text-white mb-2">
+                    {{ content.title or 'Publikation' }}
+                </h1>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    Sichtbarkeit: {{ content.visibility|capitalize }}{% if content.language %} • Sprache: {{ content.language|upper }}{% endif %}
+                </p>
+            </div>
+            {% if content.media and content.media.object_key %}
+                <a href="{{ content.media.object_key }}" class="btn-primary inline-flex items-center gap-2" target="_blank" rel="noopener">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Ansehen / Download
+                </a>
+            {% endif %}
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="card p-4">
+                <h2 class="text-lg font-semibold text-primary-indigo dark:text-white mb-3">Metadaten</h2>
+                <ul class="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                    <li><span class="font-semibold">ID:</span> {{ content.id }}</li>
+                    <li><span class="font-semibold">Erstellt am:</span> {{ content.created_at.strftime('%d.%m.%Y') if content.created_at else 'n/a' }}</li>
+                    <li><span class="font-semibold">Aktualisiert am:</span> {{ content.updated_at.strftime('%d.%m.%Y') if content.updated_at else 'n/a' }}</li>
+                    {% if content.media %}
+                        <li><span class="font-semibold">Format:</span> {{ content.media.mime_type or 'n/a' }}</li>
+                        {% if content.media.file_size %}
+                            <li><span class="font-semibold">Dateigröße:</span> {{ (content.media.file_size / (1024 * 1024))|round(2) }} MB</li>
+                        {% endif %}
+                    {% endif %}
+                </ul>
+            </div>
+
+            {% if content.media and content.media.thumbnail_key %}
+            <div class="card p-4">
+                <h2 class="text-lg font-semibold text-primary-indigo dark:text-white mb-3">Vorschau</h2>
+                <img src="{{ content.media.thumbnail_key }}" alt="Thumbnail" class="rounded-lg w-full object-cover">
+            </div>
+            {% endif %}
+
+            {% if content.media and content.media.object_key and content.media.mime_type and 'pdf' in content.media.mime_type %}
+            <div class="card p-4 md:col-span-2">
+                <h2 class="text-lg font-semibold text-primary-indigo dark:text-white mb-3">Inline Vorschau</h2>
+                <div class="w-full aspect-[4/3] bg-gray-50 dark:bg-gray-800 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+                    <iframe
+                        src="{{ content.media.object_key }}#toolbar=0&navpanes=0&scrollbar=1"
+                        class="w-full h-full"
+                        title="Publikation Vorschau"
+                    ></iframe>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

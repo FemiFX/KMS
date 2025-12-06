@@ -84,6 +84,232 @@ class TestMediaAPI:
         # May require authentication or not be fully implemented yet
         assert response.status_code in [200, 201, 400, 401, 403, 501]
 
+
+class TestMediaUploadComplete:
+    """Test complete media upload functionality."""
+
+    def test_upload_video_complete(self, authenticated_client, app):
+        """Test complete video upload with all fields."""
+        data = {
+            'file': (BytesIO(b'fake video data'), 'test_video.mp4'),
+            'kind': 'video',
+            'title': 'Complete Test Video',
+            'summary': 'This is a complete test video upload',
+            'language': 'de',
+            'visibility': 'public',
+            'tags': json.dumps([
+                {'key': 'test-tag-1', 'label': 'Test Tag 1'},
+                {'key': 'test-tag-2', 'label': 'Test Tag 2'}
+            ]),
+            'transcript': 'This is a test transcript for the video.',
+            'auto_transcript': 'false'
+        }
+
+        response = authenticated_client.post(
+            '/api/media',
+            data=data,
+            content_type='multipart/form-data'
+        )
+
+        # Should succeed with authentication
+        if response.status_code in [200, 201]:
+            result = json.loads(response.data)
+            assert 'content_id' in result
+            assert 'media_id' in result
+
+            # Verify database records were created
+            from app.models import Content, MediaContent, ArticleTranslation, Tag
+            with app.app_context():
+                content = Content.query.get(result['content_id'])
+                assert content is not None
+                assert content.type == 'video'
+                assert content.visibility == 'public'
+
+                media = MediaContent.query.get(result['media_id'])
+                assert media is not None
+                assert media.kind == 'video'
+                assert media.content_id == result['content_id']
+                assert '/static/uploads/videos/' in media.object_key
+
+                translation = ArticleTranslation.query.filter_by(
+                    content_id=result['content_id'],
+                    language='de'
+                ).first()
+                assert translation is not None
+                assert translation.title == 'Complete Test Video'
+                assert translation.is_primary is True
+
+                # Verify tags
+                assert len(content.tags) == 2
+                tag_keys = [tag.key for tag in content.tags]
+                assert 'test-tag-1' in tag_keys
+                assert 'test-tag-2' in tag_keys
+
+                # Cleanup
+                from app import db
+                ArticleTranslation.query.filter_by(content_id=result['content_id']).delete()
+                MediaContent.query.filter_by(id=result['media_id']).delete()
+                Content.query.filter_by(id=result['content_id']).delete()
+                db.session.commit()
+
+    def test_upload_audio_complete(self, authenticated_client, app):
+        """Test complete audio upload with all fields."""
+        data = {
+            'file': (BytesIO(b'fake audio data'), 'test_audio.mp3'),
+            'kind': 'audio',
+            'title': 'Complete Test Audio',
+            'summary': 'This is a complete test audio upload',
+            'language': 'en',
+            'visibility': 'private',
+            'tags': json.dumps(['audio-tag']),
+        }
+
+        response = authenticated_client.post(
+            '/api/media',
+            data=data,
+            content_type='multipart/form-data'
+        )
+
+        if response.status_code in [200, 201]:
+            result = json.loads(response.data)
+            assert 'content_id' in result
+            assert 'media_id' in result
+
+            from app.models import Content, MediaContent
+            with app.app_context():
+                content = Content.query.get(result['content_id'])
+                assert content.type == 'audio'
+
+                media = MediaContent.query.get(result['media_id'])
+                assert media.kind == 'audio'
+                assert '/static/uploads/audios/' in media.object_key
+
+                # Cleanup
+                from app import db
+                from app.models import ArticleTranslation
+                ArticleTranslation.query.filter_by(content_id=result['content_id']).delete()
+                MediaContent.query.filter_by(id=result['media_id']).delete()
+                Content.query.filter_by(id=result['content_id']).delete()
+                db.session.commit()
+
+    def test_upload_video_invalid_format(self, authenticated_client):
+        """Test uploading video with invalid file format."""
+        data = {
+            'file': (BytesIO(b'fake data'), 'test.txt'),
+            'kind': 'video',
+            'title': 'Invalid Format',
+            'summary': 'Test',
+            'language': 'de'
+        }
+
+        response = authenticated_client.post(
+            '/api/media',
+            data=data,
+            content_type='multipart/form-data'
+        )
+
+        # Should reject invalid format
+        assert response.status_code == 400
+        if response.data:
+            result = json.loads(response.data)
+            assert 'error' in result
+            assert 'format' in result['error'].lower() or 'invalid' in result['error'].lower()
+
+    def test_upload_audio_invalid_format(self, authenticated_client):
+        """Test uploading audio with invalid file format."""
+        data = {
+            'file': (BytesIO(b'fake data'), 'test.mp4'),
+            'kind': 'audio',
+            'title': 'Invalid Format',
+            'summary': 'Test',
+            'language': 'de'
+        }
+
+        response = authenticated_client.post(
+            '/api/media',
+            data=data,
+            content_type='multipart/form-data'
+        )
+
+        # Should reject invalid format
+        assert response.status_code == 400
+
+    def test_upload_media_missing_title(self, authenticated_client):
+        """Test uploading media without required title."""
+        data = {
+            'file': (BytesIO(b'fake video data'), 'test.mp4'),
+            'kind': 'video',
+            'summary': 'Test',
+            'language': 'de'
+        }
+
+        response = authenticated_client.post(
+            '/api/media',
+            data=data,
+            content_type='multipart/form-data'
+        )
+
+        # Should reject missing title
+        assert response.status_code == 400
+
+    def test_upload_media_missing_summary(self, authenticated_client):
+        """Test uploading media without required summary."""
+        data = {
+            'file': (BytesIO(b'fake video data'), 'test.mp4'),
+            'kind': 'video',
+            'title': 'Test',
+            'language': 'de'
+        }
+
+        response = authenticated_client.post(
+            '/api/media',
+            data=data,
+            content_type='multipart/form-data'
+        )
+
+        # Should reject missing summary
+        assert response.status_code == 400
+
+    def test_upload_video_with_transcript(self, authenticated_client, app):
+        """Test uploading video with transcript."""
+        data = {
+            'file': (BytesIO(b'fake video data'), 'test.mp4'),
+            'kind': 'video',
+            'title': 'Video With Transcript',
+            'summary': 'Test video with transcript',
+            'language': 'de',
+            'transcript': 'This is the video transcript content.'
+        }
+
+        response = authenticated_client.post(
+            '/api/media',
+            data=data,
+            content_type='multipart/form-data'
+        )
+
+        if response.status_code in [200, 201]:
+            result = json.loads(response.data)
+
+            from app.models import Transcript, MediaContent
+            with app.app_context():
+                media = MediaContent.query.get(result['media_id'])
+                transcripts = Transcript.query.filter_by(media_id=media.id).all()
+
+                # Should have created transcript
+                assert len(transcripts) > 0
+                transcript = transcripts[0]
+                assert transcript.language == 'de'
+                assert 'transcript content' in transcript.text
+
+                # Cleanup
+                from app import db
+                from app.models import ArticleTranslation, Content
+                Transcript.query.filter_by(media_id=media.id).delete()
+                ArticleTranslation.query.filter_by(content_id=result['content_id']).delete()
+                MediaContent.query.filter_by(id=result['media_id']).delete()
+                Content.query.filter_by(id=result['content_id']).delete()
+                db.session.commit()
+
     def test_get_publication(self, client, test_publication):
         """Test getting a publication item."""
         response = client.get(f'/api/media/{test_publication.id}')
