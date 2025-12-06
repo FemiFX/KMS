@@ -7,8 +7,8 @@ import MarkdownEditor from './MarkdownEditor';
  * Initialize the markdown viewer on any page that has a #markdown-viewer element
  * The markdown content and dark mode preference are passed via data attributes
  */
-function initializeMarkdownViewer() {
-  const container = document.getElementById('markdown-viewer');
+export function initializeMarkdownViewer(selector = '#markdown-viewer') {
+  const container = typeof selector === 'string' ? document.querySelector(selector) : selector;
 
   if (!container) {
     return; // No viewer on this page
@@ -18,7 +18,7 @@ function initializeMarkdownViewer() {
   let markdown = container.dataset.markdown || '';
 
   // Prefer the JSON payload (preserves code fences and special characters)
-  const markdownData = document.getElementById('markdown-data');
+  const markdownData = container.querySelector('[data-markdown-json]') || document.getElementById('markdown-data');
   if (markdownData?.textContent) {
     try {
       markdown = JSON.parse(markdownData.textContent);
@@ -123,3 +123,6 @@ if (document.readyState === 'loading') {
   initializeMarkdownViewer();
   initializeMarkdownEditor();
 }
+
+// Expose globally for ad-hoc mounts (e.g., version preview modal)
+window.initializeMarkdownViewer = initializeMarkdownViewer;

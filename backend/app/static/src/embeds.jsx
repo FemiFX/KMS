@@ -6,14 +6,16 @@ import React from 'react';
 export const YouTubeEmbed = ({ attrs }) => {
   const videoId = attrs.matches[1];
   return (
-    <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0 }}>
-      <iframe
-        src={`https://www.youtube.com/embed/${videoId}`}
-        frameBorder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-      />
+    <div style={{ paddingTop: '24px', paddingBottom: '24px' }}>
+      <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0 }}>
+        <iframe
+          src={`https://www.youtube.com/embed/${videoId}`}
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+        />
+      </div>
     </div>
   );
 };
@@ -24,14 +26,16 @@ export const YouTubeEmbed = ({ attrs }) => {
 export const VimeoEmbed = ({ attrs }) => {
   const videoId = attrs.matches[1];
   return (
-    <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0 }}>
-      <iframe
-        src={`https://player.vimeo.com/video/${videoId}`}
-        frameBorder="0"
-        allow="autoplay; fullscreen; picture-in-picture"
-        allowFullScreen
-        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-      />
+    <div style={{ paddingTop: '24px', paddingBottom: '24px' }}>
+      <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0 }}>
+        <iframe
+          src={`https://player.vimeo.com/video/${videoId}`}
+          frameBorder="0"
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowFullScreen
+          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+        />
+      </div>
     </div>
   );
 };
@@ -41,13 +45,15 @@ export const VimeoEmbed = ({ attrs }) => {
  */
 export const IframeEmbed = ({ attrs }) => {
   return (
-    <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0 }}>
-      <iframe
-        src={attrs.href}
-        frameBorder="0"
-        allowFullScreen
-        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-      />
+    <div style={{ paddingTop: '24px', paddingBottom: '24px' }}>
+      <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0 }}>
+        <iframe
+          src={attrs.href}
+          frameBorder="0"
+          allowFullScreen
+          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+        />
+      </div>
     </div>
   );
 };
@@ -91,13 +97,15 @@ export const embedDescriptors = [
     component: ({ attrs }) => {
       const fileId = attrs.matches[1];
       return (
-        <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0 }}>
-          <iframe
-            src={`https://drive.google.com/file/d/${fileId}/preview`}
-            frameBorder="0"
-            allowFullScreen
-            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-          />
+        <div style={{ paddingTop: '24px', paddingBottom: '24px' }}>
+          <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0 }}>
+            <iframe
+              src={`https://drive.google.com/file/d/${fileId}/preview`}
+              frameBorder="0"
+              allowFullScreen
+              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+            />
+          </div>
         </div>
       );
     },
